@@ -24,6 +24,9 @@ export function getModules(req, res) {
   }
 
   res.setHeader('content-type', 'application/json')
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
   res.status(200).json(mapObj) // Envoyer l'objet converti en JSON
 }
 

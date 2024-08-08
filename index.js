@@ -44,9 +44,11 @@ app.use('/', Router)
 
 // Make the app available through an ADSL box (WAN) and adding CORS to SocketIO + App
 app.use(cors({
-    origin: '*',
-    optionsSuccessStatus: 200
-}));
+    origin: '*', // Autoriser toutes les origines (utiliser un domaine spcifique en production)
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Autoriser ces mthodes HTTP
+    allowedHeaders: ['Content-Type', 'Authorization'], // Autoriser ces en-ttes
+    optionsSuccessStatus: 200 // Renvoyer le statut 200 pour les requtes prliminaires (preflight) en OPTIONS
+  }))
 
 // create websocket with existing port HTTP for web client
 let myhttp = http.createServer(app);
@@ -113,6 +115,8 @@ myio.listen(myhttp)
 console.log("____________________________________________________________\n")
 
 let pad = function (num) { return ('00' + num).slice(-2) }
+
+
 // #endregion
 
 // #region CRONTAB functions 
@@ -126,11 +130,12 @@ let launchSync = () => { velbuslib.VMBsyncTime() }
 let everyDay5h = schedule.scheduleJob('* * 5 */1 * *', () => {
     // Synchronize time each day at 5:00 (AM) because of summer/winter offset each year
     velbuslib.VMBSetTime(99, 99, 99)
-    console.log("ARVEL CRON for Time synchronisation done...")
+    console.log("⏱️⏱️⏱️⏱️ ARVEL CRON 5h (Time Sync) : ", d.toISOString(), "⏱️⏱️⏱️⏱️")
 
 })
 
 let everyDay23h59 = schedule.scheduleJob('50 59 23 */1 * *', () => {
+    console.log("⏱️⏱️⏱️⏱️ ARVEL CRON Midnight : ", d.toISOString(), "⏱️⏱️⏱️⏱️")
     // Record index and some jobs to clear old values
     // read values lists and send to SQL
     let tableCompteur = TeleInfo.resume()
@@ -161,8 +166,17 @@ let everyDay23h59 = schedule.scheduleJob('50 59 23 */1 * *', () => {
 let everyMinut = schedule.scheduleJob('*/1 * * * *', () => {
     // call every minute energy counter
     let d = new Date()
+    console.log("⏱️⏱️⏱️⏱️ ARVEL CRON 1 minute : ", d.toISOString(), "⏱️⏱️⏱️⏱️")
+
+    // WIP Récupération des modules de TeleInfo chaque minute dans la liste des sous-modules.
+    // scan TeleInfo modules
+    console.log("⚡⚡  TeleInfo : insert modules  ⚡⚡")
+    let tableCompteur = TeleInfo.resume()
+    velbuslib.setSubModuleList("300-1", tableCompteur[0])
+    velbuslib.setSubModuleList("300-2", tableCompteur[1])
+
+
     // Scan all module and search for a function
-    console.log("==== ARVEL CRON 1 minute  ====", d.toISOString(), "====")
     // subModuleList = velbuslib.resume()
     let subList = velbuslib.fullSubModuleList()
     if (subList) {
@@ -209,5 +223,6 @@ let everyMinut = schedule.scheduleJob('*/1 * * * *', () => {
 
 let every5min = schedule.scheduleJob('* */5 * * * *', () => {
     // call every 5 minutes event like temperatures
+    console.log("⏱️⏱️⏱️⏱️ ARVEL CRON 5 minute : ", d.toISOString(), "⏱️⏱️⏱️⏱️")
 })
 //#endregion

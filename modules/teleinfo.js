@@ -43,14 +43,19 @@ let compteurProd = {
  * @returns array of two VMBSubModule
  */
 function resume() {
+    let maxConsoDate = decodeDate(compteurConso.SMAXSN)
+    let maxConsoWatt = decodePower(compteurConso.SMAXSN)
+    let maxProdDate = decodeDate(compteurProd.SMAXIN)
+    let maxProdWatt = decodePower(compteurProd.SMAXIN)
+
     // let statusConso = {"power":compteurConso.SINSTS*1, "indexHP":compteurConso.EASF01*1, "indexHC":compteurConso.EASF02*1, "powermax":compteurConso.SMAXSN, "timestamp":Date.now()}
-    let statusConso = { "index": compteurConso.EASF01*1, "power": compteurConso.SINSTS*1, "indexHC":compteurConso.EASF02*1, "powerMax":compteurConso.SMAXSN, "timestamp": Date.now() }
+    let statusConso = { "index": compteurConso.EASF01*1, "power": compteurConso.SINSTS*1, "indexHC":compteurConso.EASF02*1, "powerMax":maxConsoWatt, "powerMaxDate":maxConsoDate, "timestamp": Date.now() }
 
     let cptConso = new VMBsubmodule(300, 1, "300-1", ["energy", "electricity"], statusConso)
     cptConso.name = "TeleInfo Conso"
 
     // let statusProd = {"power":compteurProd.SINSTI*1, "indexProd":compteurProd.EAIT*1, "indexConso":compteurProd.EASF01*1, "powerMax":compteurProd.SMAXIN, "timestamp":Date.now()}
-    let statusProd = {"index":compteurProd.EAIT*1, "power":compteurProd.SINSTI*1, "indexConso":compteurProd.EASF01*1, "powerMax":compteurProd.SMAXIN, "timestamp":Date.now()}
+    let statusProd = {"index":compteurProd.EAIT*1, "power":compteurProd.SINSTI*1, "indexConso":compteurProd.EASF01*1, "powerMax":maxProdWatt, "powerMaxDate":maxProdDate, "timestamp":Date.now()}
 
     let cptProd = new VMBsubmodule(300, 2, "300-2", ["energy", "electricity"], statusProd)
     cptProd.name = "TeleInfo Prod"
@@ -59,18 +64,24 @@ function resume() {
 
 // decode TeleInfo date :SAISON (E/H)+YYMMDDHHmmSS
 function decodeDate(m) {
-    let msg = m.split(" ")
-    // let HeureEte = "E" == m[0].substr(0,1)
-    if (msg[0].length >12) {
-        return "20"+msg[0].substr(1,2) + "-" + msg[0].substr(3,2) + "-" + msg[0].substr(5,2) + " " + msg[0].substr(7,2) + ":" + msg[0].substr(9,2) + ":" + msg[0].substr(11,2)
-    } 
-    return msg[0]
+    if (m.includes(' ')) {
+        let msg = m.split(" ")
+        // let HeureEte = "E" == m[0].substr(0,1)
+        if (msg[0].length >12) {
+            return "20"+msg[0].substr(1,2) + "-" + msg[0].substr(3,2) + "-" + msg[0].substr(5,2) + " " + msg[0].substr(7,2) + ":" + msg[0].substr(9,2) + ":" + msg[0].substr(11,2)
+        } 
+        return msg[0]
+    }
+    return "0000-00-00 00:00:00"
 
 }
 // decode TeleInfo max power :"DATE POWER"
 function decodePower(m) {
-    let msg = m.split(" ")
-    return msg[1]*1
+    if (m.includes(' ')) {
+        let msg = m.split(" ")
+        return msg[1]*1
+    }
+    return -1
 }
 
 
