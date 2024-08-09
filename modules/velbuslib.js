@@ -45,7 +45,7 @@ let subModuleList = new Map()	// class VMBsubmodule (child of a VMBmodule)
 let VMBNameStatus = new Map()
 let VMBTempStatus = new Map()
 let VMBEnergyStatus = new Map()
-
+const DEBUG = false
 
 // ============================================================================================================
 // =                                    Functions for internal use                                            =
@@ -211,9 +211,9 @@ function checkName(element) {
 		if (m) {
 			m.name = n[0]+n[1]+n[2]
 			myModule.name = m.name
-			console.log("🏷️ ARVEL - VELBUS submodule " + key + " is named " + subModuleList.get(key).name)
+			logInfo(1, "📌 VELBUS submodule " + key + " is named " + subModuleList.get(key).name)
 		} else {
-			console.log("Erreur de lecture du module")
+			logInfo(2, "Erreur de lecture du module")
 		}
 	}
 	VMBNameStatus.set(key, { "address": element[2], "name": n[0] + n[1] + n[2], "n1": n[0], "n2": n[1], "n3": n[2], "flag": flag | f })
@@ -262,7 +262,7 @@ function checkModule(VMBmessage) {
 				subModTemp.type = typVelbus
 				setSubModuleList(key, subModTemp)
 				console.log("  |_ CREATE", key, "TYPE:", subModTemp.type, "FUNCTION:",subModTemp.cat)
-				VMBWrite(FrameRequestName(adrVelbus, (i+1)))
+				VMBWrite(FrameRequestName(adrVelbus, Part2Bin(i)))
 			}
 		}
 	}
@@ -278,7 +278,7 @@ function checkModule(VMBmessage) {
 function analyze2Texte(element) {
 	let fctVelbus = Number(element[4])
 	let adrVelbus = element[2]
-	let texte = "@:" + adrVelbus.toString(16) + " Fct:" + fctVelbus.toString(16).toUpperCase() + "(" + VMB.getFunctionName(fctVelbus) + ") ► "
+	let texte = "@" + adrVelbus.toString(16) + " Fct:" + fctVelbus.toString(16).toUpperCase() + "(" + VMB.getFunctionName(fctVelbus) + ") ► "
 	let buttonOn = ""
 	let keyModule = ""
 
@@ -345,7 +345,9 @@ function analyze2Texte(element) {
  * @param {*} res not used
  * -------------------------------------------------------------------------------------------------*/
 async function VMBWrite(req) {
-	console.log('\x1b[32m', "VelbusLib writing", '\x1b[0m', toHexa(req).join())
+	if (DEBUG) {
+		console.log('\x1b[32m', "VelbusLib writing", '\x1b[0m', toHexa(req).join())
+	}
 	VelbusConnexion.write(req);
 	await sleep(10)
 }
@@ -566,7 +568,28 @@ async function VMBRequestEnergy(adr, part) {
 }*/
 // #endregion
 
-
+function logInfo(priority, text) {
+	if (DEBUG) {
+		const symbols = ['🔵', '⚠️', '🛑']
+		const priorityNames = ['INFO', 'WARNING', 'ERROR']
+		if (typeof(priority) == 'string') {
+			priority = priorityNames.indexOf(priority.toUpperCase())
+		} 
+		if (priority<0 || priority>=priorityNames.length) {
+				priority = 0
+		}
+		const now = new Date();
+		const hours = String(now.getHours()).padStart(2, '0')
+		const minutes = String(now.getMinutes()).padStart(2, '0')
+		const seconds = String(now.getSeconds()).padStart(2, '0')
+		const timeString = `${hours}:${minutes}:${seconds}`
+	
+		const symbol = symbols[priority] || '🤖'
+		const priorityName = priorityNames[priority] || 'UNKNOWN'
+	
+		console.log(`${symbol} [${timeString}] [${priorityName}] ${text}`)
+	}
+}
 
 
 
@@ -624,7 +647,7 @@ VelbusConnexion.on('data', (data) => {
 	Cut(data).forEach(element => {
 		checkModule(element);
 		desc = analyze2Texte(element);
-		console.log("  📥",desc)	// use as debug
+		logInfo('INFO', desc)
 
 		VMBmessage = { "RAW": element, "Description": desc, "TimeStamp": Date.now(), "Address": element[2], "Function": element[4] }
 

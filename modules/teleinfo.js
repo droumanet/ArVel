@@ -77,9 +77,11 @@ function decodeDate(m) {
 }
 // decode TeleInfo max power :"DATE POWER"
 function decodePower(m) {
-    if (m.includes(' ')) {
-        let msg = m.split(" ")
-        return msg[1]*1
+    if (m != undefined) {
+        if (m.includes(' ')) {
+            let msg = m.split(" ")
+            return msg[1]*1
+        }
     }
     return -1
 }

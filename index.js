@@ -129,13 +129,14 @@ let launchSync = () => { velbuslib.VMBsyncTime() }
 
 let everyDay5h = schedule.scheduleJob('* * 5 */1 * *', () => {
     // Synchronize time each day at 5:00 (AM) because of summer/winter offset each year
+    let d = new Date()
+    console.log("⏰ ARVEL CRON 5h (Time Sync) : ", d.toISOString())
     velbuslib.VMBSetTime(99, 99, 99)
-    console.log("⏱️⏱️⏱️⏱️ ARVEL CRON 5h (Time Sync) : ", d.toISOString(), "⏱️⏱️⏱️⏱️")
-
 })
 
 let everyDay23h59 = schedule.scheduleJob('50 59 23 */1 * *', () => {
-    console.log("⏱️⏱️⏱️⏱️ ARVEL CRON Midnight : ", d.toISOString(), "⏱️⏱️⏱️⏱️")
+    let d = new Date()
+    console.log("⏰ ARVEL CRON Midnight : ", d.toISOString())
     // Record index and some jobs to clear old values
     // read values lists and send to SQL
     let tableCompteur = TeleInfo.resume()
@@ -166,7 +167,7 @@ let everyDay23h59 = schedule.scheduleJob('50 59 23 */1 * *', () => {
 let everyMinut = schedule.scheduleJob('*/1 * * * *', () => {
     // call every minute energy counter
     let d = new Date()
-    console.log("⏱️⏱️⏱️⏱️ ARVEL CRON 1 minute : ", d.toISOString(), "⏱️⏱️⏱️⏱️")
+    console.log("⏰ ARVEL CRON 1 minute : ", d.toISOString())
 
     // WIP Récupération des modules de TeleInfo chaque minute dans la liste des sous-modules.
     // scan TeleInfo modules
@@ -221,8 +222,4 @@ let everyMinut = schedule.scheduleJob('*/1 * * * *', () => {
 
 })
 
-let every5min = schedule.scheduleJob('* */5 * * * *', () => {
-    // call every 5 minutes event like temperatures
-    console.log("⏱️⏱️⏱️⏱️ ARVEL CRON 5 minute : ", d.toISOString(), "⏱️⏱️⏱️⏱️")
-})
 //#endregion

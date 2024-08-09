@@ -13,7 +13,7 @@ const moduleTypes    =
  {code : "0x07", name :  "VMB1DM",    power: [35],  desc : "1 dimmer (with physical button) module", PartNb : 1, cat:["dimmer"]},
  {code : "0x08", name :  "VMB4RY",    power: [50,250], desc : "4 relays (with physical buttons) module", PartNb : 4, cat:["relay"]},
  {code : "0x09", name :  "VMB2BL",    power: [200], desc : "2 blind (with physical button) module", PartNb : 2, cat:["blind"]},
- {code : "0x0B", name :  "VMB4PD",    power: [30],  desc : "8 (2x4) push buttons with display module", PartNb : 4, cat:["button", "display"]},
+ {code : "0x0B", name :  "VMB4PD",    power: [30],  desc : "8 (2x4) push buttons with display module", PartNb : 8, cat:["button", "display"]},
  {code : "0x0C", name :  "VMB1TS",    power: [10],  desc : "1 temperature sensor module", PartNb : 1, cat: ["temp"]},
  {code : "0x0D", name :  "VMB1TH",    power: [0], desc : "-never produced-", PartNb : 1, cat:["temp"]},
  {code : "0x0E", name :  "VMB1TC",    power: [50],  desc : "1 temperature sensor module", PartNb : 1, cat:["temp", "controller"]},
