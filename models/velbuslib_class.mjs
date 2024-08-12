@@ -25,9 +25,10 @@ class VMBsubmodule {
 	address = 0		// from 1 to 250
 	part = 0		// part in main module (at least, is equal to 1)
 	id = ""			// adr-part : part always be 1 to n, ex. VMB1TS would be 128-1
+	hexId=""		// adr-part but in hexadecimal format. 170-4 ==> AA-4 (more readable)
 	name = ""
 	type = 0		// exact type module
-	cat=""			// category like 'temp', 'energy', 'relay', 'lamp', 'dimmer', blind', 'motor'...
+	cat=[""]		// category like 'temp', 'energy', 'relay', 'lamp', 'dimmer', blind', 'motor'...
 	status = {}		// object containing the specific status
 	room = ""
 	zone = []		// could be multiple : room, floor, orientation (west, north...) or some useful tags

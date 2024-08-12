@@ -35,9 +35,11 @@ import { FrameRequestMove, FrameRequestStop, FrameHello } from './velbuslib_blin
 import { relaySet, relayTimer } from './velbuslib_relay.mjs';
 import { FrameRequestTemp } from './velbuslib_temp.mjs';
 import { FrameRequestCounter } from './velbuslib_input.mjs';
+import fs from 'fs'
 
 // What is for this emitter?
 const VMBEmitter = new EventEmitter()
+const ModulesFile = "VelbusMapData.json"
 
 // General list for event
 let moduleList = new Map()		// class VMBmodule
@@ -62,9 +64,51 @@ function fullSubModuleList() {
 	return subModuleList
 }
 function lenSubModuleList() {
-	console.log("subModuleList longueur", subModuleList.size)
+	console.log("subModuleList size", subModuleList.size)
 	return subModuleList.size
 }
+
+// Preload or save modules and submodules file
+function saveMapData(ModuleList, subModuleList) {
+	const data = {
+	  ModuleList: Array.from(ModuleList.entries()),
+	  subModuleList: Array.from(subModuleList.entries())
+	}
+  
+	fs.writeFile(ModulesFile, JSON.stringify(data), (err) => {
+	  if (err) {
+		console.error('Error while trying to save Valbus datas :', err)
+	  } else {
+		console.log('Datas saved successfully in', ModulesFile)
+	  }
+	})
+  }
+
+  function loadMapData() {
+	console.log("💾 Trying to load previous scanned Velbus devices from", ModulesFile, "--------------");
+	
+	if (fs.existsSync(ModulesFile)) {
+	  try {
+		const data = fs.readFileSync(ModulesFile, 'utf8');
+		const parsedData = JSON.parse(data);
+		moduleList = new Map(parsedData.ModuleList);
+		subModuleList = new Map(parsedData.subModuleList);
+		console.log('Success loading', ModulesFile);
+		return subModuleList.size;
+	  } catch (err) {
+		console.error('Error while loading Velbus data from file:', err);
+		return 0;
+	  }
+	} else {
+	  console.log(ModulesFile, 'not found. First Scan needed.');
+	  // Logique pour scanner les modules ici
+	  return 0;
+	}
+  }
+
+
+
+
 
 
 // #region FRAME functions
@@ -181,27 +225,34 @@ function resume() {
 function checkName(element) {
 	let key = element[2] + "-" + Bin2Part(element[5])
 	let fctVelbus = element[4]
-	let myModule = VMBNameStatus.get(key)
-
-	let max = 6		// for 0xF0 and 0xF1 functions
-	if (fctVelbus == 0xF2) max = 4
 
 	// if VMBNameStatus doesn't exist, create one and get it value 
+	let myModule = VMBNameStatus.get(key)
 	if (myModule == undefined) {
 		VMBNameStatus.set(key, { "address": element[2], "name": "", "n1": "", "n2": "", "n3": "", "flag": 0 })
 		myModule = VMBNameStatus.get(key)
 	}
+	let name = [myModule.n1, myModule.n2, myModule.n3]
 
-	let n = [myModule.n1, myModule.n2, myModule.n3]
+
+	// In case it's first part name response, reset flag: make possible to update full name dynamically
+	if (fctVelbus == 0xF0) {
+		myModule.flag = 0
+	}
+
+	// Prepare to read 6 bytes (0xF0 and 0xF1) or 4 bytes (0xF2)
+	let max = 6
+	if (fctVelbus == 0xF2) max = 4
+
 	let idx = fctVelbus - 0xF0	// idx could be 2, 1 or 0
 	let flag = 2 ** idx			// 2^n transformation (bit 1, 2 or 4)
 	let f = myModule.flag		// flag use a OR binary operation with 2⁰, 2¹ and 2²
-	n[idx] = ""					// remove previous value
-
+	
 	// Filling name char by char (n1 et n2 => max=6, n3 => max=4 as 15 char)
+	name[idx] = ""
 	for (let t = 0; t < max; t++) {
 		if (element[6 + t] != 0xFF) {
-			n[idx] = n[idx] + String.fromCharCode(element[6 + t])
+			name[idx] = name[idx] + String.fromCharCode(element[6 + t])
 		}
 	}
 
@@ -209,14 +260,14 @@ function checkName(element) {
 	if ((f | flag) == 0b111) {
 		let m = subModuleList.get(key)
 		if (m) {
-			m.name = n[0]+n[1]+n[2]
+			m.name = name[0]+name[1]+name[2]
 			myModule.name = m.name
 			logInfo(1, "📌 VELBUS submodule " + key + " is named " + subModuleList.get(key).name)
 		} else {
 			logInfo(2, "Erreur de lecture du module")
 		}
 	}
-	VMBNameStatus.set(key, { "address": element[2], "name": n[0] + n[1] + n[2], "n1": n[0], "n2": n[1], "n3": n[2], "flag": flag | f })
+	VMBNameStatus.set(key, { "address": element[2], "name": name[0] + name[1] + name[2], "n1": name[0], "n2": name[1], "n3": name[2], "flag": flag | f })
 }
 
 
@@ -254,6 +305,7 @@ function checkModule(VMBmessage) {
 			for (let i=0; i<newModule.partNumber; i++) {
 				key=adrVelbus+"-"+(i+1)
 				subModTemp = new VMBsubmodule(adrVelbus, i+1, key, "", {})
+				subModTemp.hexId = toHexa([adrVelbus])+"-"+(i+1)
 				subModTemp.cat = VMB.getCatFromCode(typVelbus)
 				if (typVelbus == 0x22 && i>=4) {
 					subModTemp.cat = ["input"]
@@ -632,11 +684,22 @@ VelbusConnexion.on('connect', () => {
 })
 
 VelbusConnexion.once('connect', () => {
-	setTimeout(() => {
-		// VMBscanAll() after 1 second
-		console.log("Now scanning all devices on BUS 🔎")
-		VMBscanAll(0)
-	}, 1000)
+	// WIP lire fichier des modules d'abord
+	// Load Modules before starting asynchrone communication with Velbus
+	if (!loadMapData()) {
+		console.log("subModuleList size", subModuleList.size)
+		setTimeout(() => {
+			// VMBscanAll() after 1 second
+			console.log("Now scanning all devices on BUS 🔎")
+			VMBscanAll(0)
+		}, 1000)
+		setTimeout(() => {
+			saveMapData(moduleList, subModuleList) // after 90 second
+			console.log("List saved after scan on BUS 💾")
+		}, 90000)		
+	} else {
+		console.log("List loaded, no need to scan on BUS 💾")
+	}
 })
 
 VelbusConnexion.on('data', (data) => {
@@ -651,7 +714,7 @@ VelbusConnexion.on('data', (data) => {
 
 		VMBmessage = { "RAW": element, "Description": desc, "TimeStamp": Date.now(), "Address": element[2], "Function": element[4] }
 
-		// WIP seems to be for socketIO. Could be removed?
+		// TODO seems to be for socketIO. Could be removed?
 		VMBEmitter.emit("msg", VMBmessage);
 
 		switch (element[4]) {
@@ -668,7 +731,7 @@ VelbusConnexion.on('data', (data) => {
 	})
 });
 VelbusConnexion.on('error', (err) => {
-	// FIXME: Check if this part is needed (lost connexion start event 'close') and how...
+	// TODO Check if this part is needed (lost connexion start event 'close') and how...
 	console.log("  ❌ Connexion Error! Velbus reusedSocket:", VelbusConnexion.reusedSocket, "   err.code:", err.code)
 	if (!VelbusConnexion.destroyed) {
 		VelbusConnexion.destroy();
@@ -694,7 +757,7 @@ export {
 	setSubModuleList, getSubModuleList, lenSubModuleList, fullSubModuleList,
 	CheckSum,
 	Cut,
-	toHexa,
+	toHexa, Part2Bin,
 	VMB, resume,
 	VMBWrite, VMBSetTime, VMBscanAll,
 	relaySet, relayTimer,

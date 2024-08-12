@@ -28,6 +28,7 @@ import { VMBmodule, VMBsubmodule } from './models/velbuslib_class.mjs'
 import { getSunrise, getSunset } from 'sunrise-sunset-js'
 import { writePowerByDay, writeEnergy } from './controllers/CtrlDatabase.mjs';
 import * as TeleInfo from './modules/teleinfo.js'
+import * as VMC from './modules/VMC.js'
 
 // GPS coordonates for Grenoble (sunrise and sunset value)
 const sunset = getSunset(appProfile.locationX, appProfile.locationY);
@@ -152,12 +153,13 @@ let everyDay23h59 = schedule.scheduleJob('50 59 23 */1 * *', () => {
         date = date.getFullYear() + '-' + pad(date.getMonth() + 1) + '-' + pad(date.getDate())
         let powerTbl = new Array()
         powerTbl.push(date)
-        powerTbl.push(velbuslib.getSubModuleList('300-1').status.indexHP + "")
-        powerTbl.push(velbuslib.getSubModuleList('300-1').status.indexHC + "")
-        powerTbl.push(velbuslib.getSubModuleList('300-2').status.indexProd + "")
+        powerTbl.push(velbuslib.getSubModuleList('300-1').status.index + "")
+        powerTbl.push(velbuslib.getSubModuleList('300-1').status.indexHC + "") 
+        powerTbl.push(velbuslib.getSubModuleList('300-2').status.index + "")
         powerTbl.push(TeleInfo.decodePower(velbuslib.getSubModuleList('300-1').status.powermax) + "")
         powerTbl.push(TeleInfo.decodePower(velbuslib.getSubModuleList('300-1').status.powermax) + "")
         console.log(powerTbl)
+
         writePowerByDay(powerTbl)
         // DEBUG write is ok but need to add some error's control (like writing twice ?)
         console.log("ARVEL CRON 24H for sending power to DATABASE done...")
@@ -169,13 +171,14 @@ let everyMinut = schedule.scheduleJob('*/1 * * * *', () => {
     let d = new Date()
     console.log("⏰ ARVEL CRON 1 minute : ", d.toISOString())
 
-    // WIP Récupération des modules de TeleInfo chaque minute dans la liste des sous-modules.
     // scan TeleInfo modules
     console.log("⚡⚡  TeleInfo : insert modules  ⚡⚡")
     let tableCompteur = TeleInfo.resume()
+    let VMCModule = VMC.resume()
+
     velbuslib.setSubModuleList("300-1", tableCompteur[0])
     velbuslib.setSubModuleList("300-2", tableCompteur[1])
-
+    velbuslib.setSubModuleList("400-1", VMCModule)
 
     // Scan all module and search for a function
     // subModuleList = velbuslib.resume()
