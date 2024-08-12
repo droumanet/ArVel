@@ -14,6 +14,7 @@
 // [ ] Fonctions dimmer
 // [ ] Etat volet
 // [x] Etat température
+// [x] Etat énergie (compteurs)
 
 
 /* ====================================================================================================================
@@ -684,8 +685,7 @@ VelbusConnexion.on('connect', () => {
 })
 
 VelbusConnexion.once('connect', () => {
-	// WIP lire fichier des modules d'abord
-	// Load Modules before starting asynchrone communication with Velbus
+	// Load Modules (synchrone method) before starting asynchrone communication with Velbus
 	if (!loadMapData()) {
 		console.log("subModuleList size", subModuleList.size)
 		setTimeout(() => {

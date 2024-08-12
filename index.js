@@ -41,7 +41,6 @@ console.log(__dirname)      // "/Users/Sam/dirname-example/src/api"
 console.log(process.cwd())  // "/Users/Sam/dirname-example"
 
 let app = express()
-app.use('/', Router)
 
 // Make the app available through an ADSL box (WAN) and adding CORS to SocketIO + App
 app.use(cors({
@@ -50,6 +49,8 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'Authorization'], // Autoriser ces en-ttes
     optionsSuccessStatus: 200 // Renvoyer le statut 200 pour les requtes prliminaires (preflight) en OPTIONS
   }))
+
+app.use('/', Router)
 
 // create websocket with existing port HTTP for web client
 let myhttp = http.createServer(app);
@@ -70,7 +71,6 @@ velbuslib.VelbusStart(VMBserver.host, VMBserver.port)
 
 myio.on('connection', (socket) => {
     console.log(`▶️ SocketIO (re)connected to @IP:${socket.request.remoteAddress} (client ${socket.id})`)
-    let subList = velbuslib.fullSubModuleList()
     let modulesTeleInfo = TeleInfo.resume()
     velbuslib.setSubModuleList("300-1", modulesTeleInfo[0])
     velbuslib.setSubModuleList("300-2", modulesTeleInfo[1])
