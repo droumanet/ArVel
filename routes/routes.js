@@ -13,7 +13,7 @@ Router.get('/modules', CtrlModules.getModules)
 
 // Route pour activer/désactiver un relais
 // TODO POST and not GET
-Router.get("/relay/:addr/:part", CtrlRelay.setRelayStatus)
+Router.get("/relay/:addr/:part/:status", CtrlRelay.setRelayStatus)
 Router.get("/relay", CtrlRelay.setRelayStatus2)
 
 // default routes

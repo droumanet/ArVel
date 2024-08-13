@@ -48,7 +48,7 @@ let subModuleList = new Map()	// class VMBsubmodule (child of a VMBmodule)
 let VMBNameStatus = new Map()
 let VMBTempStatus = new Map()
 let VMBEnergyStatus = new Map()
-const DEBUG = false
+const DEBUG = true
 
 // ============================================================================================================
 // =                                    Functions for internal use                                            =
