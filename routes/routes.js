@@ -12,9 +12,10 @@ import * as CtrlRelay from '../controllers/CtrlRelay.mjs'
 Router.get('/modules', CtrlModules.getModules)
 
 // Route pour activer/désactiver un relais
-// TODO POST and not GET
+// TODO POST and not GET ?
+Router.get("/name/:addr/:part", CtrlRelay.getName)
 Router.get("/relay/:addr/:part/:status", CtrlRelay.setRelayStatus)
-Router.get("/relay", CtrlRelay.setRelayStatus2)
+
 
 // default routes
 Router.get('/', (req, res) => { res.send({msg:"nothing here"})})

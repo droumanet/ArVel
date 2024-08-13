@@ -5,6 +5,7 @@
 */
 import * as velbuslib from "../modules/velbuslib.js"
 import * as VMBRelay from "../modules/velbuslib_relay.mjs"
+import * as VMBGeneric from "../modules/velbuslib_generic.mjs"
 
 export function setRelayStatus(req, res) {
     let x = velbuslib.fullSubModuleList()
@@ -40,8 +41,19 @@ export function setRelayStatus(req, res) {
     res.status(200).json({operation:"done"}) // Envoyer l'objet converti en JSON
 }
 
-export function setRelayStatus2(req, res) {
-    console.log("🔌 chemin /relay")
-    res.status(200).json({operation:"done"})
-}
+export function getName(req, res) {
+    let x = velbuslib.fullSubModuleList()
+    const addr = req.params.addr;
+    const part = req.params.part;
+    const status = req.params.status;
 
+    let key = addr+"-"+part
+    console.log("🔌", key, "need to send it name")
+    if (addr && part) {
+        if (x.get(key)) {
+            console.log("🔌 chemin /relay/name")
+            velbuslib.VMBWrite(VMBGeneric.FrameRequestName(addr, velbuslib.Part2Bin(part)))
+            res.status(200).json({operation:"done"})
+        }
+    }
+}

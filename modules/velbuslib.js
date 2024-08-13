@@ -315,7 +315,7 @@ function checkModule(VMBmessage) {
 				subModTemp.type = typVelbus
 				setSubModuleList(key, subModTemp)
 				console.log("  |_ CREATE", key, "TYPE:", subModTemp.type, "FUNCTION:",subModTemp.cat)
-				VMBWrite(FrameRequestName(adrVelbus, Part2Bin(i)))
+				VMBWrite(FrameRequestName(adrVelbus, Part2Bin(i+1)))
 			}
 		}
 	}
