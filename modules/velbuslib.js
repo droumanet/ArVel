@@ -167,7 +167,7 @@ function toHexa(donnees) {
  * @param {*} nb 
  * @returns array of active button's number
  * -----------------------------------------------------------------------------------------*/
-function toButtons(valeur, nb) {
+function toButtons(valeur, nb=8) {
 	let response = [];
 	let x = 1;
 	for (let t = 1; t < (nb + 1); t++) {
@@ -369,6 +369,14 @@ function analyze2Texte(element) {
 			texte += localModuleName(keyModule) + " " + compteur + " KW, (Inst. :" + conso + " W) ";
 			break;
 		}
+		case 0xDA:	{	// Bus error counter
+			// 5 = TX, 6 = RX, 7 = Bus Off
+			let errorTX = element[5]
+			let errorRX = element[6]
+			let errorBO = element[7]
+			texte += `ERROR Counter: TX=${errorTX}, RX=${errorRX}, BusOFF=${errorBO}`
+			break
+		}
 		case 0xE6:
 			keyModule = adrVelbus + "-1"
 			texte += localModuleName(keyModule) + " " + TempCurrentCalculation(element) + "°C";
@@ -389,6 +397,9 @@ function analyze2Texte(element) {
 			texte += " [" + buttonPress + "]" + "Channel: "+element[5]
 			let relayTimer = element[9]*(2**16) + element[10]*(2**8) + element[11]
 			texte += relayTimer ? `(time: ${relayTimer} sec.)` : ""		// si relayTimer > 0
+			let normalStatus = element[7] & 0x0F
+			let blinkStatus = (element[7]>>4) & 0x0F
+			texte += ` (ON: ${toButtons(normalStatus, 4)}, Blink: ${toButtons(blinkStatus, 4)})`
 			break
 		}
 		case 0xFF: { // Module Type Transmit
