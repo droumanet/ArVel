@@ -281,6 +281,8 @@ function checkModule(VMBmessage) {
 	let adrVelbus = VMBmessage[2]
 	let fctVelbus = Number(VMBmessage[4])
 	let typVelbus = VMBmessage[5]
+	let buildYear = VMBmessage[9]
+	let buildWeek = VMBmessage[10]
 
 	if (moduleList.has(adrVelbus)) {
 		// module exist, check if it still same type ?
@@ -289,8 +291,11 @@ function checkModule(VMBmessage) {
 			if (!fctVelbus == newModule.modType) {
 				newModule.modType = typVelbus
 				newModule.partNumber = VMB.getPartFromCode(newModule.modType)
+				newModule.buildYear = buildYear
+				newModule.buildWeek = buildWeek
 			}
 			moduleList.set(adrVelbus, newModule)
+
 		}
 
 	} else {
@@ -299,6 +304,8 @@ function checkModule(VMBmessage) {
 		let key, subModTemp
 		if (fctVelbus == 0xFF) {
 			newModule.modType = typVelbus
+			newModule.buildYear = buildYear
+			newModule.buildWeek = buildWeek
 			console.log("CREATE TYPE:", newModule.modType)
 			newModule.partNumber = VMB.getPartFromCode(newModule.modType)	// Fixed 2024-04-07
 			moduleList.set(adrVelbus, newModule)							// Fixed 2024-04-12
