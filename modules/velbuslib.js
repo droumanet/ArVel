@@ -332,13 +332,19 @@ function analyze2Texte(element) {
 	let fctVelbus = Number(element[4])
 	let adrVelbus = element[2]
 	let texte = "@" + adrVelbus.toString(16) + " Fct:" + fctVelbus.toString(16).toUpperCase() + "(" + VMB.getFunctionName(fctVelbus) + ") ► "
-	let buttonOn = ""
+	let buttonPress, buttonRelease, buttonLongPress
 	let keyModule = ""
 
 	switch (fctVelbus) {
 		case 0x00:
-			buttonOn = toButtons(element[5], 8)
-			texte += " [" + buttonOn + "]"
+			// Button pressed, released or long pressed (> 0.85 sec.)
+			buttonPress = toButtons(element[5], 8)
+			buttonRelease = toButtons(element[6], 8)
+			buttonLongPress = toButtons(element[7], 8)
+			texte += (buttonPress.length) ? `Pressed buttons: ${buttonPress} ` : ""
+			texte += (buttonRelease.length) ? `Released buttons: ${buttonRelease} ` : ""
+			texte += (buttonLongPress.length) ? `LongPressed buttons: ${buttonLongPress} ` : ""
+			// TODO Pour l'alarme, utiliser buttonRelease
 			break;
 		case 0xBE: {
 			// Read VMB7IN counter
@@ -371,10 +377,13 @@ function analyze2Texte(element) {
 			texte += " Transmit it name '" + VMBNameStatus.get(key).name + "'"
 			break
 		}
-		case 0xFB:
-			buttonOn = toButtons(element[7], 4);
-			texte += " [" + buttonOn + "]"
+		case 0xFB:	{	// VMBRelayStatus
+			buttonPress = toButtons(element[7], 4);
+			texte += " [" + buttonPress + "]" + "Channel: "+element[5]
+			let relayTimer = element[9]*(2**16) + element[10]*(2**8) + element[11]
+			texte += relayTimer ? `(time: ${relayTimer} sec.)` : ""		// si relayTimer > 0
 			break
+		}
 		case 0xFF: { // Module Type Transmit
 			let moduleType = element[5]
 			console.log(adrVelbus, "Detected module type ", moduleType)
