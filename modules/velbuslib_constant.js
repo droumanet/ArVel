@@ -146,6 +146,18 @@ const getCodeFromName = (name) => {
 };
 
 /**
+ * send back code module from name module
+ * @param {String} name 
+ * @returns code of module
+ */
+const getPowerFromType = (type) => {
+	for (let item of moduleTypes) {
+		if (item.type == type) return Number(item.power[0]);
+	}
+	return 0x00;
+};
+
+/**
  * send back part number from type module else return 1
  * @param {Number} code of module 
  * @returns number of sub part or at least one
@@ -205,5 +217,5 @@ export {
 	StartX, EndX, PrioHi, PrioLo,
 	moduleTypes, functionCode,
 	getCodeFromName, getDesc, getFunctionName, getNameFromCode, getPartFromCode,
-	getCatFromCode
+	getCatFromCode, getPowerFromType
 }

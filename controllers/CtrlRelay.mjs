@@ -14,7 +14,7 @@ export function setRelayStatus(req, res) {
     const status = req.params.status;
 
     let key = addr+"-"+part
-    console.log("🔌", key, "need to change to ", status*1)
+    console.log("🔌", key, "status need to change to ", status*1)
     if (addr && part && status) {
         if (x.get(key)) {
             // TODO test du type de module
@@ -48,7 +48,7 @@ export function getName(req, res) {
     const status = req.params.status;
 
     let key = addr+"-"+part
-    console.log("🔌", key, "need to send it name")
+    console.log("🔌", key, "request to send it name")
     if (addr && part) {
         if (x.get(key)) {
             console.log("🔌 chemin /relay/name")

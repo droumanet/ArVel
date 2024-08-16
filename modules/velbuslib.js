@@ -48,6 +48,7 @@ let subModuleList = new Map()	// class VMBsubmodule (child of a VMBmodule)
 let VMBNameStatus = new Map()
 let VMBTempStatus = new Map()
 let VMBEnergyStatus = new Map()
+let VMBModification = false
 const DEBUG = true
 
 // ============================================================================================================
@@ -107,6 +108,15 @@ function saveMapData(ModuleList, subModuleList) {
 	}
   }
 
+  // AUTO save (every hour check the VMBModification variable)
+  function hourlyCheck() {
+	if (VMBModification) {
+	  saveMapData(moduleList, subModuleList);
+	  VMBModification = false;
+	}
+  }
+  
+  let hourlyCheckID = setInterval(hourlyCheck, 60 * 60 * 1000)
 
 
 
@@ -116,7 +126,7 @@ function saveMapData(ModuleList, subModuleList) {
 /** ---------------------------------------------------------------------------------------------
  * This function split messages that are in the same frame. Example 0F...msg1...04 / 0F...msg2...04
  * @param {*} data RAW frame that could contains multiple messages
- * @returns table
+ * @returns array containing one message by cell
  * --------------------------------------------------------------------------------------------*/
 const Cut = (data) => {
 	let table = [];
@@ -144,7 +154,7 @@ const Cut = (data) => {
 
 /** --------------------------------------------------------------------------------------------
  * toHexa convert a buffer into a table containing hexa code (2 chars) for each byte
- * @param {Array} donnees 
+ * @param {Array} donnees byte buffer
  * @returns Hexadecimal string
  * -------------------------------------------------------------------------------------------*/
 function toHexa(donnees) {
@@ -163,15 +173,15 @@ function toHexa(donnees) {
 
 /** ------------------------------------------------------------------------------------------
  * toButtons convert a binary value into an array with active bit (ex. 0b00110 => [2,4])
- * @param {*} valeur 
- * @param {*} nb 
+ * @param {*} value 
+ * @param {*} nb bits number to read (8 by default)
  * @returns array of active button's number
  * -----------------------------------------------------------------------------------------*/
-function toButtons(valeur, nb=8) {
+function toButtons(value, nb=8) {
 	let response = [];
 	let x = 1;
 	for (let t = 1; t < (nb + 1); t++) {
-		if (valeur & x) {
+		if (value & x) {
 			response.push(t);
 		}
 		x = x << 1
@@ -195,7 +205,7 @@ function Bin2Part(binValue, offset = 0) {
 
 
 /** ------------------------------------------------------------------------------------------------------
- * Convert humar part number to binary element (5 => 0b10000)
+ * Convert human part number to binary element (5 => 0b10000)
  * @param {*} partValue 
  * @returns binary number of partValue
  * -----------------------------------------------------------------------------------------------------*/
@@ -205,11 +215,11 @@ function Part2Bin(partValue) {
 
 /** ------------------------------------------------------------------------------------------------------
  * This function return a name or **** is module doesn't exist
- * @param {*} k key as 'address-part' (ex. 128-3)
+ * @param {*} key key as 'address-part' (ex. 128-3)
  * @returns string name
  * -----------------------------------------------------------------------------------------------------*/
-function localModuleName(k) {
-	let myModule = subModuleList.get(k)
+function LocalModuleName(key) {
+	let myModule = subModuleList.get(key)
 	if (myModule) return myModule.name
 	return "****"
 }
@@ -223,7 +233,7 @@ function resume() {
  * This function try to reassemble each frame to create a full name for submodule
  * @param {*} element Frame received (should be F0, F1 or F2 for name)
  * ------------------------------------------------------------------------------------------------------*/
-function checkName(element) {
+function CheckName(element) {
 	let key = element[2] + "-" + Bin2Part(element[5])
 	let fctVelbus = element[4]
 
@@ -234,6 +244,7 @@ function checkName(element) {
 		myModule = VMBNameStatus.get(key)
 	}
 	let name = [myModule.n1, myModule.n2, myModule.n3]
+	let nameTmp = ["", "", ""]
 
 
 	// In case it's first part name response, reset flag: make possible to update full name dynamically
@@ -250,11 +261,16 @@ function checkName(element) {
 	let f = myModule.flag		// flag use a OR binary operation with 2⁰, 2¹ and 2²
 	
 	// Filling name char by char (n1 et n2 => max=6, n3 => max=4 as 15 char)
-	name[idx] = ""
 	for (let t = 0; t < max; t++) {
 		if (element[6 + t] != 0xFF) {
-			name[idx] = name[idx] + String.fromCharCode(element[6 + t])
+			nameTmp[idx] = nameTmp[idx] + String.fromCharCode(element[6 + t])
 		}
+	}
+
+	// If the received part name is different than previous part name, force VMBModification to true for saving in hourlyCheck()
+	if (nameTmp[idx] != name[idx]) {
+		VMBModification = true
+		name[idx] = nameTmp[idx]
 	}
 
 	// in case name is complete (flag = 100 | 010 | 001)
@@ -277,7 +293,7 @@ function checkName(element) {
  * it create it, using some constants. 
  * @param {*} VMBmessage message from Velbus bus.
  * --------------------------------------------------------------------------------------------*/
-function checkModule(VMBmessage) {
+function CheckModule(VMBmessage) {
 	let adrVelbus = VMBmessage[2]
 	let fctVelbus = Number(VMBmessage[4])
 	let typVelbus = VMBmessage[5]
@@ -288,11 +304,12 @@ function checkModule(VMBmessage) {
 		// module exist, check if it still same type ?
 		if (fctVelbus == 0xFF) {
 			let newModule = moduleList.get(adrVelbus)
-			if (!fctVelbus == newModule.modType) {
+			if (!typVelbus == newModule.modType) {
 				newModule.modType = typVelbus
 				newModule.partNumber = VMB.getPartFromCode(newModule.modType)
 				newModule.buildYear = buildYear
 				newModule.buildWeek = buildWeek
+				VMBModification = true
 			}
 			moduleList.set(adrVelbus, newModule)
 
@@ -300,28 +317,30 @@ function checkModule(VMBmessage) {
 
 	} else {
 		// module doesn't exist : Create VMBModule
+		VMBModification = true
 		let newModule = new VMBmodule(adrVelbus, 0x00)
-		let key, subModTemp
+		let key, subModTmp
 		if (fctVelbus == 0xFF) {
 			newModule.modType = typVelbus
 			newModule.buildYear = buildYear
 			newModule.buildWeek = buildWeek
+			newModule.powerConsumption = VMB.getPowerFromType(typVelbus)
 			console.log("CREATE TYPE:", newModule.modType)
 			newModule.partNumber = VMB.getPartFromCode(newModule.modType)	// Fixed 2024-04-07
 			moduleList.set(adrVelbus, newModule)							// Fixed 2024-04-12
 			// Création des sous-modules
 			for (let i=0; i<newModule.partNumber; i++) {
 				key=adrVelbus+"-"+(i+1)
-				subModTemp = new VMBsubmodule(adrVelbus, i+1, key, "", {})
-				subModTemp.hexId = toHexa([adrVelbus])+"-"+(i+1)
-				subModTemp.cat = VMB.getCatFromCode(typVelbus)
+				subModTmp = new VMBsubmodule(adrVelbus, i+1, key, "", {})
+				subModTmp.hexId = toHexa([adrVelbus])+"-"+(i+1)
+				subModTmp.cat = VMB.getCatFromCode(typVelbus)
 				if (typVelbus == 0x22 && i>=4) {
-					subModTemp.cat = ["input"]
+					subModTmp.cat = ["input"]
 				}
 		
-				subModTemp.type = typVelbus
-				setSubModuleList(key, subModTemp)
-				console.log("  |_ CREATE", key, "TYPE:", subModTemp.type, "FUNCTION:",subModTemp.cat)
+				subModTmp.type = typVelbus
+				setSubModuleList(key, subModTmp)
+				console.log("  |_ CREATE", key, "TYPE:", subModTmp.type, "FUNCTION:",subModTmp.cat)
 				VMBWrite(FrameRequestName(adrVelbus, Part2Bin(i+1)))
 			}
 		}
@@ -329,7 +348,7 @@ function checkModule(VMBmessage) {
 
 }
 
-
+// #region Analyze
 /** ----------------------------------------------------------------------------------------------
  * Show a detailled information on a message
  * @param {*} element 
@@ -351,7 +370,6 @@ function analyze2Texte(element) {
 			texte += (buttonPress.length) ? `Pressed buttons: ${buttonPress} ` : ""
 			texte += (buttonRelease.length) ? `Released buttons: ${buttonRelease} ` : ""
 			texte += (buttonLongPress.length) ? `LongPressed buttons: ${buttonLongPress} ` : ""
-			// TODO Pour l'alarme, utiliser buttonRelease
 			break;
 		case 0xBE: {
 			// Read VMB7IN counter
@@ -366,7 +384,7 @@ function analyze2Texte(element) {
 			if (element[10] != 0xFF && element[11] != 0xFF) {
 				conso = Math.round((1000 * 1000 * 3600 / (element[10] * 256 + element[11])) / division * 10) / 10;
 			}
-			texte += localModuleName(keyModule) + " " + compteur + " KW, (Inst. :" + conso + " W) ";
+			texte += LocalModuleName(keyModule) + " " + compteur + " KW, (Inst. :" + conso + " W) ";
 			break;
 		}
 		case 0xDA:	{	// Bus error counter
@@ -379,15 +397,15 @@ function analyze2Texte(element) {
 		}
 		case 0xE6:
 			keyModule = adrVelbus + "-1"
-			texte += localModuleName(keyModule) + " " + TempCurrentCalculation(element) + "°C";
+			texte += LocalModuleName(keyModule) + " " + TempCurrentCalculation(element) + "°C";
 			break;
 		case 0xEA:
-			texte += localModuleName(keyModule) + " " + Number(element[8]) / 2 + "°C";
+			texte += LocalModuleName(keyModule) + " " + Number(element[8]) / 2 + "°C";
 			break;
 		case 0xF0:
 		case 0xF1:
 		case 0xF2: {
-			checkName(element)
+			CheckName(element)
 			let key = adrVelbus + "-" + Bin2Part(element[5])
 			texte += " Transmit it name '" + VMBNameStatus.get(key).name + "'"
 			break
@@ -412,7 +430,7 @@ function analyze2Texte(element) {
 	}
 	return texte
 }
-
+// #endregion
 
 
 // ============================================================================================================
@@ -696,6 +714,7 @@ let ReconnectTimer
 let DisconnectDate
 
 
+
 VelbusConnexion.on('connect', () => {
 	console.log("  ✅ connected to Velbus server > ", VelbusConnexion.remoteAddress, ":", VelbusConnexion.remotePort);
 	console.log("--------------------------------------------------------------", '\n\n')
@@ -735,7 +754,7 @@ VelbusConnexion.on('data', (data) => {
 
 	// data may contains multiples RAW Velbus frames: send
 	Cut(data).forEach(element => {
-		checkModule(element);
+		CheckModule(element);
 		desc = analyze2Texte(element);
 		logInfo('INFO', desc)
 
