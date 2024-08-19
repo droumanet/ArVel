@@ -7,11 +7,13 @@ class VMBmodule {
 	powerConsumption = 0		// consumption in mA
 	description = ""
 	location = ""
+	creationDate = 0
 	buildWeek = 0
 	buildYear = 0
 	busErrorTX = 0
 	busErrorRX = 0
 	busErrorOFF = 0
+	busRefreshDate = 0
 
 	constructor(address, type) {
 		this.address = address

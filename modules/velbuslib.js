@@ -304,15 +304,15 @@ function CheckModule(VMBmessage) {
 		// module exist, check if it still same type ?
 		if (fctVelbus == 0xFF) {
 			let newModule = moduleList.get(adrVelbus)
-			if (!typVelbus == newModule.modType) {
-				newModule.modType = typVelbus
-				newModule.partNumber = VMB.getPartFromCode(newModule.modType)
+			if (typVelbus != newModule.modType) {
+				// type has changed
+				VMBModification = true
+				moduleList.set(adrVelbus, ChangeModule(adrVelbus, typVelbus, VMBmessage))
+			} else {
 				newModule.buildYear = buildYear
 				newModule.buildWeek = buildWeek
-				VMBModification = true
+				moduleList.set(adrVelbus, newModule)
 			}
-			moduleList.set(adrVelbus, newModule)
-
 		}
 
 	} else {
@@ -346,6 +346,22 @@ function CheckModule(VMBmessage) {
 		}
 	}
 
+}
+
+function ChangeModule(addr, VelbusType, VelbusMsg) {
+	let newModule = moduleList.get(addr)
+	for (let t=1; t <= newModule.part; t++) {
+		if (subModuleList.get(addr+'-'+t)) {
+			subModuleList.delete(addr+'-'+t)
+		}
+	}
+	newModule.modType = VelbusType									// new type
+	newModule.partNumber = VMB.getPartFromCode(newModule.modType)	// new part number
+	newModule.buildYear = VelbusMsg[9]									// new build year
+	newModule.buildWeek = VelbusMsg[10]
+	let dt = new Date()
+	newModule.creationDate = dt.now()
+	return newModule
 }
 
 // #region Analyze
@@ -393,6 +409,16 @@ function analyze2Texte(element) {
 			let errorRX = element[6]
 			let errorBO = element[7]
 			texte += `ERROR Counter: TX=${errorTX}, RX=${errorRX}, BusOFF=${errorBO}`
+			if (moduleList.get(adrVelbus)) {
+				// update existing module with current value
+				let dt = new Date()
+				let moduleTmp = moduleList.get(adrVelbus)
+				moduleTmp.busErrorTX = element[5]
+				moduleTmp.busErrorRX = element[6]
+				moduleTmp.busErrorBOFF = element[7]
+				moduleTmp.busRefreshDate = dt.now()
+				moduleList.set(adrVelbus, moduleTmp)
+			}
 			break
 		}
 		case 0xE6:
