@@ -169,7 +169,7 @@ let everyMinut = schedule.scheduleJob('*/1 * * * *', () => {
     let d = new Date()
 
     // GPS coordonates for Grenoble (sunrise and sunset value)
-    let sunset = getSunset(appProfile.locationX, appProfile.locationY);
+    let sunset = getSunset(appProfile.locationX, appProfile.locationY)
     let sunsetMinut = sunset.getMinutes()
     let sunsetHour = sunset.getHours()
     let dMinut = d.getMinutes()
@@ -177,22 +177,23 @@ let everyMinut = schedule.scheduleJob('*/1 * * * *', () => {
 
     console.log("⏰ ARVEL CRON 1 minute : ", d.toISOString(), "sunset=", sunsetHour+":"+sunsetMinut)
 
-    //WIP heure de coucher pour fermeture des volets
-
-    if (17 == dHour && 5 == dMinut) {
+    // Sunset closing blinds (with alarm 20 seconds)
+    if (sunsetHour == dHour && sunsetMinut == dMinut) {
         console.log("Baisser les volets", dHour+":"+dMinut+"  =  "+sunsetHour+":"+sunsetMinut)
+        let subModTmp = velbuslib.fullSubModuleList();
         velbuslib.VMBWrite(velbuslib.RelayBlink(7, 4, 5))
         velbuslib.VMBWrite(velbuslib.RelayBlink(46, 1, 5))
-        let subModTmp = velbuslib.fullSubModuleList()
-        if (subModTmp) {
-            subModTmp.forEach(aSubModule => {
-                if (aSubModule.cat.includes("blind")) {
-                    velbuslib.VMBWrite(velbuslib.BlindMove(aSubModule.address, aSubModule.part, -1))
-                }            
-            });
-        } else {
-            console.log("SousModules : ",subModTmp)
-        }
+        setTimeout(() => {
+            if (subModTmp) {
+                subModTmp.forEach(aSubModule => {
+                    if (aSubModule.cat.includes("blind")) {
+                        velbuslib.VMBWrite(velbuslib.BlindMove(aSubModule.address, aSubModule.part, -1));
+                    }            
+                });
+            } else {
+                console.log("SousModules : ", subModTmp);
+            }
+        }, 20000);
     }
 
     // scan external modules (TeleInfo & VMC)
