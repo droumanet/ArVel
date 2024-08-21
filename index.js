@@ -30,12 +30,6 @@ import { writePowerByDay, writeEnergy } from './controllers/CtrlDatabase.mjs';
 import * as TeleInfo from './modules/teleinfo.js'
 import * as VMC from './modules/VMC.js'
 
-// GPS coordonates for Grenoble (sunrise and sunset value)
-const sunset = getSunset(appProfile.locationX, appProfile.locationY);
-
-
-// global.subModuleList = new Map()
-
 const __dirname = dirname(fileURLToPath(import.meta.url))
 console.log(__dirname)      // "/Users/Sam/dirname-example/src/api"
 console.log(process.cwd())  // "/Users/Sam/dirname-example"
@@ -167,7 +161,29 @@ let everyDay23h59 = schedule.scheduleJob('50 59 23 */1 * *', () => {
 let everyMinut = schedule.scheduleJob('*/1 * * * *', () => {
     // call every minute energy counter
     let d = new Date()
-    console.log("⏰ ARVEL CRON 1 minute : ", d.toISOString())
+
+    // GPS coordonates for Grenoble (sunrise and sunset value)
+    let sunset = getSunset(appProfile.locationX, appProfile.locationY);
+
+    console.log("⏰ ARVEL CRON 1 minute : ", d.toISOString(), "sunset=", sunset)
+    console.log(typeof sunset)
+    //WIP heure de coucher pour fermeture des volets
+    let sunsetMinut = sunset.getMinutes()
+    let sunsetHour = sunset.getHours()
+    let dMinut = d.getMinutes()
+    let dHour = d.getHours()
+    if (sunsetHour == dHour && sunsetMinut == dMinut) {
+        console.log("Baisser les volets", dHour+":"+dMinut+"  =  "+sunsetHour+":"+sunsetMinut)
+        velbuslib.relaySet(7, 4, 5)
+        let subModTmp = velbuslib.getSubModuleList()
+        subModTmp.forEach(aSubModule => {
+            if (aSubModule.cat.includes("blind")) {
+                velbuslib.FrameRequestMove(aSubModule.address, aSubModule.part, -1)
+            }            
+        });
+    }
+    
+
 
     // scan external modules (TeleInfo & VMC)
     console.log("⚡⚡  Resuming external modules (TeleInfo & VMC)  ⚡⚡")
