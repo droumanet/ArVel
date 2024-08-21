@@ -135,34 +135,32 @@ let everyDay5h = schedule.scheduleJob('* * 5 */1 * *', () => {
     velbuslib.VMBSetTime(99, 99, 99)
 })
 
+//let everyDay23h59 = schedule.scheduleJob('50 59 23 */1 * *', () => {
 let everyDay23h59 = schedule.scheduleJob('50 59 23 */1 * *', () => {
     let d = new Date()
     console.log("⏰ ARVEL CRON Midnight : ", d.toISOString())
     // Record index and some jobs to clear old values
+
     // read values lists and send to SQL
     let tableCompteur = TeleInfo.resume()
-/*
-    subModuleList.set("300-1", tableCompteur[0])
-    subModuleList.set("300-2", tableCompteur[1])
-*/
     velbuslib.setSubModuleList("300-1", tableCompteur[0])
     velbuslib.setSubModuleList("300-2", tableCompteur[1])
 
     if (velbuslib.getSubModuleList('300-1') != undefined) {
         let date = new Date();
         date = date.getFullYear() + '-' + pad(date.getMonth() + 1) + '-' + pad(date.getDate())
-        let powerTbl = new Array()
-        powerTbl.push(date)
-        powerTbl.push(velbuslib.getSubModuleList('300-1').status.index + "")
-        powerTbl.push(velbuslib.getSubModuleList('300-1').status.indexHC + "") 
-        powerTbl.push(velbuslib.getSubModuleList('300-2').status.index + "")
-        powerTbl.push(TeleInfo.decodePower(velbuslib.getSubModuleList('300-1').status.powermax) + "")
-        powerTbl.push(TeleInfo.decodePower(velbuslib.getSubModuleList('300-1').status.powermax) + "")
-        console.log(powerTbl)
 
+        // date, indexHP, indexHC, indexProd, powerProdmax, powerConsoMax, powerProdConso
+
+        let powerTbl = [date,
+            velbuslib.getSubModuleList('300-1').status.index + "",
+            velbuslib.getSubModuleList('300-1').status.indexHC + "",
+            velbuslib.getSubModuleList('300-2').status.index + "",
+            velbuslib.getSubModuleList('300-2').status.powerMax + "",
+            velbuslib.getSubModuleList('300-1').status.powerMax + "",
+            velbuslib.getSubModuleList('300-2').status.indexConso + ""
+        ]
         writePowerByDay(powerTbl)
-        // DEBUG write is ok but need to add some error's control (like writing twice ?)
-        console.log("ARVEL CRON 24H for sending power to DATABASE done...")
     }
 })
 
@@ -171,17 +169,17 @@ let everyMinut = schedule.scheduleJob('*/1 * * * *', () => {
     let d = new Date()
     console.log("⏰ ARVEL CRON 1 minute : ", d.toISOString())
 
-    // scan TeleInfo modules
-    console.log("⚡⚡  TeleInfo : insert modules  ⚡⚡")
+    // scan external modules (TeleInfo & VMC)
+    console.log("⚡⚡  Resuming external modules (TeleInfo & VMC)  ⚡⚡")
     let tableCompteur = TeleInfo.resume()
     let VMCModule = VMC.resume()
 
+    // Create or update external modules
     velbuslib.setSubModuleList("300-1", tableCompteur[0])
     velbuslib.setSubModuleList("300-2", tableCompteur[1])
     velbuslib.setSubModuleList("400-1", VMCModule)
 
     // Scan all module and search for a function
-    // subModuleList = velbuslib.resume()
     let subList = velbuslib.fullSubModuleList()
     if (subList) {
         console.log("LIST EXIST")
@@ -190,30 +188,20 @@ let everyMinut = schedule.scheduleJob('*/1 * * * *', () => {
             let ll
             let eventDate=""
             let texte=""
-            subList.forEach((v, k) => {
-                
-                /* // planned to have multiples values in v.cat
-                fctArray = v.cat.map(x => x.toLowerCase())
-                if (fctArray.find(e => e.toLowerCase() == "energy")) {
-                    msg = velbuslib.VMBRequestEnergy(v.address, v.part)
-                    console.log("CRON energy", msg)
-                }
-
-                if (v.cat.find(e => e.toLowerCase() == "temp")) {
-                    msg=velbuslib.VMBRequestTemp(v.address, v.part)
-                    console.log("CRON temperature", msg)
-                }
-                */
-                if (v.cat == "energy") {
-                    texte = v.address+"-"+v.part+" : "+v.name
-                    velbuslib.VMBRequestEnergy(v.address, v.part)
-                    .then((msg) => {console.log(texte, msg)})
-                    ll = new Date(v.status.timestamp)
+            subList.forEach((SubModTmp, k) => {
+                texte = ""
+                if (SubModTmp.cat.includes("energy") && SubModTmp.address < 256) {
+                    texte = SubModTmp.address+"-"+SubModTmp.part+" : "+SubModTmp.name + "   (Loop index: "+k+")"
+                    velbuslib.VMBRequestEnergy(SubModTmp.address, SubModTmp.part)
+                    .then((msg) => {console.log("VMBRequestEnergy", texte, msg)})
+                    ll = new Date(SubModTmp.status.timestamp)
                     eventDate=ll.getFullYear()+"-"+pad(ll.getMonth()+1)+"-"+pad(ll.getDate())+" "+pad(ll.getHours())+":"+pad(ll.getMinutes())+":00"
                     //eventDate = (new Date(v.status.timestamp)-).toISOString().slice(0, 19).replace('T', ' ')
-                    console.log(eventDate, v.id, v.cat, v.status.power, v.status.index, 'w (', v.address,'-' ,v.part,')')
-                    if (v.status.power && v.status.index) {
-                        writeEnergy([v.address, v.part, eventDate, v.status.index, v.status.power])
+                    console.log(eventDate, SubModTmp.id, SubModTmp.cat, SubModTmp.status.power, SubModTmp.status.index, 'w (', SubModTmp.address,'-' ,SubModTmp.part,')')
+                    if (SubModTmp.status.power != undefined && SubModTmp.status.index != undefined && SubModTmp.address<256) {
+                        // Writing datas to database
+                        console.log("📀 SENDING TO DB : ", SubModTmp.address, SubModTmp.part, eventDate, SubModTmp.status.index, SubModTmp.status.power)
+                        writeEnergy([SubModTmp.address, SubModTmp.part, eventDate, SubModTmp.status.index, SubModTmp.status.power])
                     }
                 }
             })

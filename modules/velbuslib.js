@@ -638,23 +638,11 @@ function surveyEnergyStatus() {
 			let status = { "index": rawcounter, "power": power, "timestamp": Date.now() }
 
 			// ajout pour gestion avec subModuleList
-			let subModTemp = subModuleList.get(key)
-			if (subModTemp) {
-				subModTemp.status = status
-			} else {
-				console.log("NON EXISTENT SUBMODULE", key)
+			let subModTmp = subModuleList.get(key)
+			if (subModTmp) {
+				subModTmp.status = status
+				subModuleList.set(key, subModTmp)
 			}
-			// Fin ajout
-			/*
-			VMBEnergyStatus.set(key, status)
-			UpdateModule(key, status)
-
-			// Seems we have found a new module (undefined) : send a request for it name
-			if (VMBNameStatus.get(key) == undefined) {
-				VMBWrite(FrameRequestName(msg.RAW[2], Part2Bin(part)))
-				moduleList.set(key, new VMBsubmodule(addr, part, key, "energy", status))
-			}
-			*/
 		}
 	})
 }

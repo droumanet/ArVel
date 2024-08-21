@@ -39,7 +39,7 @@ async function getPower(callback){
  * @param values Array of TeleInfo for production and cunsomption
  */
 async function SQLsetPowerDay(values) {
-    let sql='INSERT INTO pwrDay (jour, pwrconsohp,pwrconsohc, pwrprod, pwrconsomax, pwrprodmax) VALUES (?)';
+    let sql='INSERT INTO pwrDay (jour, pwrconsohp,pwrconsohc, pwrprod, pwrconsomax, pwrprodmax, pwrprodconso) VALUES (?)';
     db.query(sql, [values], function (err, data) {
         if (err) throw err;
         console.log("setPowerDay success");
