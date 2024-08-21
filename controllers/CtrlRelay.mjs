@@ -20,13 +20,13 @@ export function setRelayStatus(req, res) {
             // TODO test du type de module
             if (status < 2 && status > -1) {
                 console.log(" ", "writing order ON/OFF on Velbus")
-                velbuslib.VMBWrite(VMBRelay.relaySet(addr, velbuslib.Part2Bin(part), status*1))
+                velbuslib.VMBWrite(VMBRelay.RelaySet(addr, velbuslib.Part2Bin(part), status*1))
             } else if (status > 1 && status < 11) {
                 console.log(" ", "writing order Blinking on Velbus")
-                velbuslib.VMBWrite(VMBRelay.relayBlink(addr, velbuslib.Part2Bin(part), status*1))
+                velbuslib.VMBWrite(VMBRelay.RelayBlink(addr, velbuslib.Part2Bin(part), status*1))
             } else {
                 console.log(" ", "writing order TIMER on Velbus")
-                velbuslib.VMBWrite(VMBRelay.relayTimer(addr, velbuslib.Part2Bin(part), status*1))
+                velbuslib.VMBWrite(VMBRelay.RelayTimer(addr, velbuslib.Part2Bin(part), status*1))
             }
         }
         // let filter = req.query;

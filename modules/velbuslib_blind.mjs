@@ -4,6 +4,7 @@
 // [ ] Write this module as CtrlSensor.js
 
 import * as VMB from './velbuslib_constant.js'
+import * as Velbus from './velbuslib_generic.mjs'
 
 /**
  * Function to create frame for moving UP or DOWN blind on a module
@@ -13,7 +14,7 @@ import * as VMB from './velbuslib_constant.js'
  * @param {int} duration in seconds, default 30 seconds
  * @returns Velbus frame ready to emit
  */
- function FrameRequestMove(adr, part, state, duration = 30) {
+ function BlindMove(adr, part, state, duration = 30) {
 	if (state > 0) { state = 0x05 } else { state = 0x06 }
 	if (part == 1) { part = 0x03 }
 	else if (part == 2) { part = 0x0C }
@@ -28,11 +29,11 @@ import * as VMB from './velbuslib_constant.js'
 	trame[6] = duration >> 16 & 0xFF
 	trame[7] = duration >> 8 & 0xFF
 	trame[8] = duration & 0xFF
-	trame[9] = VMB.CheckSum(trame, 0)
+	trame[9] = Velbus.CheckSum(trame, 0)
 	trame[10] = VMB.EndX
 	return trame
 }
-function FrameRequestStop(adr, part) {
+function BlindStop(adr, part) {
 	if (part == 1) part = 0x03
 	if (part == 2) part = 0x0C
 	if (part > 2) part = 0x0F
@@ -43,7 +44,7 @@ function FrameRequestStop(adr, part) {
 	trame[3] = 0x02     // len
 	trame[4] = 0x04     // stop
 	trame[5] = part
-	trame[6] = VMB.CheckSum(trame, 0)
+	trame[6] = Velbus.CheckSum(trame, 0)
 	trame[7] = VMB.EndX
 	return trame
 }
@@ -56,7 +57,7 @@ function FrameHello (name) {
 // ==========================================================================================================
 
 export {
-    FrameRequestMove,
-    FrameRequestStop,
+    BlindMove,
+    BlindStop,
     FrameHello
 }

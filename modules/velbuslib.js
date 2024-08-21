@@ -32,8 +32,8 @@ import EventEmitter from 'events';
 import { VMBmodule, VMBsubmodule } from '../models/velbuslib_class.mjs';
 import * as VMB from './velbuslib_constant.js'
 import { FrameModuleScan, FrameRequestName, FrameTransmitTime, FrameRequestTime, CheckSum } from './velbuslib_generic.mjs';
-import { FrameRequestMove, FrameRequestStop, FrameHello } from './velbuslib_blind.mjs'
-import { relaySet, relayTimer } from './velbuslib_relay.mjs';
+import { BlindMove, BlindStop, FrameHello } from './velbuslib_blind.mjs'
+import { RelaySet, RelayTimer, RelayBlink } from './velbuslib_relay.mjs';
 import { FrameRequestTemp } from './velbuslib_temp.mjs';
 import { FrameRequestCounter } from './velbuslib_input.mjs';
 import fs from 'fs'
@@ -820,7 +820,8 @@ export {
 	toHexa, Part2Bin,
 	VMB, resume,
 	VMBWrite, VMBSetTime, VMBscanAll,
-	relaySet, relayTimer,
+	RelaySet, RelayTimer, RelayBlink,
+	BlindMove, BlindStop,
 	FrameRequestCounter as CounterRequest,
 	VelbusStart, VMBEmitter,
 	VMBRequestTemp, VMBRequestEnergy

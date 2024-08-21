@@ -13,7 +13,7 @@ import * as Velbus from './velbuslib_generic.mjs'
  * @param {*} state  optionnal : true (on) or false (off), default false
  * @returns  Velbus frame ready to emit
  */
-function relaySet(adr, part, state = false) {
+function RelaySet(adr, part, state = false) {
 	let trame = new Uint8Array(8);
 	trame[0] = VMB.StartX;
 	trame[1] = VMB.PrioHi;
@@ -33,7 +33,7 @@ function relaySet(adr, part, state = false) {
  * @param {*} timing  value in second, from 1 to FFFFFF (permanent), default 120 seconds
  * @returns  Velbus frame ready to emit
  */
-function relayTimer(adr, part, timing = 120) {
+function RelayTimer(adr, part, timing = 120) {
 	let thigh = timing >> 16 & 0xFF;
 	let tmid = timing >> 8 & 0xFF;
 	let tlow = timing & 0xFF;
@@ -60,7 +60,7 @@ function relayTimer(adr, part, timing = 120) {
  * @param {*} timing  value in second, from 1 to FFFFFF (permanent), default 120 seconds
  * @returns  Velbus frame ready to emit
  */
-function relayBlink(adr, part, timing = 10) {
+function RelayBlink(adr, part, timing = 10) {
 	let thigh = timing >> 16 & 0xFF;
 	let tmid = timing >> 8 & 0xFF;
 	let tlow = timing & 0xFF;
@@ -80,7 +80,7 @@ function relayBlink(adr, part, timing = 10) {
 }
 
 export {
-    relaySet,
-    relayTimer,
-	relayBlink
+    RelaySet,
+    RelayTimer,
+	RelayBlink
 }
