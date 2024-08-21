@@ -503,7 +503,6 @@ function VMBscanAll(adrModule = 0) {
 
 }
 
-
 // #endregion
 
 // #region LISTENER Functions
