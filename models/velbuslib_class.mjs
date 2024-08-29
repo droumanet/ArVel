@@ -3,6 +3,7 @@
 class VMBmodule {
 	address = 0
 	modType = 0
+	modCat = []
 	partNumber = 0
 	powerConsumption = 0		// consumption in mA
 	description = ""

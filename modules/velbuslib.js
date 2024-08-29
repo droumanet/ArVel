@@ -49,7 +49,7 @@ let VMBNameStatus = new Map()
 let VMBTempStatus = new Map()
 let VMBEnergyStatus = new Map()
 let VMBModification = false
-const DEBUG = true
+const DEBUG = 1		// 0 not log, 1 only error/warn, 2 = all
 
 // ============================================================================================================
 // =                                    Functions for internal use                                            =
@@ -322,6 +322,7 @@ function CheckModule(VMBmessage) {
 		let key, subModTmp
 		if (fctVelbus == 0xFF) {
 			newModule.modType = typVelbus
+			newModule.modCat = VMB.getCatFromCode(typVelbus)
 			newModule.buildYear = buildYear
 			newModule.buildWeek = buildWeek
 			newModule.powerConsumption = VMB.getPowerFromType(typVelbus)
@@ -698,8 +699,19 @@ function logInfo(priority, text) {
 	
 		const symbol = symbols[priority] || '🤖'
 		const priorityName = priorityNames[priority] || 'UNKNOWN'
-	
-		console.log(`${symbol} [${timeString}] [${priorityName}] ${text}`)
+		switch (priorityName) {
+			case "WARNING":
+				console.warn(`${symbol} [${timeString}] [${priorityName}] ${text}`)
+				break
+			case "ERROR":
+				console.error(`${symbol} [${timeString}] [${priorityName}] ${text}`)
+				break
+			default:
+				if (DEBUG > 1) {
+					console.log(`${symbol} [${timeString}] [${priorityName}] ${text}`)
+				}
+				break
+		}
 	}
 }
 
@@ -792,18 +804,18 @@ VelbusConnexion.on('data', (data) => {
 });
 VelbusConnexion.on('error', (err) => {
 	// TODO Check if this part is needed (lost connexion start event 'close') and how...
-	console.log("  ❌ Connexion Error! Velbus reusedSocket:", VelbusConnexion.reusedSocket, "   err.code:", err.code)
+	console.error("  ❌ Connexion Error! Velbus reusedSocket:", VelbusConnexion.reusedSocket, "   err.code:", err.code)
 	if (!VelbusConnexion.destroyed) {
 		VelbusConnexion.destroy();
 		setTimeout(() => {VelbusConnexion=connectVelbus(CNX)}, 5000) // Reconnexion après 5 secondes
 	}
 });
 VelbusConnexion.on('close', () => {
-	console.log("  ✂️ Closing velbus server connexion");
+	console.warn("  ✂️ Closing velbus server connexion");
 });
 VelbusConnexion.once('close', () => {
 	// Try to reconnect every 10 seconds
-	console.log("  📶 Try velbus server reconnexion");
+	console.warn("  📶 Try velbus server reconnexion");
 	DisconnectDate = Date.now()
 	ReconnectTimer = setInterval(() => {
 		VelbusConnexion.connect(CNX.port, CNX.host)

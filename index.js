@@ -191,7 +191,7 @@ let everyMinut = schedule.scheduleJob('*/1 * * * *', () => {
                     }            
                 });
             } else {
-                console.log("SousModules : ", subModTmp);
+                console.error("SousModules : ", subModTmp);
             }
         }, 20000);
     }
@@ -233,10 +233,10 @@ let everyMinut = schedule.scheduleJob('*/1 * * * *', () => {
                 }
             })
         } else {
-            console.log("!!!!!!   ModuleList empty   !!!!!!!!!!!!!!")
+            console.error("!!!!!!   ModuleList empty   !!!!!!!!!!!!!!")
         }
         
-    } else { console.log("!!!!!!   ModuleList undefined   !!!!!!!!!!!!!!")}
+    } else { console.error("!!!!!!   ModuleList undefined   !!!!!!!!!!!!!!")}
 
 })
 
