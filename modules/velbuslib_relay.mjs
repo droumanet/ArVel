@@ -5,6 +5,7 @@
 
 import * as VMB from './velbuslib_constant.js'
 import * as Velbus from './velbuslib_generic.mjs'
+import { Part2Bin } from './velbuslib.js';
 
 /**
  * Function to create frame for changing relay's state on a module
@@ -20,7 +21,7 @@ function RelaySet(adr, part, state = false) {
 	trame[2] = adr;
 	trame[3] = 0x02;    // len
 	if (state) trame[4] = 0x02; else trame[4] = 0x01;     // true=ON, false=OFF 
-	trame[5] = part;
+	trame[5] = Part2Bin(part);
 	trame[6] = Velbus.CheckSum(trame, 0);
 	trame[7] = VMB.EndX;
 	return trame;
@@ -43,7 +44,7 @@ function RelayTimer(adr, part, timing = 120) {
 	trame[2] = adr;
 	trame[3] = 0x05;    // len
 	trame[4] = 0x03;	// timer function
-	trame[5] = part;
+	trame[5] = Part2Bin(part);
 	trame[6] = thigh;   // timer with 3 bytes
 	trame[7] = tmid;
 	trame[8] = tlow;
@@ -70,7 +71,7 @@ function RelayBlink(adr, part, timing = 10) {
 	trame[2] = adr;
 	trame[3] = 0x05;    // len
 	trame[4] = 0x0D;	// blink function
-	trame[5] = part;
+	trame[5] = Part2Bin(part);
 	trame[6] = thigh;   // timer with 3 bytes
 	trame[7] = tmid;
 	trame[8] = tlow;

@@ -177,17 +177,20 @@ let everyMinut = schedule.scheduleJob('*/1 * * * *', () => {
 
     console.log("⏰ ARVEL CRON 1 minute : ", d.toISOString(), "sunset=", sunsetHour+":"+sunsetMinut)
 
-    // Sunset closing blinds (with alarm 20 seconds)
+    // 🌙🌙 Sunset closing blinds (with alarm 20 seconds) 🌙🌙
     if (sunsetHour == dHour && sunsetMinut == dMinut) {
+        // if (dHour == 15 && dMinut == 59) {    
         console.log("Baisser les volets", dHour+":"+dMinut+"  =  "+sunsetHour+":"+sunsetMinut)
         let subModTmp = velbuslib.fullSubModuleList();
         velbuslib.VMBWrite(velbuslib.RelayBlink(7, 4, 5))
         velbuslib.VMBWrite(velbuslib.RelayBlink(46, 1, 5))
         setTimeout(() => {
             if (subModTmp) {
+                let addressDone = []
                 subModTmp.forEach(aSubModule => {
-                    if (aSubModule.cat.includes("blind")) {
-                        velbuslib.VMBWrite(velbuslib.BlindMove(aSubModule.address, aSubModule.part, -1));
+                    if (aSubModule.cat.includes("blind") && !addressDone.includes(aSubModule.address)) {
+                        velbuslib.VMBWrite(velbuslib.BlindMove(aSubModule.address, 3, -1));
+                        addressDone.push(aSubModule.address)
                     }            
                 });
             } else {
