@@ -10,7 +10,7 @@ import * as Velbus from './velbuslib_generic.mjs'
  * Function to create frame for moving UP or DOWN blind on a module
  * @param {byte} adr address of module on the bus
  * @param {int} part part to move on module (%0011 or %1100 or %1111)
- * @param {int} state 0: moveUP, other moveDOWN
+ * @param {int} state 0+: moveUP, other moveDOWN
  * @param {int} duration in seconds, default 30 seconds
  * @returns Velbus frame ready to emit
  */

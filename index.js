@@ -169,7 +169,10 @@ let everyMinut = schedule.scheduleJob('*/1 * * * *', () => {
     let d = new Date()
 
     // GPS coordonates for Grenoble (sunrise and sunset value)
-    let sunset = getSunset(appProfile.locationX, appProfile.locationY)
+    let sunsetBrut = getSunset(appProfile.locationX, appProfile.locationY)
+    let decalage = 10 * 60 * 1000;  // 10 minutes
+    let sunset = new Date(sunsetBrut.getTime() + decalage);
+
     let sunsetMinut = sunset.getMinutes()
     let sunsetHour = sunset.getHours()
     let dMinut = d.getMinutes()
@@ -177,27 +180,29 @@ let everyMinut = schedule.scheduleJob('*/1 * * * *', () => {
 
     console.log("⏰ ARVEL CRON 1 minute : ", d.toISOString(), "sunset=", sunsetHour+":"+sunsetMinut)
 
-    // 🌙🌙 Sunset closing blinds (with alarm 20 seconds) 🌙🌙
     if (sunsetHour == dHour && sunsetMinut == dMinut) {
-        // if (dHour == 15 && dMinut == 59) {    
+        // descendre les volets 🌙  
         console.log("Baisser les volets", dHour+":"+dMinut+"  =  "+sunsetHour+":"+sunsetMinut)
         let subModTmp = velbuslib.fullSubModuleList();
         velbuslib.VMBWrite(velbuslib.RelayBlink(7, 4, 5))
         velbuslib.VMBWrite(velbuslib.RelayBlink(46, 1, 5))
         setTimeout(() => {
-            if (subModTmp) {
-                let addressDone = []
-                subModTmp.forEach(aSubModule => {
-                    if (aSubModule.cat.includes("blind") && !addressDone.includes(aSubModule.address)) {
-                        velbuslib.VMBWrite(velbuslib.BlindMove(aSubModule.address, 3, -1));
-                        addressDone.push(aSubModule.address)
-                    }            
-                });
-            } else {
-                console.error("SousModules : ", subModTmp);
-            }
+            velbuslib.VMBWrite(velbuslib.FrameSendButton(0xAA, 8, 1)) 
+            velbuslib.VMBWrite(velbuslib.FrameSendButton(0xAA, 8, 0))          
         }, 20000);
     }
+    /*
+    if (dHour == 7 && dMinut == 25) {
+        // Monter les volets le matin (simulation présence) 🌞  
+        console.log("Monter les volets", dHour+":"+dMinut+"  =  "+sunsetHour+":"+sunsetMinut)
+        velbuslib.VMBWrite(velbuslib.RelayBlink(7, 4, 5))
+        velbuslib.VMBWrite(velbuslib.RelayBlink(46, 1, 5))
+        setTimeout(() => {
+            velbuslib.VMBWrite(velbuslib.FrameSendButton(0xAA, 6, 1)) 
+            velbuslib.VMBWrite(velbuslib.FrameSendButton(0xAA, 6, 0))          
+        }, 20000);
+    }  
+        */
 
     // scan external modules (TeleInfo & VMC)
     console.log("⚡⚡  Resuming external modules (TeleInfo & VMC)  ⚡⚡")

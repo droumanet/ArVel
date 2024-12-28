@@ -31,7 +31,7 @@
 import EventEmitter from 'events';
 import { VMBmodule, VMBsubmodule } from '../models/velbuslib_class.mjs';
 import * as VMB from './velbuslib_constant.js'
-import { FrameModuleScan, FrameRequestName, FrameTransmitTime, FrameRequestTime, CheckSum } from './velbuslib_generic.mjs';
+import { FrameModuleScan, FrameRequestName, FrameTransmitTime, FrameRequestTime, FrameSendButton, CheckSum } from './velbuslib_generic.mjs';
 import { BlindMove, BlindStop, FrameHello } from './velbuslib_blind.mjs'
 import { RelaySet, RelayTimer, RelayBlink } from './velbuslib_relay.mjs';
 import { FrameRequestTemp } from './velbuslib_temp.mjs';
@@ -360,8 +360,8 @@ function ChangeModule(addr, VelbusType, VelbusMsg) {
 	newModule.partNumber = VMB.getPartFromCode(newModule.modType)	// new part number
 	newModule.buildYear = VelbusMsg[9]									// new build year
 	newModule.buildWeek = VelbusMsg[10]
-	let dt = new Date()
-	newModule.creationDate = dt.now()
+	//let dt = new Date()
+	newModule.creationDate =Date.now()
 	return newModule
 }
 
@@ -832,6 +832,7 @@ export {
 	toHexa, Part2Bin,
 	VMB, resume,
 	VMBWrite, VMBSetTime, VMBscanAll,
+	FrameSendButton,
 	RelaySet, RelayTimer, RelayBlink,
 	BlindMove, BlindStop,
 	FrameRequestCounter as CounterRequest,

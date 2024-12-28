@@ -3,7 +3,8 @@
 // ==================================================================================
 
 import * as VMB from '../models/velbuslib_class.mjs'
-import { EndX, PrioLo, StartX } from './velbuslib_constant.js';
+import { Part2Bin } from './velbuslib.js';
+import { EndX, PrioLo, PrioHi, StartX } from './velbuslib_constant.js';
 
 function FrameRequestName (addr, part) {
 	let trame = new Uint8Array(8);
@@ -43,7 +44,7 @@ function FrameRequestName (addr, part) {
   * Nota : if one transmitted value is wrong, then the current system date (server) replace them (be worry with timezone)
  */
  function FrameTransmitTime(day, hour, minuts) {
-	let trame = new Uint8Array(9);
+	let trame = new Uint8Array(10);
 	trame[0] = StartX;
 	trame[1] = PrioLo;
 	trame[2] = 0x00;
@@ -79,7 +80,7 @@ function FrameRequestName (addr, part) {
  * @returns Velbus frame ready to emit
  */
  function FrameRequestTime() {
-	let trame = new Uint8Array(5);
+	let trame = new Uint8Array(7);
 	trame[0] = StartX;
 	trame[1] = PrioLo;
 	trame[2] = 0x00;
@@ -87,6 +88,41 @@ function FrameRequestName (addr, part) {
 	trame[4] = 0xD7;    // request time function
 	trame[5] = CheckSum(trame, 0);
 	trame[6] = EndX;
+	return trame;
+}
+
+/**
+ * Frame format to send button status
+ * @param {number} address module address 
+ * @param {number} part which button(s) is/are concerned
+ * @param {string} status could be ["press", "longpress", "release"]
+ * @returns Velbus frame ready to emit
+ */
+function FrameSendButton(address, part, status) {
+	let realPart = Part2Bin(part)
+	console.log("BOUTON _=_", address, realPart, "Etat ",status)
+	let trame = new Uint8Array(10);
+	trame[0] = StartX
+	trame[1] = PrioHi
+	trame[2] = address
+	trame[3] = 0x04		// len 1, RTR off
+	trame[4] = 0x00		// request time function
+	trame[5] = 0x00		// Pressed
+	trame[6] = 0x00		// Released
+	trame[7] = 0x00		//Long pressed
+	switch (status) {
+		case 1: // Press
+			trame[5] = realPart
+			break
+		case 0: // Release
+			trame[6] = realPart
+			break
+		default: // Long Press
+			trame[7] = realPart
+			break
+	}
+	trame[8] = CheckSum(trame, 0);
+	trame[9] = EndX;
 	return trame;
 }
 
@@ -107,4 +143,4 @@ function FrameRequestName (addr, part) {
 	return crc;
 }
 
-export {FrameModuleScan, FrameRequestName, FrameTransmitTime, FrameRequestTime, CheckSum}
+export {FrameModuleScan, FrameRequestName, FrameTransmitTime, FrameRequestTime, FrameSendButton, CheckSum}
