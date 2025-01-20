@@ -24,19 +24,21 @@ async function connectDB() {
     return connection;
   }
 
+/**
+ * Return pwrDay data to the transmitted callback
+ * @async
+ * @param {function} callback 
+ */
 async function getPower(callback){
-
     let sql='SELECT * FROM pwrDay';
     db.query(sql, function (err, data, fields) {
         if (err) throw err;
         return callback(data)
     })
-
-    
 }
 
 /**
- * @param values Array of TeleInfo for production and cunsomption
+ * @param values {Array} of TeleInfo for production and cunsomption
  */
 async function SQLsetPowerDay(values) {
     let sql='INSERT INTO pwrDay (jour, indexconsohp, indexconsohc, indexprod, pwrconsomax, pwrprodmax, indexprodconso) VALUES (?)';
@@ -48,7 +50,7 @@ async function SQLsetPowerDay(values) {
 }
 
 /**
- * @param values Array of TeleInfo for production and cunsomption
+ * @param values {Array} of TeleInfo for production and cunsomption
  */
  async function SQLsetEnergy(values) {
     let sql='REPLACE INTO Energie (ModAddr, ModPart, dateRecord, PowerIndex, PowerInst) VALUES (?)';
@@ -58,7 +60,6 @@ async function SQLsetPowerDay(values) {
         return data.affectedRows;
     })
 }
-
 
 // launch initial connexion
 db = await connectDB()
