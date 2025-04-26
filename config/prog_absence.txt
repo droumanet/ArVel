@@ -13,4 +13,4 @@
 # Simulation présence
 20:35 LMMJVSD relayTimer $2E-1=900
 21:55 LMMJVSD relayTimer $0C-2=900
-
+22:58 LMMJVSD pressButton $AA-8 !

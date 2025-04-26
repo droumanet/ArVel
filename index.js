@@ -195,8 +195,7 @@ let everyMinut = schedule.scheduleJob('*/1 * * * *', () => {
         velbuslib.VMBWrite(velbuslib.RelayBlink(7, 4, 5))
         velbuslib.VMBWrite(velbuslib.RelayBlink(46, 1, 5))
         setTimeout(() => {
-            velbuslib.VMBWrite(velbuslib.FrameSendButton(0xAA, 8, 1)) 
-            velbuslib.VMBWrite(velbuslib.FrameSendButton(0xAA, 8, 0))          
+            velbuslib.VMBWrite(velbuslib.PressButton(0xAA, 8))      
         }, 20000);
     }
 

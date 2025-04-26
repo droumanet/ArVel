@@ -674,6 +674,18 @@ async function VMBRequestEnergy(adr, part) {
 
 }
 
+
+const PressButton = (address, part) => {
+	VMBWrite(FrameSendButton(address, part, 1))
+	VMBWrite(FrameSendButton(address, part, 0))
+}
+
+const LongPressButton = (address, part) => {
+	VMBWrite(FrameSendButton(address, part, 1))
+	setTimeout(() => { VMBWrite(FrameSendButton(address, part, 2)) }, 1000)
+	setTimeout(() => { VMBWrite(FrameSendButton(address, part, 0)) }, 1020)
+}
+
 // [ ] Write a function that store the request in a array then,
 // [ ] Write a function in receive part, that compare mask & msg and execute callback if true
 /*function VMBSearchMsg(msg, callBackFct, part = 0xFF) {
@@ -832,7 +844,7 @@ export {
 	toHexa, Part2Bin,
 	VMB, resume,
 	VMBWrite, VMBSetTime, VMBscanAll,
-	FrameSendButton,
+	FrameSendButton, PressButton, LongPressButton,
 	RelaySet, RelayTimer, RelayBlink,
 	BlindMove, BlindStop,
 	FrameRequestCounter as CounterRequest,

@@ -21,7 +21,7 @@ export function executeCommand(action, moduleAddress, modulePart, duration) {
             break;
         }
         case 'pressbutton': {
-            velbuslib.VMBWrite(velbuslib.PressButton(moduleAddress, modulePart))
+            velbuslib.PressButton(moduleAddress, modulePart)
             break;
         }
         case 'blinddown': {
