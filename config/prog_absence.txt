@@ -1,0 +1,16 @@
+# Format : 07:25 LMM-V-- relayblink $07-4=x !
+# Actions: relayBlink, relayTimer, relayOff, relayOn, clicButton, blindUp, blindDown, blindStop
+
+# Lever tous les volets
+07:25 LMMJVSD clicbutton $AA-6 !
+19:02 LMMJVSD relayTimer $2E-2=180 !
+
+# Baisser les volets ouest : 21-2 (Ch. amis), 23-2 (Cuisine ouest), 37-2 (bureau)
+14:00 LMMJVSD blindDown $21-2=12
+14:00 LMMJVSD blindDown $23-2=10
+14:00 LMMJVSD blindDown $37-2=12
+
+# Simulation présence
+20:35 LMMJVSD relayTimer $2E-1=900
+21:55 LMMJVSD relayTimer $0C-2=900
+
