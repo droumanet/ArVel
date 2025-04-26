@@ -1,5 +1,5 @@
 # Format : 07:25 LMM-V-- relayblink $07-4=x !
-# Actions: relayBlink, relayTimer, relayOff, relayOn, clicButton, blindUp, blindDown, blindStop
+# Actions: relayBlink, relayTimer, relayOff, relayOn, PressButton, LongPressButton, blindUp, blindDown, blindStop
 
 # Lever tous les volets
 07:25 LMMJVSD clicbutton $AA-6 !
@@ -13,4 +13,6 @@
 # Simulation présence
 20:35 LMMJVSD relayTimer $2E-1=900
 21:55 LMMJVSD relayTimer $0C-2=900
+
+# Fermer tous les volets si l'automatisme ne fonctionne pas
 22:58 LMMJVSD pressButton $AA-8 !
