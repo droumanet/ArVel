@@ -126,6 +126,17 @@ function FrameSendButton(address, part, status) {
 	return trame;
 }
 
+function PressButton(address, part) {
+	FrameSendButton(address, part, 1)
+	FrameSendButton(address, part, 0)
+}
+
+function LongPressButton(address, part) {
+	FrameSendButton(address, part, 1)
+	setTimeout(() => { FrameSendButton(address, part, 2) }, 1000)
+	setTimeout(() => { FrameSendButton(address, part, 0) }, 1020)
+}
+
 /**
  * Checksum is able to calculate the frame checksum
  * @param {Buffer} frame a Velbus frame from 0F xxxxx to 04
@@ -143,4 +154,4 @@ function FrameSendButton(address, part, status) {
 	return crc;
 }
 
-export {FrameModuleScan, FrameRequestName, FrameTransmitTime, FrameRequestTime, FrameSendButton, CheckSum}
+export {FrameModuleScan, FrameRequestName, FrameTransmitTime, FrameRequestTime, FrameSendButton, PressButton, LongPressButton, CheckSum}

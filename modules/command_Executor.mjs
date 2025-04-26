@@ -20,9 +20,8 @@ export function executeCommand(action, moduleAddress, modulePart, duration) {
             velbuslib.VMBWrite(velbuslib.RelayTimer(moduleAddress, modulePart, duration))
             break;
         }
-        case 'clicbutton': {
-            velbuslib.VMBWrite(velbuslib.FrameSendButton(moduleAddress, modulePart, 1))
-            velbuslib.VMBWrite(velbuslib.FrameSendButton(moduleAddress, modulePart, 0))
+        case 'pressbutton': {
+            velbuslib.VMBWrite(velbuslib.PressButton(moduleAddress, modulePart))
             break;
         }
         case 'blinddown': {

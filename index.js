@@ -176,7 +176,11 @@ let everyMinut = schedule.scheduleJob('*/1 * * * *', () => {
     // GPS coordonates for Grenoble (sunrise and sunset value)
     let sunsetBrut = getSunset(appProfile.locationX, appProfile.locationY)
     let decalage = 20 * 60 * 1000;  // 20 minutes
-    let sunset = new Date(sunsetBrut.getTime() + decalage);
+    let summerTime = 0
+    if (isDaylightSavingTime()) {
+        summerTime = 60*60*1000
+    }
+    let sunset = new Date(sunsetBrut.getTime() - summerTime + decalage);
 
     // Format time as XX:YY in 24h hour
     let sunsetTime = sunset.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
@@ -186,7 +190,7 @@ let everyMinut = schedule.scheduleJob('*/1 * * * *', () => {
 
     // descendre les volets automatiquement 🌙 
     if (sunsetTime == nowTime) { 
-        console.log("Baisser les volets", dHour+":"+dMinut+"  =  "+sunsetHour+":"+sunsetMinut)
+        console.log("Baisser les volets", nowTime)
         let subModTmp = velbuslib.fullSubModuleList();
         velbuslib.VMBWrite(velbuslib.RelayBlink(7, 4, 5))
         velbuslib.VMBWrite(velbuslib.RelayBlink(46, 1, 5))
@@ -199,7 +203,7 @@ let everyMinut = schedule.scheduleJob('*/1 * * * *', () => {
     // Reading and parsing file for programmed actions (new version)
     const scheduleActions = parseScheduleFile(filePath)
     const actionsToExecute = getActionsToExecute(scheduleActions, d)
-    console.log("ACTIONS READ : ",scheduleActions)
+    console.log("ACTIONS TO EXECUTE : ",actionsToExecute)
     actionsToExecute.forEach(action => {
         if (action.preAlert) {
             setTimeout(() => executeCommand(action.action, action.moduleAddress, action.modulePart, action.duration), 20000)
@@ -264,3 +268,14 @@ let everyMinut = schedule.scheduleJob('*/1 * * * *', () => {
 })
 
 //#endregion
+function isDaylightSavingTime(date = new Date()) {
+    // Obtenir le décalage horaire en minutes pour la date actuelle
+    const january = new Date(date.getFullYear(), 0, 1); // Janvier (hiver)
+    const july = new Date(date.getFullYear(), 6, 1);    // Juillet (été)
+
+    // Comparer le décalage horaire de janvier (hiver) et juillet (été)
+    const standardTimezoneOffset = Math.max(january.getTimezoneOffset(), july.getTimezoneOffset());
+
+    // Si le décalage actuel est inférieur au décalage standard, on est en heure d'été
+    return date.getTimezoneOffset() < standardTimezoneOffset;
+}
