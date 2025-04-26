@@ -7,6 +7,32 @@ let port = 65433
 const VMC = Dgram.createSocket("udp4")
 let VMCStatus = {}
 
+/*
+            data = {
+                "TotalRunningTime": running_motor,
+                "current":temp[0],
+                "TempAdmission": temp[0],
+                "TempInsufflation": temp[1], 
+                "TempExtraction": temp[2],
+                "TempOut": temp[3],
+                "humidity": humidity[0],
+                "bypass": bypass[0],
+                "boost": boost[0],
+                "fanInSpeed": fan[0],
+                "fanMaxSpeed": MAXSpeed,
+                "fanInPercent": bypass[1],
+                "fanOutSpeed": fan[1],
+                "fanOutPercent": bypass[2],
+                "power": power,
+                "powerMax": MAXPower,
+                "flow": flow,
+                "flowMax": MAXFlow,
+                "Alarm":alarm[0],
+                "FilterStatus":filters[0],
+                "ReplaceFilterCountdown": replace_day
+            }
+*/
+
 /**
  * This function return an array with two VMBsubModule (address with $300-1 and $300-2)
  * @returns array of two VMBSubModule
@@ -31,7 +57,7 @@ VMC.on('message', (message) => {
     const minutes = String(now.getMinutes()).padStart(2, '0')
     const seconds = String(now.getSeconds()).padStart(2, '0')
     const timeString = `${hours}:${minutes}:${seconds}`
-    console.log(timeString, VMCStatus.current+"°C", VMCStatus.fanInPercent+"%", VMCStatus.Alarm)
+    console.log(timeString, `TempHouse:${VMCStatus.current}°C Boost:[${VMCStatus.boost}] SpeedFan:${VMCStatus.fanInPercent}% Alarm:[${VMCStatus.Alarm}]`)
 })
 VMC.on('error', (message, info) => {
     console.log("Error message from VMC", message)
