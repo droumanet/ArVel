@@ -13,7 +13,7 @@
 // [ ] Etat dimmer
 // [ ] Fonctions dimmer
 // [ ] Etat volet
-// [x] Etat température
+// [ ] Etat température
 // [x] Etat énergie (compteurs)
 
 
@@ -36,7 +36,7 @@ import { BlindMove, BlindStop, FrameHello } from './velbuslib_blind.mjs'
 import { RelaySet, RelayTimer, RelayBlink } from './velbuslib_relay.mjs';
 import { FrameRequestTemp } from './velbuslib_temp.mjs';
 import { FrameRequestCounter } from './velbuslib_input.mjs';
-import fs from 'fs'
+import fs, { write } from 'fs'
 
 // What is for this emitter?
 const VMBEmitter = new EventEmitter()
@@ -73,38 +73,38 @@ function lenSubModuleList() {
 // Preload or save modules and submodules file
 function saveMapData(ModuleList, subModuleList) {
 	const data = {
-	  ModuleList: Array.from(ModuleList.entries()),
-	  subModuleList: Array.from(subModuleList.entries())
+		ModuleList: Array.from(ModuleList.entries()),
+		subModuleList: Array.from(subModuleList.entries())
 	}
   
-	fs.writeFile(ModulesFile, JSON.stringify(data), (err) => {
-	  if (err) {
-		console.error('Error while trying to save Valbus datas :', err)
-	  } else {
-		console.log('Datas saved successfully in', ModulesFile)
-	  }
+	fs.writeFile(ModulesFile, JSON.stringify(data, null, 2), (err) => {
+		if (err) {
+			logInfo(3, '💾 Error while trying to save Valbus datas :', err)
+		} else {
+			logInfo(0, '💾 Datas saved successfully in '+ModulesFile)
+		}
 	})
-  }
+}
 
-  function loadMapData() {
-	console.log("💾 Trying to load previous scanned Velbus devices from", ModulesFile, "--------------");
-	
+function loadMapData() {
+	logInfo(0, "💾 Trying to load previous scanned Velbus devices from "+ModulesFile+" -------------");
+
 	if (fs.existsSync(ModulesFile)) {
-	  try {
-		const data = fs.readFileSync(ModulesFile, 'utf8');
-		const parsedData = JSON.parse(data);
-		moduleList = new Map(parsedData.ModuleList);
-		subModuleList = new Map(parsedData.subModuleList);
-		console.log('Success loading', ModulesFile);
-		return subModuleList.size;
-	  } catch (err) {
-		console.error('Error while loading Velbus data from file:', err);
-		return 0;
-	  }
+		logInfo(0, "💾 The file exist, trying to read now... please wait!")
+		try {
+			const data = fs.readFileSync(ModulesFile, 'utf8');
+			const parsedData = JSON.parse(data);
+			moduleList = new Map(parsedData.ModuleList);
+			subModuleList = new Map(parsedData.subModuleList);
+			logInfo(0, '💾 Success loading '+ModulesFile+`\nFound ${subModuleList.size} subModules`);
+			return subModuleList.size;
+		} catch (err) {
+			logInfo(2, '💾 Error while loading Velbus data from file : '+err);
+			return false;
+		}
 	} else {
-	  console.log(ModulesFile, 'not found. First Scan needed.');
-	  // Logique pour scanner les modules ici
-	  return 0;
+		logInfo(3, "💾 "+ModulesFile+' not found! First Scan needed.');
+		return false;
 	}
   }
 
@@ -234,7 +234,13 @@ function resume() {
  * @param {*} element Frame received (should be F0, F1 or F2 for name)
  * ------------------------------------------------------------------------------------------------------*/
 function CheckName(element) {
-	let key = element[2] + "-" + Bin2Part(element[5])
+	let key = element[2]+"-"
+	//specific part for blind VMB2BL
+	if (element[5] == 0x03 || element[5] == 0x0C) {
+		key += element[5]==0x03 ? "1" : "2"
+	} else {
+		key = element[2] + "-" + Bin2Part(element[5])
+	}
 	let fctVelbus = element[4]
 
 	// if VMBNameStatus doesn't exist, create one and get it value 
@@ -259,7 +265,7 @@ function CheckName(element) {
 	let idx = fctVelbus - 0xF0	// idx could be 2, 1 or 0
 	let flag = 2 ** idx			// 2^n transformation (bit 1, 2 or 4)
 	let f = myModule.flag		// flag use a OR binary operation with 2⁰, 2¹ and 2²
-	
+	logInfo(0, "CheckName "+key+" flag:"+flag+"  f:"+f)
 	// Filling name char by char (n1 et n2 => max=6, n3 => max=4 as 15 char)
 	for (let t = 0; t < max; t++) {
 		if (element[6 + t] != 0xFF) {
@@ -274,14 +280,14 @@ function CheckName(element) {
 	}
 
 	// in case name is complete (flag = 100 | 010 | 001)
-	if ((f | flag) == 0b111) {
-		let m = subModuleList.get(key)
-		if (m) {
-			m.name = name[0]+name[1]+name[2]
-			myModule.name = m.name
-			logInfo(1, "📌 VELBUS submodule " + key + " is named " + subModuleList.get(key).name)
+	if ((f & flag) == 0b111) {
+		let thisSubModule = subModuleList.get(key)
+		if (thisSubModule) {
+			thisSubModule.name = name[0]+name[1]+name[2]
+			myModule.name = thisSubModule.name
+			logInfo(0, "📌 VELBUS submodule " + key + " is named " + subModuleList.get(key).name)
 		} else {
-			logInfo(2, "Erreur de lecture du module")
+			logInfo(2, "Erreur de lecture du module "+key+" (flag:"+flag+", f:"+f)
 		}
 	}
 	VMBNameStatus.set(key, { "address": element[2], "name": name[0] + name[1] + name[2], "n1": name[0], "n2": name[1], "n3": name[2], "flag": flag | f })
@@ -301,22 +307,25 @@ function CheckModule(VMBmessage) {
 	let buildWeek = VMBmessage[10]
 
 	if (moduleList.has(adrVelbus)) {
-		// module exist, check if it still same type ?
+		// MODULE exist, check if it still same type ?
+		let newModule = moduleList.get(adrVelbus)
 		if (fctVelbus == 0xFF) {
-			let newModule = moduleList.get(adrVelbus)
 			if (typVelbus != newModule.modType) {
-				// type has changed
+				// MODULE type has changed (physical changed module)
 				VMBModification = true
 				moduleList.set(adrVelbus, ChangeModule(adrVelbus, typVelbus, VMBmessage))
 			} else {
+				// Take Year/Week information
 				newModule.buildYear = buildYear
 				newModule.buildWeek = buildWeek
 				moduleList.set(adrVelbus, newModule)
 			}
+			logInfo(0,"CheckModule on existing module address: "+adrVelbus)
 		}
 
 	} else {
-		// module doesn't exist : Create VMBModule
+		// module doesn't exist : Create MODULE
+		logInfo(0,"CheckModule on new module address: "+adrVelbus)
 		VMBModification = true
 		let newModule = new VMBmodule(adrVelbus, 0x00)
 		let key, subModTmp
@@ -329,20 +338,28 @@ function CheckModule(VMBmessage) {
 			console.log("CREATE TYPE:", newModule.modType)
 			newModule.partNumber = VMB.getPartFromCode(newModule.modType)	// Fixed 2024-04-07
 			moduleList.set(adrVelbus, newModule)							// Fixed 2024-04-12
-			// Création des sous-modules
+			// Now we have enough information to create SUBMODULE
 			for (let i=0; i<newModule.partNumber; i++) {
 				key=adrVelbus+"-"+(i+1)
 				subModTmp = new VMBsubmodule(adrVelbus, i+1, key, "", {})
 				subModTmp.hexId = toHexa([adrVelbus])+"-"+(i+1)
-				subModTmp.cat = VMB.getCatFromCode(typVelbus)
-				if (typVelbus == 0x22 && i>=4) {
+				subModTmp.type = typVelbus
+				subModTmp.cat = newModule.modCat
+				if (typVelbus == 0x22 && i>=4) {	// VMB7IN : correcting 4 counters, 4+3 inputs
 					subModTmp.cat = ["input"]
 				}
 		
-				subModTmp.type = typVelbus
 				setSubModuleList(key, subModTmp)
 				console.log("  |_ CREATE", key, "TYPE:", subModTmp.type, "FUNCTION:",subModTmp.cat)
-				VMBWrite(FrameRequestName(adrVelbus, Part2Bin(i+1)))
+				// 2025-05-04 pour les modules blind VMB2BL uniquement, les numéros de parties sont 3 et 12
+				if (typVelbus == 0x03 || typVelbus == 0x09) {
+					let blindPart = [0x03, 0x0C]
+					VMBWrite(FrameRequestName(adrVelbus, blindPart[i]))
+					console.log("NAME request on blind module",key, blindPart[i])
+				} else {
+					VMBWrite(FrameRequestName(adrVelbus, Part2Bin(i+1)))
+					console.log("NAME request on normal module",key, Part2Bin(i+1))
+				}
 			}
 		}
 	}
@@ -433,7 +450,11 @@ function analyze2Texte(element) {
 		case 0xF1:
 		case 0xF2: {
 			CheckName(element)
-			let key = adrVelbus + "-" + Bin2Part(element[5])
+			logInfo(0, "CheckName on Element: "+toHexa(element))
+			let key = adrVelbus + "-"
+			if (element[5] == 0x03) { key += "1" }
+			else if (element[5] == 0x0C) {key += "2"}
+			else {key += Bin2Part(element[5])}
 			texte += " Transmit it name '" + VMBNameStatus.get(key).name + "'"
 			break
 		}
@@ -695,7 +716,7 @@ const LongPressButton = (address, part) => {
 
 function logInfo(priority, text) {
 	if (DEBUG) {
-		const symbols = ['🔵', '⚠️', '🛑']
+		const symbols = ['🔵', '🟡', '🛑']
 		const priorityNames = ['INFO', 'WARNING', 'ERROR']
 		if (typeof(priority) == 'string') {
 			priority = priorityNames.indexOf(priority.toUpperCase())
@@ -770,19 +791,21 @@ VelbusConnexion.on('connect', () => {
 
 VelbusConnexion.once('connect', () => {
 	// Load Modules (synchrone method) before starting asynchrone communication with Velbus
-	if (!loadMapData()) {
+	let fileRead = loadMapData()
+	logInfo(1,"Reading file give "+fileRead+" submodules")
+	if (fileRead<5) {
 		console.log("subModuleList size", subModuleList.size)
 		setTimeout(() => {
 			// VMBscanAll() after 1 second
-			console.log("Now scanning all devices on BUS 🔎")
+			logInfo(0, "Now scanning all devices on BUS 🔎")
 			VMBscanAll(0)
 		}, 1000)
 		setTimeout(() => {
 			saveMapData(moduleList, subModuleList) // after 90 second
-			console.log("List saved after scan on BUS 💾")
+			logInfo(0,"List saved after scan on BUS 💾")
 		}, 90000)		
 	} else {
-		console.log("List loaded, no need to scan on BUS 💾")
+		logInfo(0,"List loaded, no need to scan on BUS 💾")
 	}
 })
 
@@ -793,12 +816,14 @@ VelbusConnexion.on('data', (data) => {
 	// data may contains multiples RAW Velbus frames: send
 	Cut(data).forEach(element => {
 		CheckModule(element);
+
 		desc = analyze2Texte(element);
 		logInfo('INFO', desc)
 
 		VMBmessage = { "RAW": element, "Description": desc, "TimeStamp": Date.now(), "Address": element[2], "Function": element[4] }
 
 		// TODO seems to be for socketIO. Could be removed?
+		/*
 		VMBEmitter.emit("msg", VMBmessage);
 
 		switch (element[4]) {
@@ -811,7 +836,7 @@ VelbusConnexion.on('data', (data) => {
 			default:
 				break;
 		}
-
+		*/
 	})
 });
 VelbusConnexion.on('error', (err) => {

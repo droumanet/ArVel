@@ -12,9 +12,13 @@ export function getModules(req, res) {
     console.log("*** API CTRL-Module : Filtered request", filter)
     let y = new Map()
     for (const [key, value] of x) {
-      if (x.get(key).cat.some(cat => cat == filter.cat)) {
-        // check for table 
+      const moduleData = x.get(key);
+      // Vérification complète avant d'utiliser .some()
+      if (moduleData && moduleData.cat && Array.isArray(moduleData.cat) && 
+          moduleData.cat.some(cat => cat === filter.cat)) {
         y.set(key, value);
+      } else if (!Array.isArray(moduleData.cat) ) {
+        console.log("⚠️ Error on filtered request with ", key, moduleData)
       }
     }
     mapObj = Object.fromEntries(y);
@@ -23,6 +27,17 @@ export function getModules(req, res) {
     mapObj = Object.fromEntries(x); // Convertir la Map en objet
   }
 
+  res.setHeader('content-type', 'application/json')
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  res.status(200).json(mapObj) // Envoyer l'objet converti en JSON
+}
+
+export function scanModules(req, res) {
+  velbuslib.VMBscanAll()
+
+  const mapObj = {"Message":"Scan launched", "Error":0}
   res.setHeader('content-type', 'application/json')
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');

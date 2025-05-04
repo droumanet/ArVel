@@ -30,7 +30,7 @@ import { writePowerByDay, writeEnergy } from './controllers/CtrlDatabase.mjs'
 import * as TeleInfo from './modules/teleinfo.js'
 import * as VMC from './modules/VMC.js'
 import { parseScheduleFile, getActionsToExecute } from './modules/command_Parser.mjs'
-import { executeCommand } from './modules/command_Executor.mjs'
+import { checkAndExecuteActions } from './modules/command_Executor.mjs'
 
 // GPS coordonates for Grenoble (sunrise and sunset value)
 const sunset = getSunset(appProfile.locationX, appProfile.locationY)
@@ -195,27 +195,17 @@ let everyMinut = schedule.scheduleJob('*/1 * * * *', () => {
         velbuslib.VMBWrite(velbuslib.RelayBlink(7, 4, 5))
         velbuslib.VMBWrite(velbuslib.RelayBlink(46, 1, 5))
         setTimeout(() => {
-            velbuslib.VMBWrite(velbuslib.PressButton(0xAA, 8))      
+            velbuslib.PressButton(0xAA, 8)      
         }, 20000);
     }
 
-    // Reading and parsing file for programmed actions (new version)
+    // ⏰📖 Reading and parsing file for programmed actions (new version)
     const scheduleActions = parseScheduleFile(filePath)
-    const actionsToExecute = getActionsToExecute(scheduleActions, d)
-    console.log("ACTIONS TO EXECUTE : ",actionsToExecute)
-    actionsToExecute.forEach(action => {
-        if (action.preAlert) {
-            setTimeout(() => executeCommand(action.action, action.moduleAddress, action.modulePart, action.duration), 20000)
-            executeCommand("relayblink", 7, 4, 5)
-            executeCommand("relayblink", 46, 1, 5)
-            console.log(`${nowTime} Action "${action.action}" on ${action.moduleAddress}-${action.modulePart} in few seconds`);
-        }
-        else {
-            executeCommand(action.action, action.moduleAddress, action.modulePart, action.duration)
-            console.log(`${nowTime} Action "${action.action}" on ${action.moduleAddress}-${action.modulePart} now`);
-        }
-    })
-
+    const actionsToCheck = getActionsToExecute(scheduleActions, d)
+    console.log("ACTIONS TO CHECK : ",actionsToCheck)
+    // checkAndExecuteActions(actionsToCheck, moduleStates)
+    // console.log(velbuslib.getSubModuleList("400-1").status)
+ 
     // scan external modules (TeleInfo & VMC)
     console.log("⚡⚡  Resuming external modules (TeleInfo & VMC)  ⚡⚡")
     let tableCompteur = TeleInfo.resume()

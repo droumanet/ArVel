@@ -16,6 +16,11 @@ class VMBmodule {
 	busErrorOFF = 0
 	busRefreshDate = 0
 
+	/**
+	 * Create a new module
+	 * @param {Int} address 
+	 * @param {*Int} type 
+	 */
 	constructor(address, type) {
 		this.address = address
 		this.modType = type
@@ -36,6 +41,14 @@ class VMBsubmodule {
 	room = ""
 	zone = []		// could be multiple : room, floor, orientation (west, north...) or some useful tags
 
+	/**
+	 * Create a new SubModule
+	 * @param {Int} address (0-255)
+	 * @param {Int} part (1-x)
+	 * @param {String} key adr-part (ex. 128-4)
+	 * @param {Array} cat contains energy, blind, relay...
+	 * @param {Object} status non standard information (temp, energy, relay state,...)
+	 */
 	constructor(address, part, key, cat, status) {
 		this.address = address
 		this.part = part

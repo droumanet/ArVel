@@ -43,10 +43,10 @@ const moduleTypes    =
  {code : "0x2C", name :  "VMBPIRO",   power: [30],  desc : "Infra Red sensor", PartNb : 1, cat:["input"]},
  {code : "0x2D", name :  "VMBGP4PIR", power: [25],  desc : "4 push buttons + Infra Red sensor", PartNb : 4, cat:["input","command"]},
  {code : "0x2E", name :  "VMB1BLS",   power: [100], desc : "", PartNb : 1, cat:["blind"]},
- {code : "0x2F", name :  "VMBDMIR",   power: [30], desc : "", PartNb : 1},
- {code : "0x30", name :  "VMBRFR8X",  power: [30], desc : "", PartNb : 8},
+ {code : "0x2F", name :  "VMBDMIR",   power: [30], desc : "", PartNb : 1, cat:["unknown"]},
+ {code : "0x30", name :  "VMBRFR8X",  power: [30], desc : "", PartNb : 8, cat:["unknown"]},
  {code : "0x31", name :  "VMBMETEO",  power: [35],  desc : "light, wind and rain sensor", PartNb : 8, cat:["meteo", "temp"]},  // mainly 8 alarms
- {code : "0x33", name :  "VMBVP01",   power: [300], desc : "Doorbird interface module", PartNb : 8},	// 2 Bells, 2 motions, 2 doors, 2 virtual
+ {code : "0x33", name :  "VMBVP01",   power: [300], desc : "Doorbird interface module", PartNb : 8, cat:["unknown"]},	// 2 Bells, 2 motions, 2 doors, 2 virtual
  {code : "0x44", name :  "VMB4PB",    power: [50],  desc : "", PartNb : 4, cat:["button"]},
  {code : "0x00", name :  "VMBRSUSB",  power: [15],  desc : "USB or serial Interface (for computer)", PartNb : 1, cat:["interface"]}];
 //#endregion

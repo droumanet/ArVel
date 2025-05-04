@@ -10,6 +10,7 @@ import * as CtrlRelay from '../controllers/CtrlRelay.mjs'
 
 // routes list
 Router.get('/modules', CtrlModules.getModules)
+Router.get('/scan', CtrlModules.scanModules)
 
 // Route pour activer/désactiver un relais
 // TODO POST and not GET ?
