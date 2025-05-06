@@ -79,7 +79,7 @@ function saveMapData(ModuleList, subModuleList) {
   
 	fs.writeFile(ModulesFile, JSON.stringify(data, null, 2), (err) => {
 		if (err) {
-			logInfo(3, '💾 Error while trying to save Valbus datas :', err)
+			logInfo(4, '💾 Error while trying to save Valbus datas :', err)
 		} else {
 			logInfo(0, '💾 Datas saved successfully in '+ModulesFile)
 		}
@@ -99,12 +99,12 @@ function loadMapData() {
 			logInfo(0, '💾 Success loading '+ModulesFile+`\nFound ${subModuleList.size} subModules`);
 			return subModuleList.size;
 		} catch (err) {
-			logInfo(2, '💾 Error while loading Velbus data from file : '+err);
-			return false;
+			logInfo(3, '💾 Error while loading Velbus data from file : '+err);
+			return 0;
 		}
 	} else {
-		logInfo(3, "💾 "+ModulesFile+' not found! First Scan needed.');
-		return false;
+		logInfo(4, "💾 "+ModulesFile+' not found! First Scan needed.');
+		return 0;
 	}
   }
 
@@ -239,8 +239,9 @@ function CheckName(element) {
 	if (element[5] == 0x03 || element[5] == 0x0C) {
 		key += element[5]==0x03 ? "1" : "2"
 	} else {
-		key = element[2] + "-" + Bin2Part(element[5])
+		key += Bin2Part(element[5])
 	}
+	logInfo(0, "CheckName for "+key)
 	let fctVelbus = element[4]
 
 	// if VMBNameStatus doesn't exist, create one and get it value 
@@ -287,7 +288,7 @@ function CheckName(element) {
 			myModule.name = thisSubModule.name
 			logInfo(0, "📌 VELBUS submodule " + key + " is named " + subModuleList.get(key).name)
 		} else {
-			logInfo(2, "Erreur de lecture du module "+key+" (flag:"+flag+", f:"+f)
+			logInfo(3, "Erreur de lecture du module "+key+" (flag:"+flag+", f:"+f)
 		}
 	}
 	VMBNameStatus.set(key, { "address": element[2], "name": name[0] + name[1] + name[2], "n1": name[0], "n2": name[1], "n3": name[2], "flag": flag | f })
@@ -373,8 +374,8 @@ function ChangeModule(addr, VelbusType, VelbusMsg) {
 			subModuleList.delete(addr+'-'+t)
 		}
 	}
-	newModule.modType = VelbusType									// new type
-	newModule.partNumber = VMB.getPartFromCode(newModule.modType)	// new part number
+	newModule.modType = VelbusType										// new type
+	newModule.partNumber = VMB.getPartFromCode(newModule.modType)		// new part number
 	newModule.buildYear = VelbusMsg[9]									// new build year
 	newModule.buildWeek = VelbusMsg[10]
 	//let dt = new Date()
@@ -389,12 +390,13 @@ function ChangeModule(addr, VelbusType, VelbusMsg) {
  * @returns texte contening information like temperature, status, energy, etc.
  * ---------------------------------------------------------------------------------------------*/
 function analyze2Texte(element) {
-	let fctVelbus = Number(element[4])
 	let adrVelbus = element[2]
+	let fctVelbus = Number(element[4])
 	let texte = "@" + adrVelbus.toString(16) + " Fct:" + fctVelbus.toString(16).toUpperCase() + "(" + VMB.getFunctionName(fctVelbus) + ") ► "
 	let buttonPress, buttonRelease, buttonLongPress
 	let keyModule = ""
 
+	logInfo(1, "analyze2Texte with module "+adrVelbus+" message: "+toHexa(element))
 	switch (fctVelbus) {
 		case 0x00:
 			// Button pressed, released or long pressed (> 0.85 sec.)
@@ -563,7 +565,7 @@ function TempCurrentCalculation(msg) {
 		case 0xEA:
 			return FineTempCalculation(msg[8], msg[9])
 		default:
-			console.error("ERROR with TempCalculation", msg)
+			logInfo("ERROR", "ERROR with TempCalculation: "+msg)
 			return undefined
 	}
 }
@@ -716,8 +718,8 @@ const LongPressButton = (address, part) => {
 
 function logInfo(priority, text) {
 	if (DEBUG) {
-		const symbols = ['🔵', '🟡', '🛑']
-		const priorityNames = ['INFO', 'WARNING', 'ERROR']
+		const symbols = ['🤖','🟢', '🔼', '❌']
+		const priorityNames = ['NOTHING', 'INFO', 'WARNING', 'ERROR']
 		if (typeof(priority) == 'string') {
 			priority = priorityNames.indexOf(priority.toUpperCase())
 		} 
@@ -775,7 +777,7 @@ let DisconnectDate
 
 
 VelbusConnexion.on('connect', () => {
-	console.log("  ✅ connected to Velbus server > ", VelbusConnexion.remoteAddress, ":", VelbusConnexion.remotePort);
+	console.log("ARVEL - Connexion to Velbus server TCP)  > ", VelbusConnexion.remoteAddress, ":", VelbusConnexion.remotePort);
 	console.log("--------------------------------------------------------------", '\n\n')
 	surveyTempStatus()
 	surveyEnergyStatus()
@@ -792,38 +794,37 @@ VelbusConnexion.on('connect', () => {
 VelbusConnexion.once('connect', () => {
 	// Load Modules (synchrone method) before starting asynchrone communication with Velbus
 	let fileRead = loadMapData()
-	logInfo(1,"Reading file give "+fileRead+" submodules")
+	logInfo(2,"💾 Reading file give "+fileRead+" submodules")
 	if (fileRead<5) {
 		console.log("subModuleList size", subModuleList.size)
 		setTimeout(() => {
 			// VMBscanAll() after 1 second
-			logInfo(0, "Now scanning all devices on BUS 🔎")
+			logInfo(0, "🔎 Now scanning all devices on BUS")
 			VMBscanAll(0)
 		}, 1000)
 		setTimeout(() => {
 			saveMapData(moduleList, subModuleList) // after 90 second
-			logInfo(0,"List saved after scan on BUS 💾")
+			logInfo(0,"💾 List saved after scan on BUS")
 		}, 90000)		
 	} else {
-		logInfo(0,"List loaded, no need to scan on BUS 💾")
+		logInfo(0,"💾 List loaded, no need to scan on BUS")
 	}
 })
 
 VelbusConnexion.on('data', (data) => {
 	let VMBmessage = {}
-	let desc = ''
-
+	let description = ''
+	logInfo("NOTHING", "VelbusConnexion.on 'data' event")
 	// data may contains multiples RAW Velbus frames: send
 	Cut(data).forEach(element => {
 		CheckModule(element);
 
-		desc = analyze2Texte(element);
-		logInfo('INFO', desc)
+		description = analyze2Texte(element);
+		logInfo('INFO', description)
 
-		VMBmessage = { "RAW": element, "Description": desc, "TimeStamp": Date.now(), "Address": element[2], "Function": element[4] }
+		VMBmessage = { "RAW": element, "Description": description, "TimeStamp": Date.now(), "Address": element[2], "Function": element[4] }
 
-		// TODO seems to be for socketIO. Could be removed?
-		/*
+
 		VMBEmitter.emit("msg", VMBmessage);
 
 		switch (element[4]) {
@@ -836,7 +837,7 @@ VelbusConnexion.on('data', (data) => {
 			default:
 				break;
 		}
-		*/
+
 	})
 });
 VelbusConnexion.on('error', (err) => {

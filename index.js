@@ -57,73 +57,17 @@ app.use(cors({
 
 app.use('/', Router)
 
-// create websocket with existing port HTTP for web client
-let myhttp = http.createServer(app);
-let myio = new Server(myhttp, {
-    // manage CORS for NAT traversal
-    cors: {
-        origin: appProfile.CORSwebsite,
-        methods: ["GET", "POST"]
-    }
-});
 
 // Launch Velbus network (connect to velserv)
 velbuslib.VelbusStart(VMBserver.host, VMBserver.port)
-
-// #region SocketIO functions 
-// ================================================================================================
-// here is an example on how to connect, from HTML/JS page : let listenClients = io.listen(http);
-
-myio.on('connection', (socket) => {
-    console.log(`▶️ SocketIO (re)connected to @IP:${socket.request.remoteAddress} (client ${socket.id})`)
-    let modulesTeleInfo = TeleInfo.resume()
-    velbuslib.setSubModuleList("300-1", modulesTeleInfo[0])
-    velbuslib.setSubModuleList("300-2", modulesTeleInfo[1])
-    // subModuleList.set("300-1", modulesTeleInfo[0])
-    // subModuleList.set("300-2", modulesTeleInfo[1])
-
-    let json = JSON.stringify(Object.fromEntries(velbuslib.fullSubModuleList()))
-    myio.emit("resume", json)
-    console.log("▶️ Loaded modules numbers : ", velbuslib.lenSubModuleList())
-    socket.on("energy", (msg) => {
-        console.log("► Energy request transmitted (socketIO client)")
-        velbuslib.VMBWrite(velbuslib.CounterRequest(msg.address, msg.part))
-    })
-    socket.on('relay', (msg) => {
-        console.log("▶️ ", msg)
-        if (msg.status == "ON") velbuslib.VMBWrite(velbuslib.relaySet(msg.address, msg.part, 1))
-        if (msg.status == "OFF") velbuslib.VMBWrite(velbuslib.relaySet(msg.address, msg.part, 0))
-        console.log("▶️ Action on relay: ", msg, "address:", msg.address);
-    });
-    socket.on('blind', (msg) => {
-        if (msg.status == "DOWN") velbuslib.VMBWrite(velbuslib.blindMove(msg.address, msg.part, -1, 10))
-        if (msg.status == "UP") velbuslib.VMBWrite(velbuslib.blindMove(msg.address, msg.part, 1, 10))
-        if (msg.status == "STOP") velbuslib.VMBWrite(velbuslib.blindStop(msg.address, msg.part))
-        console.log("▶️ Action on blind: ", msg)
-    })
-    socket.on('discover', () => {
-
-    })
-})
-
-// when a message is detected on Velbus bus, send it to socketIO client
-velbuslib.VMBEmitter.on("msg", (dataSend) => {
-    myio.emit("msg", dataSend)
-});
-
+// create websocket with existing port HTTP for web client
+let myhttp = http.createServer(app);
 // NOTE - running Velbus server on port 8001
 let portWeb = appProfile.listenPort;
 myhttp.listen(portWeb, () => {
     console.log("ARVEL - Velbus Service listening on port ", portWeb)
 });
 
-myio.listen(myhttp)
-console.log("____________________________________________________________\n")
-
-let pad = function (num) { return ('00' + num).slice(-2) }
-
-
-// #endregion
 
 // #region CRONTAB functions 
 // ================================================================================================
@@ -171,11 +115,11 @@ let everyDay23h59 = schedule.scheduleJob('50 59 23 */1 * *', () => {
 
 let everyMinut = schedule.scheduleJob('*/1 * * * *', () => {
     // call every minute energy counter
-    let d = new Date()
+    let currentDate = new Date()
 
-    // GPS coordonates for Grenoble (sunrise and sunset value)
+    // ☀️ -> 🌙 : GPS coordonates for Grenoble (sunrise and sunset value)
     let sunsetBrut = getSunset(appProfile.locationX, appProfile.locationY)
-    let decalage = 20 * 60 * 1000;  // 20 minutes
+    let decalage = 30 * 60 * 1000;  // 20 minutes
     let summerTime = 0
     if (isDaylightSavingTime()) {
         summerTime = 60*60*1000
@@ -184,9 +128,9 @@ let everyMinut = schedule.scheduleJob('*/1 * * * *', () => {
 
     // Format time as XX:YY in 24h hour
     let sunsetTime = sunset.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-    let nowTime = d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+    let nowTime = currentDate.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
 
-    console.log("⏰ ARVEL CRON 1 minute : ", nowTime, "sunset=", sunsetTime)
+    console.log(`⏰ ARVEL CRON 1 minute: (now=${nowTime}, sunset=${sunsetTime})`)
 
     // descendre les volets automatiquement 🌙 
     if (sunsetTime == nowTime) { 
@@ -201,7 +145,7 @@ let everyMinut = schedule.scheduleJob('*/1 * * * *', () => {
 
     // ⏰📖 Reading and parsing file for programmed actions (new version)
     const scheduleActions = parseScheduleFile(filePath)
-    const actionsToCheck = getActionsToExecute(scheduleActions, d)
+    const actionsToCheck = getActionsToExecute(scheduleActions, currentDate)
     console.log("ACTIONS TO CHECK : ",actionsToCheck)
     // checkAndExecuteActions(actionsToCheck, moduleStates)
     // console.log(velbuslib.getSubModuleList("400-1").status)
@@ -211,49 +155,43 @@ let everyMinut = schedule.scheduleJob('*/1 * * * *', () => {
     let tableCompteur = TeleInfo.resume()
     let VMCModule = VMC.resume()
 
-    // Create or update external modules
+    // Create or update external modules (with addresses > 255)
     velbuslib.setSubModuleList("300-1", tableCompteur[0])
     velbuslib.setSubModuleList("300-2", tableCompteur[1])
     velbuslib.setSubModuleList("400-1", VMCModule)
 
     // Scan all module and search for a function
     let subList = velbuslib.fullSubModuleList()
-    if (subList) {
-        console.log("LIST EXIST")
-        if (subList.size > 0) {
-            console.log("THERE ARE ",subList.size," MODULES")
-            let ll
-            let eventDate=""
-            let texte=""
-            subList.forEach((SubModTmp, k) => {
-                texte = ""
-                try {
-                    if (SubModTmp.cat.includes("energy") && SubModTmp.address < 256) {
-                        texte = SubModTmp.address+"-"+SubModTmp.part+" : "+SubModTmp.name + "   (Loop index: "+k+")"
-                        velbuslib.VMBRequestEnergy(SubModTmp.address, SubModTmp.part)
-                        .then((msg) => {console.log("VMBRequestEnergy", texte, msg)})
-                        ll = new Date(SubModTmp.status.timestamp)
-                        eventDate=ll.getFullYear()+"-"+pad(ll.getMonth()+1)+"-"+pad(ll.getDate())+" "+pad(ll.getHours())+":"+pad(ll.getMinutes())+":00"
-                        //eventDate = (new Date(v.status.timestamp)-).toISOString().slice(0, 19).replace('T', ' ')
-                        console.log(eventDate, SubModTmp.id, SubModTmp.cat, SubModTmp.status.power, SubModTmp.status.index, 'w (', SubModTmp.address,'-' ,SubModTmp.part,')')
-                        if (SubModTmp.status.power != undefined && SubModTmp.status.index != undefined && SubModTmp.address<256) {
-                            // Writing datas to database
-                            console.log("📀 SENDING TO DB : ", SubModTmp.address, SubModTmp.part, eventDate, SubModTmp.status.index, SubModTmp.status.power)
-                            writeEnergy([SubModTmp.address, SubModTmp.part, eventDate, SubModTmp.status.index, SubModTmp.status.power])
-                        }
+    if (subList.size > 0) {
+        console.log("THERE ARE ",subList.size," MODULES")
+        let lastSubModuleTime
+        let eventDate=""
+        let texte=""
+        subList.forEach((SubModTmp, k) => {
+            texte = ""
+            try {
+                // Search for Velbus module able to manage energy counting
+                if (SubModTmp.cat.includes("energy") && SubModTmp.address < 256) {
+                    texte = SubModTmp.address+"-"+SubModTmp.part+" : "+SubModTmp.name + "   (Loop index: "+k+")"
+                    velbuslib.VMBRequestEnergy(SubModTmp.address, SubModTmp.part)
+                    .then((msg) => {
+                        console.log("VMBRequestEnergy", texte, msg)
+                    })
+                    lastSubModuleTime = new Date(SubModTmp.status.timestamp)
+                    eventDate=lastSubModuleTime.getFullYear()+"-"+pad(lastSubModuleTime.getMonth()+1)+"-"+pad(lastSubModuleTime.getDate())+" "+pad(lastSubModuleTime.getHours())+":"+pad(lastSubModuleTime.getMinutes())+":00"
+                    //eventDate = (new Date(v.status.timestamp)-).toISOString().slice(0, 19).replace('T', ' ')
+                    console.log(eventDate, SubModTmp.id, SubModTmp.cat, SubModTmp.status.power, SubModTmp.status.index, 'w (', SubModTmp.address,'-' ,SubModTmp.part,')')
+                    if (SubModTmp.status.power != undefined && SubModTmp.status.index != undefined && SubModTmp.address<256) {
+                        // Writing datas to database
+                        console.log("📀 SENDING TO DB : ", SubModTmp.address, SubModTmp.part, eventDate, SubModTmp.status.index, SubModTmp.status.power)
+                        writeEnergy([SubModTmp.address, SubModTmp.part, eventDate, SubModTmp.status.index, SubModTmp.status.power])
                     }
-                } catch {
-                    console.error("No energy module in list")
                 }
-
-
-            })
-        } else {
-            console.error("!!!!!!   ModuleList empty   !!!!!!!!!!!!!!")
-        }
-        
-    } else { console.error("!!!!!!   ModuleList undefined   !!!!!!!!!!!!!!")}
-
+            } catch {
+                console.error("No energy module in list")
+            }
+        })
+    }
 })
 
 //#endregion

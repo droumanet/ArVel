@@ -1,0 +1,26 @@
+From pi@arvel Wed Nov 03 00:00:03 2021
+Return-path: <pi@arvel>
+Envelope-to: pi@arvel
+Delivery-date: Wed, 03 Nov 2021 00:00:03 +0100
+Received: from pi by Arvel with local (Exim 4.92)
+	(envelope-from <pi@arvel>)
+	id 1mi2l8-0003uG-CB
+	for pi@arvel; Wed, 03 Nov 2021 00:00:02 +0100
+From: root@arvel (Cron Daemon)
+To: pi@arvel
+Subject: Cron <pi@Arvel> python3 ~/TeleInfo/teleinfo_read.py
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Cron-Env: <SHELL=/bin/sh>
+X-Cron-Env: <HOME=/home/pi>
+X-Cron-Env: <PATH=/usr/bin:/bin>
+X-Cron-Env: <LOGNAME=pi>
+Message-Id: <E1mi2l8-0003uG-CB@Arvel>
+Date: Wed, 03 Nov 2021 00:00:02 +0100
+
+Traceback (most recent call last):
+  File "/home/pi/TeleInfo/teleinfo_read.py", line 10, in <module>
+    from pylibftdi import Device
+ModuleNotFoundError: No module named 'pylibftdi'
+

@@ -1,0 +1,67 @@
+
+// create websocket with existing port HTTP for web client
+let myhttp = http.createServer(app);
+let myio = new Server(myhttp, {
+    // manage CORS for NAT traversal
+    cors: {
+        origin: appProfile.CORSwebsite,
+        methods: ["GET", "POST"]
+    }
+});
+
+
+
+// #region SocketIO functions 
+// ================================================================================================
+// here is an example on how to connect, from HTML/JS page : let listenClients = io.listen(http);
+
+myio.on('connection', (socket) => {
+    console.log(`▶️ SocketIO (re)connected to @IP:${socket.request.remoteAddress} (client ${socket.id})`)
+    let modulesTeleInfo = TeleInfo.resume()
+    velbuslib.setSubModuleList("300-1", modulesTeleInfo[0])
+    velbuslib.setSubModuleList("300-2", modulesTeleInfo[1])
+    // subModuleList.set("300-1", modulesTeleInfo[0])
+    // subModuleList.set("300-2", modulesTeleInfo[1])
+
+    let json = JSON.stringify(Object.fromEntries(velbuslib.fullSubModuleList()))
+    myio.emit("resume", json)
+    console.log("▶️ Loaded modules numbers : ", velbuslib.lenSubModuleList())
+    socket.on("energy", (msg) => {
+        console.log("► Energy request transmitted (socketIO client)")
+        velbuslib.VMBWrite(velbuslib.CounterRequest(msg.address, msg.part))
+    })
+    socket.on('relay', (msg) => {
+        console.log("▶️ ", msg)
+        if (msg.status == "ON") velbuslib.VMBWrite(velbuslib.relaySet(msg.address, msg.part, 1))
+        if (msg.status == "OFF") velbuslib.VMBWrite(velbuslib.relaySet(msg.address, msg.part, 0))
+        console.log("▶️ Action on relay: ", msg, "address:", msg.address);
+    });
+    socket.on('blind', (msg) => {
+        if (msg.status == "DOWN") velbuslib.VMBWrite(velbuslib.blindMove(msg.address, msg.part, -1, 10))
+        if (msg.status == "UP") velbuslib.VMBWrite(velbuslib.blindMove(msg.address, msg.part, 1, 10))
+        if (msg.status == "STOP") velbuslib.VMBWrite(velbuslib.blindStop(msg.address, msg.part))
+        console.log("▶️ Action on blind: ", msg)
+    })
+    socket.on('discover', () => {
+
+    })
+})
+
+// when a message is detected on Velbus bus, send it to socketIO client
+velbuslib.VMBEmitter.on("msg", (dataSend) => {
+    myio.emit("msg", dataSend)
+});
+
+// NOTE - running Velbus server on port 8001
+let portWeb = appProfile.listenPort;
+myhttp.listen(portWeb, () => {
+    console.log("ARVEL - Velbus Service listening on port ", portWeb)
+});
+
+myio.listen(myhttp)
+console.log("____________________________________________________________\n")
+
+let pad = function (num) { return ('00' + num).slice(-2) }
+
+
+// #endregion
