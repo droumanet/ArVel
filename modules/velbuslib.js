@@ -43,11 +43,14 @@ const VMBEmitter = new EventEmitter()
 const ModulesFile = "VelbusMapData.json"
 
 // General list for event
-let moduleList = new Map()		// class VMBmodule
-let subModuleList = new Map()	// class VMBsubmodule (child of a VMBmodule)
+/** @type {Map<byte, import('../models/velbuslib_class.mjs').VMBmodule>} */
+let moduleList = new Map()
+
+/** @type {Map<byte, import('../models/velbuslib_class.mjs').VMBsubmodule>} */
+let subModuleList = new Map()
+
+// TODO remove this way to capture Name ????
 let VMBNameStatus = new Map()
-let VMBTempStatus = new Map()
-let VMBEnergyStatus = new Map()
 let VMBModification = false
 const DEBUG = 1		// 0 not log, 1 only error/warn, 2 = all
 
@@ -298,7 +301,7 @@ function CheckName(element) {
 /** ---------------------------------------------------------------------------------------------
  * Check if a module address is already in the list : if yes, it check if it still the same, else
  * it create it, using some constants. 
- * @param {*} VMBmessage message from Velbus bus.
+ * @param {ByteArray} VMBmessage message from Velbus bus.
  * --------------------------------------------------------------------------------------------*/
 function CheckModule(VMBmessage) {
 	let adrVelbus = VMBmessage[2]
@@ -308,13 +311,20 @@ function CheckModule(VMBmessage) {
 	let buildWeek = VMBmessage[10]
 
 	if (moduleList.has(adrVelbus)) {
-		// MODULE exist, check if it still same type ?
+		
 		let newModule = moduleList.get(adrVelbus)
+
+		// MODULE exist, check if it still same type ?
 		if (fctVelbus == 0xFF) {
 			if (typVelbus != newModule.modType) {
 				// MODULE type has changed (physical changed module)
 				VMBModification = true
+				// (1) Remove SubModules and change module
 				moduleList.set(adrVelbus, ChangeModule(adrVelbus, typVelbus, VMBmessage))
+				// (3) Create subModules (names and status)
+
+				// WIP scan new part...
+
 			} else {
 				// Take Year/Week information
 				newModule.buildYear = buildYear
@@ -346,6 +356,7 @@ function CheckModule(VMBmessage) {
 				subModTmp.hexId = toHexa([adrVelbus])+"-"+(i+1)
 				subModTmp.type = typVelbus
 				subModTmp.cat = newModule.modCat
+				subModTmp.
 				if (typVelbus == 0x22 && i>=4) {	// VMB7IN : correcting 4 counters, 4+3 inputs
 					subModTmp.cat = ["input"]
 				}
@@ -367,6 +378,13 @@ function CheckModule(VMBmessage) {
 
 }
 
+/**
+ * Remove SubModule then create main Module
+ * @param {Byte} addr (1 to 255)
+ * @param {Byte} VelbusType (0x01 to 0xFF)
+ * @param {ByteArray} VelbusMsg (0F xxxx 04)
+ * @returns {VMBModule} The new module type
+ */
 function ChangeModule(addr, VelbusType, VelbusMsg) {
 	let newModule = moduleList.get(addr)
 	for (let t=1; t <= newModule.part; t++) {
@@ -489,8 +507,7 @@ function analyze2Texte(element) {
 
 /** --------------------------------------------------------------------------------------------------
  * This method write a Velbus frame to the TCP connexion
- * @param {Buffer} req RAW format Velbus frame
- * @param {*} res not used
+ * @param {ByteArray} req RAW format Velbus frame
  * -------------------------------------------------------------------------------------------------*/
 async function VMBWrite(req) {
 	if (DEBUG) {
@@ -502,10 +519,10 @@ async function VMBWrite(req) {
 
 
 /** --------------------------------------------------------------------------------------------------
- * Synchronize Velbus with host. If day/hour/minute are wrong (ie. 99) then use system date
- * @param {*} day if any field is wrong, function will use system date
- * @param {*} hour 
- * @param {*} minute 
+ * Synchronize Velbus with host. If day/hour/minute are wrong (ie. 99) then it use system date
+ * @param {Int} day if any field is wrong, sub function FrameTransmitTime() will use system date
+ * @param {Int} hour 
+ * @param {Int} minute 
  * -------------------------------------------------------------------------------------------------*/
 function VMBSetTime(day, hour, minute) {
 	VMBWrite(FrameTransmitTime(day, hour, minute))
@@ -552,7 +569,12 @@ function EnergyPowerCalculation(msg) {
 	return power
 }
 
-// Function that calculate full digit for temperature. PartA is main part, partB is low digit part
+/**
+ * Function that calculate full digit for Velvus temperature. PartA is main part, partB is low digit part
+ * @param {Byte} partA main part
+ * @param {Byte} partB 
+ * @returns 
+ */
 function FineTempCalculation(partA, partB) {
 	return partA / 2 - Math.round(((4 - partB) >> 5) * 0.0625 * 10) / 10
 }
@@ -604,7 +626,11 @@ function UpdateModule(key, value) {
 }
 
 
-// Function to wait before reading values (async problem)
+ 
+/**
+ * wait (asynchronously) a delay 
+ * @param {*} timeout delay in milliseconds
+ */
 async function sleep(timeout) {
 	await new Promise(r => setTimeout(r, timeout));
 }
@@ -718,6 +744,11 @@ const LongPressButton = (address, part) => {
 }*/
 // #endregion
 
+/**
+ * Automatic console message with icon and text
+ * @param {String|number} priority show an icon (nothing, info, warning, error)
+ * @param {String} text string to show
+ */
 function logInfo(priority, text) {
 	if (DEBUG) {
 		const symbols = ['🤖','🟢', '🔼', '❌']

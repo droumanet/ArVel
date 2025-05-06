@@ -165,7 +165,6 @@ let everyMinut = schedule.scheduleJob('*/1 * * * *', () => {
         console.log("THERE ARE ",subList.size," MODULES")
         let lastSubModuleTime
         let eventDate=""
-        let texte=""
         subList.forEach((SubModTmp, k) => {
             try {
                 // Search for Velbus module able to manage energy counting
