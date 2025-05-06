@@ -356,7 +356,6 @@ function CheckModule(VMBmessage) {
 				subModTmp.hexId = toHexa([adrVelbus])+"-"+(i+1)
 				subModTmp.type = typVelbus
 				subModTmp.cat = newModule.modCat
-				subModTmp.
 				if (typVelbus == 0x22 && i>=4) {	// VMB7IN : correcting 4 counters, 4+3 inputs
 					subModTmp.cat = ["input"]
 				}
