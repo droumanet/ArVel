@@ -626,7 +626,6 @@ function surveyTempStatus() {
 			if (subModTemp) {
 				subModTemp.status = status
 				subModuleList.set(key, subModTemp)
-				console.log("Temp reading... ", key, subModTemp.status.defaultStatus)
 				if (subModTemp.name == undefined) {
 					// if it has no name, ask it
 					VMBWrite(FrameRequestName(msg.RAW[2], 1))
@@ -644,8 +643,8 @@ async function VMBRequestTemp(adr, part) {
 	let trame = FrameRequestTemp(adr, part);
 	VMBWrite(trame);
 	await sleep(200);
-	let result = VMBTempStatus.get(adr + "-" + part)
-	if (result != undefined) return result;
+	let result = subModuleList.get(adr + "-" + part)
+	if (result) return result.status;
 	return { "defaultStatus": 1000, "current": 1000, "min": 1000, "max": 1000, "timestamp": Date.now() };
 
 }

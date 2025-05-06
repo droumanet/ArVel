@@ -1726,9 +1726,10 @@
           "input"
         ],
         "status": {
-          "index": 25688.303,
-          "power": 77.6,
-          "timestamp": 1746498960035
+          "defaultStatus": 76.7,
+          "index": 25691.142,
+          "power": 76.7,
+          "timestamp": 1746543840036
         },
         "room": "",
         "zone": []
@@ -1748,9 +1749,10 @@
           "input"
         ],
         "status": {
+          "defaultStatus": 0,
           "index": 3553.583,
           "power": 0,
-          "timestamp": 1746498960092
+          "timestamp": 1746543840091
         },
         "room": "",
         "zone": []
@@ -1770,9 +1772,10 @@
           "input"
         ],
         "status": {
-          "index": 11875.469,
+          "defaultStatus": 0,
+          "index": 11875.473,
           "power": 0,
-          "timestamp": 1746498960152
+          "timestamp": 1746543840151
         },
         "room": "",
         "zone": []
@@ -1792,9 +1795,10 @@
           "input"
         ],
         "status": {
+          "defaultStatus": 0,
           "index": 0,
           "power": 0,
-          "timestamp": 1746498960212
+          "timestamp": 1746543840211
         },
         "room": "",
         "zone": []
@@ -3197,9 +3201,10 @@
           "input"
         ],
         "status": {
-          "index": 1780.894,
+          "defaultStatus": 0,
+          "index": 1780.978,
           "power": 0,
-          "timestamp": 1746498971408
+          "timestamp": 1746543845420
         },
         "room": "",
         "zone": []
@@ -3219,9 +3224,10 @@
           "input"
         ],
         "status": {
-          "index": 4670.412,
-          "power": 102.6,
-          "timestamp": 1746498971419
+          "defaultStatus": 100.8,
+          "index": 4671.706,
+          "power": 100.8,
+          "timestamp": 1746543845431
         },
         "room": "",
         "zone": []
@@ -3395,10 +3401,11 @@
           "temp"
         ],
         "status": {
-          "current": 22.4,
-          "min": 19.4,
+          "defaultStatus": 21.3,
+          "current": 21.3,
+          "min": 19.3,
           "max": 26.6,
-          "timestamp": 1746498931371
+          "timestamp": 1746543840517
         },
         "room": "",
         "zone": []
@@ -3417,10 +3424,11 @@
           "temp"
         ],
         "status": {
-          "current": 22.3,
+          "defaultStatus": 21.7,
+          "current": 21.7,
           "min": 20.2,
           "max": 26.8,
-          "timestamp": 1746498931250
+          "timestamp": 1746543840579
         },
         "room": "",
         "zone": []
@@ -3439,10 +3447,11 @@
           "temp"
         ],
         "status": {
-          "current": 23.6,
+          "defaultStatus": 22.4,
+          "current": 22.4,
           "min": 20.2,
           "max": 27.6,
-          "timestamp": 1746498931310
+          "timestamp": 1746543840639
         },
         "room": "",
         "zone": []
@@ -3461,10 +3470,11 @@
           "temp"
         ],
         "status": {
-          "current": 20.4,
+          "defaultStatus": 20.2,
+          "current": 20.2,
           "min": 12.9,
           "max": 25.2,
-          "timestamp": 1746498931431
+          "timestamp": 1746543840700
         },
         "room": "",
         "zone": []
@@ -3483,10 +3493,11 @@
           "temp"
         ],
         "status": {
-          "current": 24.3,
+          "defaultStatus": 23.9,
+          "current": 23.9,
           "min": 13.9,
           "max": 30.5,
-          "timestamp": 1746498931596
+          "timestamp": 1746543840759
         },
         "room": "",
         "zone": []
@@ -3505,10 +3516,11 @@
           "temp"
         ],
         "status": {
-          "current": 20.4,
+          "defaultStatus": 19.7,
+          "current": 19.7,
           "min": 18.5,
           "max": 22.9,
-          "timestamp": 1746498931657
+          "timestamp": 1746543840823
         },
         "room": "",
         "zone": []
@@ -3527,10 +3539,11 @@
           "temp"
         ],
         "status": {
-          "current": 21.5,
+          "defaultStatus": 21.1,
+          "current": 21.1,
           "min": 16.1,
           "max": 28.6,
-          "timestamp": 1746498931782
+          "timestamp": 1746543840897
         },
         "room": "",
         "zone": []
@@ -3549,10 +3562,11 @@
           "temp"
         ],
         "status": {
-          "current": 23.5,
+          "defaultStatus": 22,
+          "current": 22,
           "min": 17.4,
           "max": 28.8,
-          "timestamp": 1746498930886
+          "timestamp": 1746543840940
         },
         "room": "",
         "zone": []
@@ -3571,10 +3585,11 @@
           "temp"
         ],
         "status": {
-          "current": 21.4,
+          "defaultStatus": 20.8,
+          "current": 20.8,
           "min": 17.6,
           "max": 28.1,
-          "timestamp": 1746498930281
+          "timestamp": 1746543841001
         },
         "room": "",
         "zone": []
@@ -3593,10 +3608,11 @@
           "temp"
         ],
         "status": {
-          "current": 22.6,
+          "defaultStatus": 22.4,
+          "current": 22.4,
           "min": 18.9,
           "max": 27.9,
-          "timestamp": 1746498930417
+          "timestamp": 1746543841062
         },
         "room": "",
         "zone": []
@@ -3615,10 +3631,11 @@
           "temp"
         ],
         "status": {
-          "current": 21.9,
+          "defaultStatus": 21.4,
+          "current": 21.4,
           "min": 19.5,
           "max": 26.8,
-          "timestamp": 1746498930627
+          "timestamp": 1746543841122
         },
         "room": "",
         "zone": []
@@ -7134,16 +7151,16 @@
           "electricity"
         ],
         "status": {
-          "index": 85607669,
-          "power": 1588,
+          "index": 85618084,
+          "power": 4101,
           "indexHC": 18073331,
-          "powerMax": 2514,
-          "powerMaxDate": "2025-05-06 00:17:56",
+          "powerMax": 4147,
+          "powerMaxDate": "2025-05-06 17:01:58",
           "message": "PAS DE MESSAGE",
-          "Urms": "239",
-          "Umoy": "E250506043000 239",
-          "timestamp": 1746498960014,
-          "dateRefresh": "E250506043558"
+          "Urms": "235",
+          "Umoy": "E250506170000 238",
+          "timestamp": 1746543840013,
+          "dateRefresh": "E250506170402"
         },
         "room": "",
         "zone": []
@@ -7163,15 +7180,15 @@
           "electricity"
         ],
         "status": {
-          "index": 23076177,
-          "power": 0,
-          "indexConso": 20457,
-          "Urms": "239",
-          "powerMax": 512,
-          "powerMaxDate": "2025-05-05 12:28:51",
+          "index": 23077895,
+          "power": 230,
+          "indexConso": 20468,
+          "Urms": "240",
+          "powerMax": 456,
+          "powerMaxDate": "2025-05-06 15:11:40",
           "message": "PAS DE MESSAGE",
-          "timestamp": 1746498960014,
-          "dateRefresh": "E250505193254"
+          "timestamp": 1746543840013,
+          "dateRefresh": "E250506170350"
         },
         "room": "",
         "zone": []
@@ -7191,31 +7208,31 @@
           "vmc"
         ],
         "status": {
-          "TotalRunningTime": "615d, 7h, 50m",
-          "current": 11.9,
-          "defaultStatus": 11.9,
-          "TempAdmission": 11.9,
-          "TempInsufflation": 18.9,
-          "TempExtraction": 20.2,
-          "TempOut": 13.8,
+          "TotalRunningTime": "615d, 20h, 18m",
+          "current": 14.7,
+          "defaultStatus": 14.7,
+          "TempAdmission": 14.7,
+          "TempInsufflation": 19.5,
+          "TempExtraction": 20.4,
+          "TempOut": 16.6,
           "humidity": 49,
           "bypass": 0,
-          "boost": false,
-          "fanInSpeed": 1260,
+          "boost": true,
+          "fanInSpeed": 2460,
           "fanMaxSpeed": 3360,
-          "fanInPercent": 35,
-          "fanOutSpeed": 1080,
-          "fanOutPercent": 30,
-          "power": 56,
+          "fanInPercent": 70,
+          "fanOutSpeed": 2340,
+          "fanOutPercent": 65,
+          "power": 116,
           "powerMax": 162,
-          "flow": 104,
+          "flow": 214,
           "flowMax": 300,
           "Alarm": 0,
           "FilterStatus": 0,
           "ReplaceFilterCountdown": 55,
-          "MotorUpTime": "615d, 7h, 50m",
-          "rendement": 84.3,
-          "timestamp": "04:35:58"
+          "MotorUpTime": "615d, 20h, 18m",
+          "rendement": 84.2,
+          "timestamp": "17:03:45"
         },
         "room": "",
         "zone": []

@@ -192,7 +192,7 @@ let everyMinut = schedule.scheduleJob('*/1 * * * *', () => {
                     .then((subModuleStatus) => {
                         if (subModuleStatus) {
                             let texte = `${SubModTmp.address}-${SubModTmp.part}: [${SubModTmp.name}]`
-                            console.log("VMBRequestTemp read:", texte, subModuleStatus.defaultStatus+"°C", TimeStamp2Date(new Date(subModuleStatus.timestamp)))
+                            console.log(`Temp read: ${texte} \t${subModuleStatus.defaultStatus}°C, \t${TimeStamp2Date(new Date(subModuleStatus.timestamp))}`)
                         }
                     })
                     /* TODO adapter pour temperature
