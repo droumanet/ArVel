@@ -132,10 +132,9 @@ let everyMinut = schedule.scheduleJob('*/1 * * * *', () => {
 
     console.log(`⏰ ARVEL CRON 1 minute: (now=${nowTime}, sunset=${sunsetTime})`)
 
-    // descendre les volets automatiquement 🌙 
+    // 🌙🪟 Automatically lower the blinds/shutters 
     if (sunsetTime == nowTime) { 
-        console.log("Baisser les volets", nowTime)
-        let subModTmp = velbuslib.fullSubModuleList();
+        console.log("Lower the blinds/shutters", nowTime)
         velbuslib.VMBWrite(velbuslib.RelayBlink(7, 4, 5))
         velbuslib.VMBWrite(velbuslib.RelayBlink(46, 1, 5))
         setTimeout(() => {
@@ -146,12 +145,12 @@ let everyMinut = schedule.scheduleJob('*/1 * * * *', () => {
     // ⏰📖 Reading and parsing file for programmed actions (new version)
     const scheduleActions = parseScheduleFile(filePath)
     const actionsToCheck = getActionsToExecute(scheduleActions, currentDate)
-    console.log("ACTIONS TO CHECK : ",actionsToCheck)
+    if (actionsToCheck) console.log("ACTIONS TO CHECK : ",actionsToCheck)
     // checkAndExecuteActions(actionsToCheck, moduleStates)
     // console.log(velbuslib.getSubModuleList("400-1").status)
  
     // scan external modules (TeleInfo & VMC)
-    console.log("⚡⚡  Resuming external modules (TeleInfo & VMC)  ⚡⚡")
+    console.log("⚡🌀  Synchronizing external modules (TeleInfo & VMC)  ⚡🌀")
     let tableCompteur = TeleInfo.resume()
     let VMCModule = VMC.resume()
 
@@ -168,27 +167,46 @@ let everyMinut = schedule.scheduleJob('*/1 * * * *', () => {
         let eventDate=""
         let texte=""
         subList.forEach((SubModTmp, k) => {
-            texte = ""
             try {
                 // Search for Velbus module able to manage energy counting
                 if (SubModTmp.cat.includes("energy") && SubModTmp.address < 256) {
-                    texte = SubModTmp.address+"-"+SubModTmp.part+" : "+SubModTmp.name + "   (Loop index: "+k+")"
                     velbuslib.VMBRequestEnergy(SubModTmp.address, SubModTmp.part)
-                    .then((msg) => {
-                        console.log("VMBRequestEnergy", texte, msg)
+                    .then((subModuleStatus) => {
+                        if (subModuleStatus) {
+                            // let texte = `${SubModTmp.address}-${SubModTmp.part}: [${SubModTmp.name}]`
+                            // console.log("VMBRequestEnergy read:", texte, subModuleStatus, TimeStamp2Date(new Date(subModuleStatus.timestamp)))
+                        }
                     })
-                    lastSubModuleTime = new Date(SubModTmp.status.timestamp)
-                    eventDate=lastSubModuleTime.getFullYear()+"-"+pad(lastSubModuleTime.getMonth()+1)+"-"+pad(lastSubModuleTime.getDate())+" "+pad(lastSubModuleTime.getHours())+":"+pad(lastSubModuleTime.getMinutes())+":00"
-                    //eventDate = (new Date(v.status.timestamp)-).toISOString().slice(0, 19).replace('T', ' ')
-                    console.log(eventDate, SubModTmp.id, SubModTmp.cat, SubModTmp.status.power, SubModTmp.status.index, 'w (', SubModTmp.address,'-' ,SubModTmp.part,')')
+                    
                     if (SubModTmp.status.power != undefined && SubModTmp.status.index != undefined && SubModTmp.address<256) {
                         // Writing datas to database
-                        console.log("📀 SENDING TO DB : ", SubModTmp.address, SubModTmp.part, eventDate, SubModTmp.status.index, SubModTmp.status.power)
+                        lastSubModuleTime = new Date(SubModTmp.status.timestamp)
+                        eventDate=TimeStamp2Date(lastSubModuleTime)
                         writeEnergy([SubModTmp.address, SubModTmp.part, eventDate, SubModTmp.status.index, SubModTmp.status.power])
+                        console.log(`📀 STORE IN DB:  ${SubModTmp.address}-${SubModTmp.part} \t${SubModTmp.status.power}w \tINDEX: ${SubModTmp.status.index} \ton ${eventDate}`)
                     }
                 }
+                // Search for Velbus module able to manage energy counting
+                if (SubModTmp.cat.includes("temp") && SubModTmp.address < 256) {
+                    velbuslib.VMBRequestTemp(SubModTmp.address, SubModTmp.part)
+                    .then((subModuleStatus) => {
+                        if (subModuleStatus) {
+                            let texte = `${SubModTmp.address}-${SubModTmp.part}: [${SubModTmp.name}]`
+                            console.log("VMBRequestTemp read:", texte, subModuleStatus.defaultStatus+"°C", TimeStamp2Date(new Date(subModuleStatus.timestamp)))
+                        }
+                    })
+                    /* TODO adapter pour temperature
+                    if (SubModTmp.status.power != undefined && SubModTmp.status.index != undefined && SubModTmp.address<256) {
+                        // Writing datas to database
+                        lastSubModuleTime = new Date(SubModTmp.status.timestamp)
+                        eventDate=TimeStamp2Date(lastSubModuleTime)
+                        writeEnergy([SubModTmp.address, SubModTmp.part, eventDate, SubModTmp.status.index, SubModTmp.status.power])
+                        console.log(`📀 STORE IN DB:  ${SubModTmp.address}-${SubModTmp.part} \t${SubModTmp.status.power}w \tINDEX: ${SubModTmp.status.index} \ton ${eventDate}`)
+                    }
+                    */
+                }   
             } catch {
-                console.error("No energy module in list")
+                console.error("❌ No energy module in list")
             }
         })
     }
@@ -205,4 +223,13 @@ function isDaylightSavingTime(date = new Date()) {
 
     // Si le décalage actuel est inférieur au décalage standard, on est en heure d'été
     return date.getTimezoneOffset() < standardTimezoneOffset;
+}
+
+/**
+ * Convert a date (number) to a string "AAAA-"
+ * @param {*} theDate element like new Date()
+ * @returns String
+ */
+function TimeStamp2Date(TS = new Date()) {
+    return `${TS.getFullYear()}-${String(TS.getMonth() + 1).padStart(2, '0')}-${String(TS.getDate()).padStart(2, '0')} ${String(TS.getHours()).padStart(2, '0')}:${String(TS.getMinutes()).padStart(2, '0')}:${String(TS.getSeconds()).padStart(2, '0')}`
 }

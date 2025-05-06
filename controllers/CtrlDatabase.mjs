@@ -14,7 +14,7 @@ async function readPowerDay(dateIN, dateOUT) {
 }
 
 async function writeEnergy(req) {
-  console.log("WriteEnergy : ",req)
+  // console.log("WriteEnergy : ",req)
   return DB.SQLsetEnergy(req)
 }
 

@@ -494,7 +494,7 @@ function analyze2Texte(element) {
  * -------------------------------------------------------------------------------------------------*/
 async function VMBWrite(req) {
 	if (DEBUG) {
-		console.log('\x1b[32m', "VelbusLib writing", '\x1b[0m', toHexa(req).join())
+		// console.log('\x1b[32m', "VelbusLib writing", '\x1b[0m', toHexa(req).join())
 	}
 	VelbusConnexion.write(req);
 	await sleep(10)
@@ -615,15 +615,18 @@ async function sleep(timeout) {
 function surveyTempStatus() {
 	VMBEmitter.on("TempStatus", (msg) => {
 		if (msg.RAW[4] == 0xE6) {
-			let currentT = TempCurrentCalculation(msg.RAW)
-			let minT = TempMinCalculation(msg.RAW)
-			let maxT = TempMaxCalculation(msg.RAW)
+			let currentTemperature = TempCurrentCalculation(msg.RAW)
+			let minTemperature = TempMinCalculation(msg.RAW)
+			let maxTemperature = TempMaxCalculation(msg.RAW)
 			let key = msg.RAW[2] + "-1"
-			let status = { "current": currentT, "min": minT, "max": maxT, "timestamp": Date.now() }
+			let status = { "defaultStatus": currentTemperature, "current": currentTemperature, "min": minTemperature, "max": maxTemperature, "timestamp": Date.now() }
+
 			// ajout pour gestion avec subModuleList
 			let subModTemp = subModuleList.get(key)
 			if (subModTemp) {
 				subModTemp.status = status
+				subModuleList.set(key, subModTemp)
+				console.log("Temp reading... ", key, subModTemp.status.defaultStatus)
 				if (subModTemp.name == undefined) {
 					// if it has no name, ask it
 					VMBWrite(FrameRequestName(msg.RAW[2], 1))
@@ -643,7 +646,7 @@ async function VMBRequestTemp(adr, part) {
 	await sleep(200);
 	let result = VMBTempStatus.get(adr + "-" + part)
 	if (result != undefined) return result;
-	return { "currentT": 1000, "min": 1000, "max": 1000, "timestamp": Date.now() };
+	return { "defaultStatus": 1000, "current": 1000, "min": 1000, "max": 1000, "timestamp": Date.now() };
 
 }
 
@@ -659,7 +662,7 @@ function surveyEnergyStatus() {
 			let addr = msg.RAW[2]
 			let part = (msg.RAW[5] & 3) + 1
 			let key = addr + "-" + part
-			let status = { "index": rawcounter, "power": power, "timestamp": Date.now() }
+			let status = { "defaultStatus":power, "index": rawcounter, "power": power, "timestamp": Date.now() }
 
 			// ajout pour gestion avec subModuleList
 			let subModTmp = subModuleList.get(key)

@@ -120,7 +120,7 @@ export function parseScheduleFile(filePath) {
 
         return schedule;
     } catch (error) {
-        console.error('Error while reading or parsing the file: ', error.message);
+        console.error('❌ Command_Parser: Error while reading or parsing the file: ', error.message);
         return [];
     }
 }

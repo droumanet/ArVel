@@ -3,6 +3,8 @@
 // ==================================================================================
 
 import * as VMB from './velbuslib_constant.js'
+import * as Velbus from './velbuslib_generic.mjs'
+import { Part2Bin } from './velbuslib.js';
 
 const FrameRequestTemp = (addr, part=1, interval=0) => {
 	let trame = new Uint8Array(8);
@@ -12,7 +14,7 @@ const FrameRequestTemp = (addr, part=1, interval=0) => {
 	trame[3] = 0x02;    // len 1, RTR off
 	trame[4] = 0xE5;     // request Temp function
 	trame[5] = interval;
-	trame[6] = VMB.CheckSum(trame, 0);
+	trame[6] = Velbus.CheckSum(trame, 0);
 	trame[7] = VMB.EndX;
 	return trame;
 }
