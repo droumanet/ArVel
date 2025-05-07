@@ -97,7 +97,7 @@ let everyDay23h59 = schedule.scheduleJob('50 59 23 */1 * *', () => {
 
     if (velbuslib.getSubModuleList('300-1') != undefined) {
         let date = new Date();
-        date = date.getFullYear() + '-' + pad(date.getMonth() + 1) + '-' + pad(date.getDate())
+        date = TimeStamp2Date(date)
 
         // date, indexHP, indexHC, indexProd, powerProdmax, powerConsoMax, powerProdConso
 
@@ -190,8 +190,7 @@ let everyMinut = schedule.scheduleJob('*/1 * * * *', () => {
                     velbuslib.VMBRequestTemp(SubModTmp.address, SubModTmp.part)
                     .then((subModuleStatus) => {
                         if (subModuleStatus) {
-                            let texte = `${SubModTmp.address}-${SubModTmp.part}: [${SubModTmp.name}]`
-                            console.log(`Temp read: ${texte} \t${subModuleStatus.defaultStatus}°C, \t${TimeStamp2Date(new Date(subModuleStatus.timestamp))}`)
+                            console.log(`Temp read: ${SubModTmp.address}-${SubModTmp.part}: \t${subModuleStatus.defaultStatus}°C [${SubModTmp.name}] \t${TimeStamp2Date(new Date(subModuleStatus.timestamp))}`)
                         }
                     })
                     /* TODO adapter pour temperature

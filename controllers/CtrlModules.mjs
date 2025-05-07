@@ -35,9 +35,16 @@ export function getModules(req, res) {
 }
 
 export function scanModules(req, res) {
-  velbuslib.VMBscanAll()
-
-  const mapObj = {"Message":"Scan launched", "Error":0}
+  let filter = req.query;
+  let mapObj = {}
+  if (filter.addr) {
+    velbuslib.VMBscanAll(filter.addr)
+    mapObj = {"Message":`Scan launched on ${filter.addr}`, "Error":0}
+  } else if (!filter) {
+    velbuslib.VMBscanAll()
+    mapObj = {"Message":`Scan launched on ALL modules`, "Error":0}
+  }
+  
   res.setHeader('content-type', 'application/json')
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
