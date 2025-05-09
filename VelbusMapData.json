@@ -1515,7 +1515,7 @@
         "part": 1,
         "id": "1-1",
         "hexId": "01-1",
-        "name": "",
+        "name": "PC-Ch. Parents",
         "type": 8,
         "cat": [
           "relay"
@@ -1532,7 +1532,7 @@
         "part": 2,
         "id": "1-2",
         "hexId": "01-2",
-        "name": "",
+        "name": "PC-Cuisine",
         "type": 8,
         "cat": [
           "relay"
@@ -1549,7 +1549,7 @@
         "part": 3,
         "id": "1-3",
         "hexId": "01-3",
-        "name": "",
+        "name": "X",
         "type": 8,
         "cat": [
           "relay"
@@ -1566,7 +1566,7 @@
         "part": 4,
         "id": "1-4",
         "hexId": "01-4",
-        "name": "",
+        "name": "Hotte",
         "type": 8,
         "cat": [
           "relay"
@@ -1583,7 +1583,7 @@
         "part": 1,
         "id": "2-1",
         "hexId": "02-1",
-        "name": "",
+        "name": "PC-Extérieur",
         "type": 8,
         "cat": [
           "relay"
@@ -1600,7 +1600,7 @@
         "part": 2,
         "id": "2-2",
         "hexId": "02-2",
-        "name": "",
+        "name": "PC-Salon & SàM",
         "type": 8,
         "cat": [
           "relay"
@@ -1617,7 +1617,7 @@
         "part": 3,
         "id": "2-3",
         "hexId": "02-3",
-        "name": "",
+        "name": "PC-SdB RdC",
         "type": 8,
         "cat": [
           "relay"
@@ -1634,7 +1634,7 @@
         "part": 4,
         "id": "2-4",
         "hexId": "02-4",
-        "name": "",
+        "name": "PC-Bureau",
         "type": 8,
         "cat": [
           "relay"
@@ -1651,7 +1651,7 @@
         "part": 1,
         "id": "4-1",
         "hexId": "04-1",
-        "name": "",
+        "name": "Chaudiere ECO",
         "type": 8,
         "cat": [
           "relay"
@@ -1668,7 +1668,7 @@
         "part": 2,
         "id": "4-2",
         "hexId": "04-2",
-        "name": "",
+        "name": "Chaudiere TA",
         "type": 8,
         "cat": [
           "relay"
@@ -1685,7 +1685,7 @@
         "part": 3,
         "id": "4-3",
         "hexId": "04-3",
-        "name": "",
+        "name": "FP Chambre",
         "type": 8,
         "cat": [
           "relay"
@@ -1702,7 +1702,7 @@
         "part": 4,
         "id": "4-4",
         "hexId": "04-4",
-        "name": "",
+        "name": "FP SdB",
         "type": 8,
         "cat": [
           "relay"
@@ -1719,17 +1719,17 @@
         "part": 1,
         "id": "6-1",
         "hexId": "06-1",
-        "name": "",
+        "name": "conso PAC",
         "type": 34,
         "cat": [
           "energy",
           "input"
         ],
         "status": {
-          "defaultStatus": 77.3,
-          "index": 25699.108,
-          "power": 77.3,
-          "timestamp": 1746651794086
+          "defaultStatus": 77.2,
+          "index": 25707.619,
+          "power": 77.2,
+          "timestamp": 1746764527312
         },
         "room": "",
         "zone": []
@@ -1742,7 +1742,7 @@
         "part": 2,
         "id": "6-2",
         "hexId": "06-2",
-        "name": "",
+        "name": "conso Radiat-A-B",
         "type": 34,
         "cat": [
           "energy",
@@ -1750,9 +1750,9 @@
         ],
         "status": {
           "defaultStatus": 0,
-          "index": 3553.584,
+          "index": 3553.585,
           "power": 0,
-          "timestamp": 1746651794096
+          "timestamp": 1746764527321
         },
         "room": "",
         "zone": []
@@ -1765,7 +1765,7 @@
         "part": 3,
         "id": "6-3",
         "hexId": "06-3",
-        "name": "",
+        "name": "conso voiture",
         "type": 34,
         "cat": [
           "energy",
@@ -1773,9 +1773,9 @@
         ],
         "status": {
           "defaultStatus": 0,
-          "index": 11875.483,
+          "index": 11903.426,
           "power": 0,
-          "timestamp": 1746651794105
+          "timestamp": 1746764527331
         },
         "room": "",
         "zone": []
@@ -1788,7 +1788,7 @@
         "part": 4,
         "id": "6-4",
         "hexId": "06-4",
-        "name": "",
+        "name": "Kw_Y",
         "type": 34,
         "cat": [
           "energy",
@@ -1798,7 +1798,7 @@
           "defaultStatus": 0,
           "index": 0,
           "power": 0,
-          "timestamp": 1746651794113
+          "timestamp": 1746764527340
         },
         "room": "",
         "zone": []
@@ -1811,7 +1811,7 @@
         "part": 5,
         "id": "6-5",
         "hexId": "06-5",
-        "name": "",
+        "name": "dtr_couloir RdC",
         "type": 34,
         "cat": [
           "input"
@@ -1828,7 +1828,7 @@
         "part": 6,
         "id": "6-6",
         "hexId": "06-6",
-        "name": "",
+        "name": "dtr_Ext. HLM",
         "type": 34,
         "cat": [
           "input"
@@ -1845,7 +1845,7 @@
         "part": 7,
         "id": "6-7",
         "hexId": "06-7",
-        "name": "",
+        "name": "dtr_porte_garage",
         "type": 34,
         "cat": [
           "input"
@@ -1862,7 +1862,7 @@
         "part": 1,
         "id": "7-1",
         "hexId": "07-1",
-        "name": "",
+        "name": "P-Garage",
         "type": 8,
         "cat": [
           "relay"
@@ -1879,7 +1879,7 @@
         "part": 2,
         "id": "7-2",
         "hexId": "07-2",
-        "name": "",
+        "name": "L-Ext. Garage",
         "type": 8,
         "cat": [
           "relay"
@@ -1896,7 +1896,7 @@
         "part": 3,
         "id": "7-3",
         "hexId": "07-3",
-        "name": "",
+        "name": "L-Comble",
         "type": 8,
         "cat": [
           "relay"
@@ -1913,7 +1913,7 @@
         "part": 4,
         "id": "7-4",
         "hexId": "07-4",
-        "name": "",
+        "name": "L-Cuisine (M)",
         "type": 8,
         "cat": [
           "relay"
@@ -1930,7 +1930,7 @@
         "part": 1,
         "id": "8-1",
         "hexId": "08-1",
-        "name": "",
+        "name": "P-Portail",
         "type": 17,
         "cat": [
           "relay"
@@ -1947,7 +1947,7 @@
         "part": 2,
         "id": "8-2",
         "hexId": "08-2",
-        "name": "",
+        "name": "Relais 2",
         "type": 17,
         "cat": [
           "relay"
@@ -1964,7 +1964,7 @@
         "part": 3,
         "id": "8-3",
         "hexId": "08-3",
-        "name": "",
+        "name": "Relais 3",
         "type": 17,
         "cat": [
           "relay"
@@ -1981,7 +1981,7 @@
         "part": 4,
         "id": "8-4",
         "hexId": "08-4",
-        "name": "",
+        "name": "Relais 4",
         "type": 17,
         "cat": [
           "relay"
@@ -1998,7 +1998,7 @@
         "part": 1,
         "id": "11-1",
         "hexId": "0B-1",
-        "name": "",
+        "name": "L-Salon (S)",
         "type": 8,
         "cat": [
           "relay"
@@ -2015,7 +2015,7 @@
         "part": 2,
         "id": "11-2",
         "hexId": "0B-2",
-        "name": "",
+        "name": "L-Chambre/Placa",
         "type": 8,
         "cat": [
           "relay"
@@ -2032,7 +2032,7 @@
         "part": 3,
         "id": "11-3",
         "hexId": "0B-3",
-        "name": "",
+        "name": "L-SàM (M)",
         "type": 8,
         "cat": [
           "relay"
@@ -2049,7 +2049,7 @@
         "part": 4,
         "id": "11-4",
         "hexId": "0B-4",
-        "name": "",
+        "name": "L-Bureau (M)",
         "type": 8,
         "cat": [
           "relay"
@@ -2066,7 +2066,7 @@
         "part": 1,
         "id": "12-1",
         "hexId": "0C-1",
-        "name": "",
+        "name": "L-Buanderie",
         "type": 8,
         "cat": [
           "relay"
@@ -2083,7 +2083,7 @@
         "part": 2,
         "id": "12-2",
         "hexId": "0C-2",
-        "name": "",
+        "name": "L-SdB (M)",
         "type": 8,
         "cat": [
           "relay"
@@ -2100,7 +2100,7 @@
         "part": 3,
         "id": "12-3",
         "hexId": "0C-3",
-        "name": "",
+        "name": "L-Ch. Par. (M)",
         "type": 8,
         "cat": [
           "relay"
@@ -2117,7 +2117,7 @@
         "part": 4,
         "id": "12-4",
         "hexId": "0C-4",
-        "name": "",
+        "name": "L-SàM (S)",
         "type": 8,
         "cat": [
           "relay"
@@ -2134,7 +2134,7 @@
         "part": 1,
         "id": "13-1",
         "hexId": "0D-1",
-        "name": "",
+        "name": "D-Chevet Béa",
         "type": 7,
         "cat": [
           "dimmer"
@@ -2151,7 +2151,7 @@
         "part": 1,
         "id": "14-1",
         "hexId": "0E-1",
-        "name": "",
+        "name": "D-Chevet David",
         "type": 7,
         "cat": [
           "dimmer"
@@ -2168,7 +2168,7 @@
         "part": 1,
         "id": "16-1",
         "hexId": "10-1",
-        "name": "",
+        "name": "L-Garage",
         "type": 8,
         "cat": [
           "relay"
@@ -2185,7 +2185,7 @@
         "part": 2,
         "id": "16-2",
         "hexId": "10-2",
-        "name": "",
+        "name": "L-SdB (S)",
         "type": 8,
         "cat": [
           "relay"
@@ -2202,7 +2202,7 @@
         "part": 3,
         "id": "16-3",
         "hexId": "10-3",
-        "name": "",
+        "name": "L-Terrasse",
         "type": 8,
         "cat": [
           "relay"
@@ -2219,7 +2219,7 @@
         "part": 4,
         "id": "16-4",
         "hexId": "10-4",
-        "name": "",
+        "name": "L-Cuisine BAR",
         "type": 8,
         "cat": [
           "relay"
@@ -2236,7 +2236,7 @@
         "part": 1,
         "id": "17-1",
         "hexId": "11-1",
-        "name": "",
+        "name": "D-Salon",
         "type": 20,
         "cat": [
           "dimmer"
@@ -2253,7 +2253,7 @@
         "part": 1,
         "id": "18-1",
         "hexId": "12-1",
-        "name": "",
+        "name": "D-Bureau",
         "type": 47,
         "cat": [
           "unknown"
@@ -2270,7 +2270,7 @@
         "part": 1,
         "id": "19-1",
         "hexId": "13-1",
-        "name": "",
+        "name": "D-WC-RdC",
         "type": 7,
         "cat": [
           "dimmer"
@@ -2287,7 +2287,7 @@
         "part": 1,
         "id": "20-1",
         "hexId": "14-1",
-        "name": "",
+        "name": "D-Couloir",
         "type": 7,
         "cat": [
           "dimmer"
@@ -2304,7 +2304,7 @@
         "part": 1,
         "id": "33-1",
         "hexId": "21-1",
-        "name": "",
+        "name": "V-SàM",
         "type": 9,
         "cat": [
           "blind"
@@ -2321,7 +2321,7 @@
         "part": 2,
         "id": "33-2",
         "hexId": "21-2",
-        "name": "",
+        "name": "V-Ch. Amis",
         "type": 9,
         "cat": [
           "blind"
@@ -2338,7 +2338,7 @@
         "part": 1,
         "id": "34-1",
         "hexId": "22-1",
-        "name": "",
+        "name": "V-Salon Sud",
         "type": 9,
         "cat": [
           "blind"
@@ -2355,7 +2355,7 @@
         "part": 2,
         "id": "34-2",
         "hexId": "22-2",
-        "name": "",
+        "name": "V-Salon Est",
         "type": 9,
         "cat": [
           "blind"
@@ -2372,7 +2372,7 @@
         "part": 1,
         "id": "35-1",
         "hexId": "23-1",
-        "name": "",
+        "name": "V-Cuisine Sud",
         "type": 9,
         "cat": [
           "blind"
@@ -2389,7 +2389,7 @@
         "part": 2,
         "id": "35-2",
         "hexId": "23-2",
-        "name": "",
+        "name": "V-Cuisine Ouest",
         "type": 9,
         "cat": [
           "blind"
@@ -2406,7 +2406,7 @@
         "part": 1,
         "id": "37-1",
         "hexId": "25-1",
-        "name": "",
+        "name": "V-Ch Alexandre",
         "type": 9,
         "cat": [
           "blind"
@@ -2423,7 +2423,7 @@
         "part": 2,
         "id": "37-2",
         "hexId": "25-2",
-        "name": "",
+        "name": "V-Grenier (Est)",
         "type": 9,
         "cat": [
           "blind"
@@ -2440,7 +2440,7 @@
         "part": 1,
         "id": "38-1",
         "hexId": "26-1",
-        "name": "",
+        "name": "PC-SdB-1er",
         "type": 8,
         "cat": [
           "relay"
@@ -2457,7 +2457,7 @@
         "part": 2,
         "id": "38-2",
         "hexId": "26-2",
-        "name": "",
+        "name": "L-Ext fort(1er)",
         "type": 8,
         "cat": [
           "relay"
@@ -2474,7 +2474,7 @@
         "part": 3,
         "id": "38-3",
         "hexId": "26-3",
-        "name": "",
+        "name": "L-SdB(M)",
         "type": 8,
         "cat": [
           "relay"
@@ -2491,7 +2491,7 @@
         "part": 4,
         "id": "38-4",
         "hexId": "26-4",
-        "name": "",
+        "name": "L-Balcon",
         "type": 8,
         "cat": [
           "relay"
@@ -2508,7 +2508,7 @@
         "part": 1,
         "id": "39-1",
         "hexId": "27-1",
-        "name": "",
+        "name": "PC-Ch. Alexandr",
         "type": 8,
         "cat": [
           "relay"
@@ -2525,7 +2525,7 @@
         "part": 2,
         "id": "39-2",
         "hexId": "27-2",
-        "name": "",
+        "name": "PC-Ch. Amis (CH",
         "type": 8,
         "cat": [
           "relay"
@@ -2542,7 +2542,7 @@
         "part": 3,
         "id": "39-3",
         "hexId": "27-3",
-        "name": "",
+        "name": "PC-Ch. Bastien",
         "type": 8,
         "cat": [
           "relay"
@@ -2559,7 +2559,7 @@
         "part": 4,
         "id": "39-4",
         "hexId": "27-4",
-        "name": "",
+        "name": "PC-Grenier",
         "type": 8,
         "cat": [
           "relay"
@@ -2576,7 +2576,7 @@
         "part": 1,
         "id": "41-1",
         "hexId": "29-1",
-        "name": "",
+        "name": "L-Ch. Amis (M)",
         "type": 8,
         "cat": [
           "relay"
@@ -2593,7 +2593,7 @@
         "part": 2,
         "id": "41-2",
         "hexId": "29-2",
-        "name": "",
+        "name": "L-Ch. Alex (M)",
         "type": 8,
         "cat": [
           "relay"
@@ -2610,7 +2610,7 @@
         "part": 3,
         "id": "41-3",
         "hexId": "29-3",
-        "name": "",
+        "name": "L-Ch Bastien (M",
         "type": 8,
         "cat": [
           "relay"
@@ -2627,7 +2627,7 @@
         "part": 4,
         "id": "41-4",
         "hexId": "29-4",
-        "name": "",
+        "name": "L-SdB 1er (S)",
         "type": 8,
         "cat": [
           "relay"
@@ -2644,7 +2644,7 @@
         "part": 1,
         "id": "42-1",
         "hexId": "2A-1",
-        "name": "",
+        "name": "D-Chevet-Alex.",
         "type": 7,
         "cat": [
           "dimmer"
@@ -2661,7 +2661,7 @@
         "part": 1,
         "id": "43-1",
         "hexId": "2B-1",
-        "name": "",
+        "name": "D-Chevet-Bast.",
         "type": 20,
         "cat": [
           "dimmer"
@@ -2678,7 +2678,7 @@
         "part": 1,
         "id": "44-1",
         "hexId": "2C-1",
-        "name": "",
+        "name": "V-Ch Bastien",
         "type": 9,
         "cat": [
           "blind"
@@ -2695,7 +2695,7 @@
         "part": 2,
         "id": "44-2",
         "hexId": "2C-2",
-        "name": "",
+        "name": "Store Extérieur",
         "type": 9,
         "cat": [
           "blind"
@@ -2712,7 +2712,7 @@
         "part": 1,
         "id": "46-1",
         "hexId": "2E-1",
-        "name": "",
+        "name": "L-Gre-Bureau",
         "type": 8,
         "cat": [
           "relay"
@@ -2729,7 +2729,7 @@
         "part": 2,
         "id": "46-2",
         "hexId": "2E-2",
-        "name": "",
+        "name": "L-Couloir 1er",
         "type": 8,
         "cat": [
           "relay"
@@ -2746,7 +2746,7 @@
         "part": 3,
         "id": "46-3",
         "hexId": "2E-3",
-        "name": "",
+        "name": "L-WC 1er",
         "type": 8,
         "cat": [
           "relay"
@@ -2763,7 +2763,7 @@
         "part": 4,
         "id": "46-4",
         "hexId": "2E-4",
-        "name": "",
+        "name": "L-Ch amis (Ch)",
         "type": 8,
         "cat": [
           "relay"
@@ -2780,7 +2780,7 @@
         "part": 1,
         "id": "47-1",
         "hexId": "2F-1",
-        "name": "",
+        "name": "FP Alex",
         "type": 17,
         "cat": [
           "relay"
@@ -2797,7 +2797,7 @@
         "part": 2,
         "id": "47-2",
         "hexId": "2F-2",
-        "name": "",
+        "name": "FP Bastien",
         "type": 17,
         "cat": [
           "relay"
@@ -2814,7 +2814,7 @@
         "part": 3,
         "id": "47-3",
         "hexId": "2F-3",
-        "name": "",
+        "name": "FP Amis",
         "type": 17,
         "cat": [
           "relay"
@@ -2831,7 +2831,7 @@
         "part": 4,
         "id": "47-4",
         "hexId": "2F-4",
-        "name": "",
+        "name": "FP Grenier",
         "type": 17,
         "cat": [
           "relay"
@@ -2848,7 +2848,7 @@
         "part": 1,
         "id": "52-1",
         "hexId": "34-1",
-        "name": "",
+        "name": "R_CTRL-Volets",
         "type": 17,
         "cat": [
           "relay"
@@ -2865,7 +2865,7 @@
         "part": 2,
         "id": "52-2",
         "hexId": "34-2",
-        "name": "",
+        "name": "(libre)",
         "type": 17,
         "cat": [
           "relay"
@@ -2882,7 +2882,7 @@
         "part": 3,
         "id": "52-3",
         "hexId": "34-3",
-        "name": "",
+        "name": "L_Portail_Ext",
         "type": 17,
         "cat": [
           "relay"
@@ -2899,7 +2899,7 @@
         "part": 4,
         "id": "52-4",
         "hexId": "34-4",
-        "name": "",
+        "name": "Relay 4",
         "type": 17,
         "cat": [
           "relay"
@@ -2916,7 +2916,7 @@
         "part": 1,
         "id": "53-1",
         "hexId": "35-1",
-        "name": "",
+        "name": "V-Grenier_velux",
         "type": 9,
         "cat": [
           "blind"
@@ -2933,7 +2933,7 @@
         "part": 2,
         "id": "53-2",
         "hexId": "35-2",
-        "name": "",
+        "name": "V-Puit_velux",
         "type": 9,
         "cat": [
           "blind"
@@ -2950,7 +2950,7 @@
         "part": 1,
         "id": "54-1",
         "hexId": "36-1",
-        "name": "",
+        "name": "ALM_Sirene_Lo-H",
         "type": 9,
         "cat": [
           "blind"
@@ -2967,7 +2967,7 @@
         "part": 2,
         "id": "54-2",
         "hexId": "36-2",
-        "name": "",
+        "name": "Volet Baie (seco",
         "type": 9,
         "cat": [
           "blind"
@@ -2984,7 +2984,7 @@
         "part": 1,
         "id": "55-1",
         "hexId": "37-1",
-        "name": "",
+        "name": "V-Ch. Parents",
         "type": 9,
         "cat": [
           "blind"
@@ -3001,7 +3001,7 @@
         "part": 2,
         "id": "55-2",
         "hexId": "37-2",
-        "name": "",
+        "name": "V-Bureau",
         "type": 9,
         "cat": [
           "blind"
@@ -3018,7 +3018,7 @@
         "part": 1,
         "id": "56-1",
         "hexId": "38-1",
-        "name": "",
+        "name": "FP SdB",
         "type": 8,
         "cat": [
           "relay"
@@ -3035,7 +3035,7 @@
         "part": 2,
         "id": "56-2",
         "hexId": "38-2",
-        "name": "",
+        "name": "VMC Boost",
         "type": 8,
         "cat": [
           "relay"
@@ -3052,7 +3052,7 @@
         "part": 3,
         "id": "56-3",
         "hexId": "38-3",
-        "name": "",
+        "name": "(libre)",
         "type": 8,
         "cat": [
           "relay"
@@ -3069,7 +3069,7 @@
         "part": 4,
         "id": "56-4",
         "hexId": "38-4",
-        "name": "",
+        "name": "(libre)",
         "type": 8,
         "cat": [
           "relay"
@@ -3086,7 +3086,7 @@
         "part": 1,
         "id": "57-1",
         "hexId": "39-1",
-        "name": "",
+        "name": "dtr_Garage",
         "type": 5,
         "cat": [
           "button",
@@ -3104,7 +3104,7 @@
         "part": 2,
         "id": "57-2",
         "hexId": "39-2",
-        "name": "",
+        "name": "dtr_Grenier",
         "type": 5,
         "cat": [
           "button",
@@ -3122,7 +3122,7 @@
         "part": 3,
         "id": "57-3",
         "hexId": "39-3",
-        "name": "",
+        "name": "dtr_Buanderie",
         "type": 5,
         "cat": [
           "button",
@@ -3140,7 +3140,7 @@
         "part": 4,
         "id": "57-4",
         "hexId": "39-4",
-        "name": "",
+        "name": "IN4-empty",
         "type": 5,
         "cat": [
           "button",
@@ -3158,7 +3158,7 @@
         "part": 5,
         "id": "57-5",
         "hexId": "39-5",
-        "name": "",
+        "name": "IN5-empty",
         "type": 5,
         "cat": [
           "button",
@@ -3176,7 +3176,7 @@
         "part": 6,
         "id": "57-6",
         "hexId": "39-6",
-        "name": "",
+        "name": "IN6-empty",
         "type": 5,
         "cat": [
           "button",
@@ -3194,7 +3194,7 @@
         "part": 1,
         "id": "64-1",
         "hexId": "40-1",
-        "name": "",
+        "name": "conso Clim 1er",
         "type": 34,
         "cat": [
           "energy",
@@ -3202,9 +3202,9 @@
         ],
         "status": {
           "defaultStatus": 0,
-          "index": 1781.177,
+          "index": 1781.385,
           "power": 0,
-          "timestamp": 1746651789204
+          "timestamp": 1746764520275
         },
         "room": "",
         "zone": []
@@ -3217,17 +3217,17 @@
         "part": 2,
         "id": "64-2",
         "hexId": "40-2",
-        "name": "",
+        "name": "conso Domotique",
         "type": 34,
         "cat": [
           "energy",
           "input"
         ],
         "status": {
-          "defaultStatus": 107.2,
-          "index": 4674.802,
-          "power": 107.2,
-          "timestamp": 1746651789214
+          "defaultStatus": 108.6,
+          "index": 4678.031,
+          "power": 108.6,
+          "timestamp": 1746764520335
         },
         "room": "",
         "zone": []
@@ -3240,7 +3240,7 @@
         "part": 3,
         "id": "64-3",
         "hexId": "40-3",
-        "name": "",
+        "name": "Bouton 3",
         "type": 34,
         "cat": [
           "energy",
@@ -3258,7 +3258,7 @@
         "part": 4,
         "id": "64-4",
         "hexId": "40-4",
-        "name": "",
+        "name": "Bouton 4",
         "type": 34,
         "cat": [
           "energy",
@@ -3276,7 +3276,7 @@
         "part": 5,
         "id": "64-5",
         "hexId": "40-5",
-        "name": "",
+        "name": "Bouton 5",
         "type": 34,
         "cat": [
           "input"
@@ -3293,7 +3293,7 @@
         "part": 6,
         "id": "64-6",
         "hexId": "40-6",
-        "name": "",
+        "name": "Bouton 6",
         "type": 34,
         "cat": [
           "input"
@@ -3310,7 +3310,7 @@
         "part": 7,
         "id": "64-7",
         "hexId": "40-7",
-        "name": "",
+        "name": "Bouton 7",
         "type": 34,
         "cat": [
           "input"
@@ -3327,7 +3327,7 @@
         "part": 1,
         "id": "65-1",
         "hexId": "41-1",
-        "name": "",
+        "name": "PC-Piscine",
         "type": 17,
         "cat": [
           "relay"
@@ -3344,7 +3344,7 @@
         "part": 2,
         "id": "65-2",
         "hexId": "41-2",
-        "name": "",
+        "name": "L-Ext.Sol",
         "type": 17,
         "cat": [
           "relay"
@@ -3361,7 +3361,7 @@
         "part": 3,
         "id": "65-3",
         "hexId": "41-3",
-        "name": "",
+        "name": "Relais 3",
         "type": 17,
         "cat": [
           "relay"
@@ -3378,7 +3378,7 @@
         "part": 4,
         "id": "65-4",
         "hexId": "41-4",
-        "name": "",
+        "name": "Relais 4",
         "type": 17,
         "cat": [
           "relay"
@@ -3395,17 +3395,17 @@
         "part": 1,
         "id": "113-1",
         "hexId": "71-1",
-        "name": "",
+        "name": "T-Ch. Parents",
         "type": 12,
         "cat": [
           "temp"
         ],
         "status": {
-          "defaultStatus": 21.6,
-          "current": 21.6,
+          "defaultStatus": 22.3,
+          "current": 22.3,
           "min": 19.3,
           "max": 26.6,
-          "timestamp": 1746651780532
+          "timestamp": 1746764520521
         },
         "room": "",
         "zone": []
@@ -3418,7 +3418,7 @@
         "part": 1,
         "id": "114-1",
         "hexId": "72-1",
-        "name": "",
+        "name": "T-Salon",
         "type": 12,
         "cat": [
           "temp"
@@ -3428,7 +3428,7 @@
           "current": 21.2,
           "min": 20.2,
           "max": 26.8,
-          "timestamp": 1746651780593
+          "timestamp": 1746764520581
         },
         "room": "",
         "zone": []
@@ -3441,17 +3441,17 @@
         "part": 1,
         "id": "115-1",
         "hexId": "73-1",
-        "name": "",
+        "name": "T-SdB RdC",
         "type": 12,
         "cat": [
           "temp"
         ],
         "status": {
-          "defaultStatus": 23.2,
-          "current": 23.2,
+          "defaultStatus": 22.9,
+          "current": 22.9,
           "min": 20.2,
           "max": 27.6,
-          "timestamp": 1746651780653
+          "timestamp": 1746764520641
         },
         "room": "",
         "zone": []
@@ -3464,7 +3464,7 @@
         "part": 1,
         "id": "116-1",
         "hexId": "74-1",
-        "name": "",
+        "name": "T-Buanderie",
         "type": 12,
         "cat": [
           "temp"
@@ -3474,7 +3474,7 @@
           "current": 19.2,
           "min": 12.9,
           "max": 25.2,
-          "timestamp": 1746651780714
+          "timestamp": 1746764520701
         },
         "room": "",
         "zone": []
@@ -3487,17 +3487,17 @@
         "part": 1,
         "id": "118-1",
         "hexId": "76-1",
-        "name": "",
+        "name": "T-Baie Info",
         "type": 12,
         "cat": [
           "temp"
         ],
         "status": {
-          "defaultStatus": 22.6,
-          "current": 22.6,
+          "defaultStatus": 22.9,
+          "current": 22.9,
           "min": 13.9,
           "max": 30.5,
-          "timestamp": 1746651780776
+          "timestamp": 1746764520764
         },
         "room": "",
         "zone": []
@@ -3510,17 +3510,17 @@
         "part": 1,
         "id": "119-1",
         "hexId": "77-1",
-        "name": "",
+        "name": "T-Couloir-RdC",
         "type": 12,
         "cat": [
           "temp"
         ],
         "status": {
-          "defaultStatus": 19.4,
-          "current": 19.4,
+          "defaultStatus": 19.2,
+          "current": 19.2,
           "min": 18.5,
           "max": 22.9,
-          "timestamp": 1746651780835
+          "timestamp": 1746764520830
         },
         "room": "",
         "zone": []
@@ -3533,7 +3533,7 @@
         "part": 1,
         "id": "120-1",
         "hexId": "78-1",
-        "name": "",
+        "name": "T-Ch. Bastien",
         "type": 12,
         "cat": [
           "temp"
@@ -3543,7 +3543,7 @@
           "current": 20.1,
           "min": 16.1,
           "max": 28.6,
-          "timestamp": 1746651780894
+          "timestamp": 1746764520896
         },
         "room": "",
         "zone": []
@@ -3556,17 +3556,17 @@
         "part": 1,
         "id": "121-1",
         "hexId": "79-1",
-        "name": "",
+        "name": "T-Ch. Alexandre",
         "type": 12,
         "cat": [
           "temp"
         ],
         "status": {
-          "defaultStatus": 22.6,
-          "current": 22.6,
+          "defaultStatus": 20.8,
+          "current": 20.8,
           "min": 17.4,
           "max": 28.8,
-          "timestamp": 1746651780954
+          "timestamp": 1746764520942
         },
         "room": "",
         "zone": []
@@ -3579,17 +3579,17 @@
         "part": 1,
         "id": "122-1",
         "hexId": "7A-1",
-        "name": "",
+        "name": "T-Ch Amis",
         "type": 12,
         "cat": [
           "temp"
         ],
         "status": {
-          "defaultStatus": 19.8,
-          "current": 19.8,
+          "defaultStatus": 19.7,
+          "current": 19.7,
           "min": 17.6,
           "max": 28.1,
-          "timestamp": 1746651781015
+          "timestamp": 1746764521003
         },
         "room": "",
         "zone": []
@@ -3602,17 +3602,17 @@
         "part": 1,
         "id": "123-1",
         "hexId": "7B-1",
-        "name": "",
+        "name": "T-SdB 1er",
         "type": 12,
         "cat": [
           "temp"
         ],
         "status": {
-          "defaultStatus": 21.5,
-          "current": 21.5,
+          "defaultStatus": 21.9,
+          "current": 21.9,
           "min": 18.9,
           "max": 27.9,
-          "timestamp": 1746651781075
+          "timestamp": 1746764521063
         },
         "room": "",
         "zone": []
@@ -3625,17 +3625,17 @@
         "part": 1,
         "id": "124-1",
         "hexId": "7C-1",
-        "name": "",
+        "name": "T-Grenier",
         "type": 12,
         "cat": [
           "temp"
         ],
         "status": {
-          "defaultStatus": 22.2,
-          "current": 22.2,
+          "defaultStatus": 21.1,
+          "current": 21.1,
           "min": 19.5,
           "max": 26.8,
-          "timestamp": 1746651781135
+          "timestamp": 1746764521123
         },
         "room": "",
         "zone": []
@@ -3648,7 +3648,7 @@
         "part": 1,
         "id": "160-1",
         "hexId": "A0-1",
-        "name": "",
+        "name": "Dav_Chev-Dav.",
         "type": 11,
         "cat": [
           "button",
@@ -3666,7 +3666,7 @@
         "part": 2,
         "id": "160-2",
         "hexId": "A0-2",
-        "name": "",
+        "name": "Dav_V-Ch-Par.",
         "type": 11,
         "cat": [
           "button",
@@ -3684,7 +3684,7 @@
         "part": 3,
         "id": "160-3",
         "hexId": "A0-3",
-        "name": "",
+        "name": "Dav_L-Plafond",
         "type": 11,
         "cat": [
           "button",
@@ -3702,7 +3702,7 @@
         "part": 4,
         "id": "160-4",
         "hexId": "A0-4",
-        "name": "",
+        "name": "Dav_Prise",
         "type": 11,
         "cat": [
           "button",
@@ -3720,7 +3720,7 @@
         "part": 5,
         "id": "160-5",
         "hexId": "A0-5",
-        "name": "",
+        "name": "Dav_Chev-Alex",
         "type": 11,
         "cat": [
           "button",
@@ -3738,7 +3738,7 @@
         "part": 6,
         "id": "160-6",
         "hexId": "A0-6",
-        "name": "",
+        "name": "Dav_Chev-Bast",
         "type": 11,
         "cat": [
           "button",
@@ -3756,7 +3756,7 @@
         "part": 7,
         "id": "160-7",
         "hexId": "A0-7",
-        "name": "",
+        "name": "Dav_",
         "type": 11,
         "cat": [
           "button",
@@ -3774,7 +3774,7 @@
         "part": 8,
         "id": "160-8",
         "hexId": "A0-8",
-        "name": "",
+        "name": "Dav_Chev-Bea",
         "type": 11,
         "cat": [
           "button",
@@ -3792,7 +3792,7 @@
         "part": 1,
         "id": "162-1",
         "hexId": "A2-1",
-        "name": "",
+        "name": "Bea_Chev-Bea",
         "type": 11,
         "cat": [
           "button",
@@ -3810,7 +3810,7 @@
         "part": 2,
         "id": "162-2",
         "hexId": "A2-2",
-        "name": "",
+        "name": "Bea_V-Ch-par.",
         "type": 11,
         "cat": [
           "button",
@@ -3828,7 +3828,7 @@
         "part": 3,
         "id": "162-3",
         "hexId": "A2-3",
-        "name": "",
+        "name": "Bea_L-Plafond",
         "type": 11,
         "cat": [
           "button",
@@ -3846,7 +3846,7 @@
         "part": 4,
         "id": "162-4",
         "hexId": "A2-4",
-        "name": "",
+        "name": "Bea_Prise",
         "type": 11,
         "cat": [
           "button",
@@ -3864,7 +3864,7 @@
         "part": 5,
         "id": "162-5",
         "hexId": "A2-5",
-        "name": "",
+        "name": "Bea_GetUp",
         "type": 11,
         "cat": [
           "button",
@@ -3882,7 +3882,7 @@
         "part": 6,
         "id": "162-6",
         "hexId": "A2-6",
-        "name": "",
+        "name": "Bea_",
         "type": 11,
         "cat": [
           "button",
@@ -3900,7 +3900,7 @@
         "part": 7,
         "id": "162-7",
         "hexId": "A2-7",
-        "name": "",
+        "name": "Bea_All-Off",
         "type": 11,
         "cat": [
           "button",
@@ -3918,7 +3918,7 @@
         "part": 8,
         "id": "162-8",
         "hexId": "A2-8",
-        "name": "",
+        "name": "Bea_",
         "type": 11,
         "cat": [
           "button",
@@ -3936,7 +3936,7 @@
         "part": 1,
         "id": "163-1",
         "hexId": "A3-1",
-        "name": "",
+        "name": "Ch.Pa_L-plafond",
         "type": 1,
         "cat": [
           "button"
@@ -3953,7 +3953,7 @@
         "part": 2,
         "id": "163-2",
         "hexId": "A3-2",
-        "name": "",
+        "name": "Ch.Pa_Volet",
         "type": 1,
         "cat": [
           "button"
@@ -3970,7 +3970,7 @@
         "part": 3,
         "id": "163-3",
         "hexId": "A3-3",
-        "name": "",
+        "name": "Ch.Pa_Prise",
         "type": 1,
         "cat": [
           "button"
@@ -3987,7 +3987,7 @@
         "part": 4,
         "id": "163-4",
         "hexId": "A3-4",
-        "name": "",
+        "name": "Ch.Pa_Dress.",
         "type": 1,
         "cat": [
           "button"
@@ -4004,7 +4004,7 @@
         "part": 5,
         "id": "163-5",
         "hexId": "A3-5",
-        "name": "",
+        "name": "Ch.Pa",
         "type": 1,
         "cat": [
           "button"
@@ -4021,7 +4021,7 @@
         "part": 6,
         "id": "163-6",
         "hexId": "A3-6",
-        "name": "",
+        "name": "Ch.Pa",
         "type": 1,
         "cat": [
           "button"
@@ -4038,7 +4038,7 @@
         "part": 7,
         "id": "163-7",
         "hexId": "A3-7",
-        "name": "",
+        "name": "Ch.Pa",
         "type": 1,
         "cat": [
           "button"
@@ -4055,7 +4055,7 @@
         "part": 8,
         "id": "163-8",
         "hexId": "A3-8",
-        "name": "",
+        "name": "Ch.Pa",
         "type": 1,
         "cat": [
           "button"
@@ -4072,7 +4072,7 @@
         "part": 1,
         "id": "164-1",
         "hexId": "A4-1",
-        "name": "",
+        "name": "Salon_no",
         "type": 1,
         "cat": [
           "button"
@@ -4089,7 +4089,7 @@
         "part": 2,
         "id": "164-2",
         "hexId": "A4-2",
-        "name": "",
+        "name": "Salon_no",
         "type": 1,
         "cat": [
           "button"
@@ -4106,7 +4106,7 @@
         "part": 3,
         "id": "164-3",
         "hexId": "A4-3",
-        "name": "",
+        "name": "Salon_no",
         "type": 1,
         "cat": [
           "button"
@@ -4123,7 +4123,7 @@
         "part": 4,
         "id": "164-4",
         "hexId": "A4-4",
-        "name": "",
+        "name": "Salon_no",
         "type": 1,
         "cat": [
           "button"
@@ -4140,7 +4140,7 @@
         "part": 5,
         "id": "164-5",
         "hexId": "A4-5",
-        "name": "",
+        "name": "Salon_Prise",
         "type": 1,
         "cat": [
           "button"
@@ -4157,7 +4157,7 @@
         "part": 6,
         "id": "164-6",
         "hexId": "A4-6",
-        "name": "",
+        "name": "Salon_V-sud",
         "type": 1,
         "cat": [
           "button"
@@ -4174,7 +4174,7 @@
         "part": 7,
         "id": "164-7",
         "hexId": "A4-7",
-        "name": "",
+        "name": "Salon_V-Est",
         "type": 1,
         "cat": [
           "button"
@@ -4191,7 +4191,7 @@
         "part": 8,
         "id": "164-8",
         "hexId": "A4-8",
-        "name": "",
+        "name": "Salon_L-Ambia",
         "type": 1,
         "cat": [
           "button"
@@ -4208,7 +4208,7 @@
         "part": 1,
         "id": "165-1",
         "hexId": "A5-1",
-        "name": "",
+        "name": "Salon_L-Salon",
         "type": 11,
         "cat": [
           "button",
@@ -4226,7 +4226,7 @@
         "part": 2,
         "id": "165-2",
         "hexId": "A5-2",
-        "name": "",
+        "name": "Salon_V-Sud",
         "type": 11,
         "cat": [
           "button",
@@ -4244,7 +4244,7 @@
         "part": 3,
         "id": "165-3",
         "hexId": "A5-3",
-        "name": "",
+        "name": "Salon_PC-TV",
         "type": 11,
         "cat": [
           "button",
@@ -4262,7 +4262,7 @@
         "part": 4,
         "id": "165-4",
         "hexId": "A5-4",
-        "name": "",
+        "name": "Salon_Store",
         "type": 11,
         "cat": [
           "button",
@@ -4280,7 +4280,7 @@
         "part": 5,
         "id": "165-5",
         "hexId": "A5-5",
-        "name": "",
+        "name": "Salon_PC-Ext",
         "type": 11,
         "cat": [
           "button",
@@ -4298,7 +4298,7 @@
         "part": 6,
         "id": "165-6",
         "hexId": "A5-6",
-        "name": "",
+        "name": "Salon_(libre)",
         "type": 11,
         "cat": [
           "button",
@@ -4316,7 +4316,7 @@
         "part": 7,
         "id": "165-7",
         "hexId": "A5-7",
-        "name": "",
+        "name": "Salon_Piscine",
         "type": 11,
         "cat": [
           "button",
@@ -4334,7 +4334,7 @@
         "part": 8,
         "id": "165-8",
         "hexId": "A5-8",
-        "name": "",
+        "name": "Salon_V-Baie",
         "type": 11,
         "cat": [
           "button",
@@ -4352,7 +4352,7 @@
         "part": 1,
         "id": "167-1",
         "hexId": "A7-1",
-        "name": "",
+        "name": "Bar_V-Est",
         "type": 11,
         "cat": [
           "button",
@@ -4370,7 +4370,7 @@
         "part": 2,
         "id": "167-2",
         "hexId": "A7-2",
-        "name": "",
+        "name": "Bar_V-Baie",
         "type": 11,
         "cat": [
           "button",
@@ -4388,7 +4388,7 @@
         "part": 3,
         "id": "167-3",
         "hexId": "A7-3",
-        "name": "",
+        "name": "Bar_V-Ouest",
         "type": 11,
         "cat": [
           "button",
@@ -4406,7 +4406,7 @@
         "part": 4,
         "id": "167-4",
         "hexId": "A7-4",
-        "name": "",
+        "name": "Bar_V-Cui-Sud",
         "type": 11,
         "cat": [
           "button",
@@ -4424,7 +4424,7 @@
         "part": 5,
         "id": "167-5",
         "hexId": "A7-5",
-        "name": "",
+        "name": "Bar_L-Terrasse",
         "type": 11,
         "cat": [
           "button",
@@ -4442,7 +4442,7 @@
         "part": 6,
         "id": "167-6",
         "hexId": "A7-6",
-        "name": "",
+        "name": "Bar_V-Sud-Off",
         "type": 11,
         "cat": [
           "button",
@@ -4460,7 +4460,7 @@
         "part": 7,
         "id": "167-7",
         "hexId": "A7-7",
-        "name": "",
+        "name": "Bar_Portail",
         "type": 11,
         "cat": [
           "button",
@@ -4478,7 +4478,7 @@
         "part": 8,
         "id": "167-8",
         "hexId": "A7-8",
-        "name": "",
+        "name": "Bar_PC-TV",
         "type": 11,
         "cat": [
           "button",
@@ -4496,7 +4496,7 @@
         "part": 1,
         "id": "168-1",
         "hexId": "A8-1",
-        "name": "",
+        "name": "Cuis_L-Bar",
         "type": 11,
         "cat": [
           "button",
@@ -4514,7 +4514,7 @@
         "part": 2,
         "id": "168-2",
         "hexId": "A8-2",
-        "name": "",
+        "name": "Cuis_L-SaM(M)",
         "type": 11,
         "cat": [
           "button",
@@ -4532,7 +4532,7 @@
         "part": 3,
         "id": "168-3",
         "hexId": "A8-3",
-        "name": "",
+        "name": "Cuis_L-SaM(S)",
         "type": 11,
         "cat": [
           "button",
@@ -4550,7 +4550,7 @@
         "part": 4,
         "id": "168-4",
         "hexId": "A8-4",
-        "name": "",
+        "name": "Cuis_Couloir",
         "type": 11,
         "cat": [
           "button",
@@ -4568,7 +4568,7 @@
         "part": 5,
         "id": "168-5",
         "hexId": "A8-5",
-        "name": "",
+        "name": "Cuis_L1-Off",
         "type": 11,
         "cat": [
           "button",
@@ -4586,7 +4586,7 @@
         "part": 6,
         "id": "168-6",
         "hexId": "A8-6",
-        "name": "",
+        "name": "Cuis_PC-Hotte",
         "type": 11,
         "cat": [
           "button",
@@ -4604,7 +4604,7 @@
         "part": 7,
         "id": "168-7",
         "hexId": "A8-7",
-        "name": "",
+        "name": "Cuis_V-RdC",
         "type": 11,
         "cat": [
           "button",
@@ -4622,7 +4622,7 @@
         "part": 8,
         "id": "168-8",
         "hexId": "A8-8",
-        "name": "",
+        "name": "Cuis_L-Salon",
         "type": 11,
         "cat": [
           "button",
@@ -4640,7 +4640,7 @@
         "part": 1,
         "id": "170-1",
         "hexId": "AA-1",
-        "name": "",
+        "name": "BPMA_L-Couloir",
         "type": 11,
         "cat": [
           "button",
@@ -4658,7 +4658,7 @@
         "part": 2,
         "id": "170-2",
         "hexId": "AA-2",
-        "name": "",
+        "name": "BPMA_ABSENT",
         "type": 11,
         "cat": [
           "button",
@@ -4676,7 +4676,7 @@
         "part": 3,
         "id": "170-3",
         "hexId": "AA-3",
-        "name": "",
+        "name": "BPMA_L-Ext",
         "type": 11,
         "cat": [
           "button",
@@ -4694,7 +4694,7 @@
         "part": 4,
         "id": "170-4",
         "hexId": "AA-4",
-        "name": "",
+        "name": "BPMA_P.Gge",
         "type": 11,
         "cat": [
           "button",
@@ -4712,7 +4712,7 @@
         "part": 5,
         "id": "170-5",
         "hexId": "AA-5",
-        "name": "",
+        "name": "BPMA_PRESENT",
         "type": 11,
         "cat": [
           "button",
@@ -4730,7 +4730,7 @@
         "part": 6,
         "id": "170-6",
         "hexId": "AA-6",
-        "name": "",
+        "name": "BPMA_VoletsUp",
         "type": 11,
         "cat": [
           "button",
@@ -4748,7 +4748,7 @@
         "part": 7,
         "id": "170-7",
         "hexId": "AA-7",
-        "name": "",
+        "name": "BPMA_Portail",
         "type": 11,
         "cat": [
           "button",
@@ -4766,7 +4766,7 @@
         "part": 8,
         "id": "170-8",
         "hexId": "AA-8",
-        "name": "",
+        "name": "BPMA_VoletsDown",
         "type": 11,
         "cat": [
           "button",
@@ -4784,7 +4784,7 @@
         "part": 1,
         "id": "171-1",
         "hexId": "AB-1",
-        "name": "",
+        "name": "Bureau_Lampe",
         "type": 1,
         "cat": [
           "button"
@@ -4801,7 +4801,7 @@
         "part": 2,
         "id": "171-2",
         "hexId": "AB-2",
-        "name": "",
+        "name": "Bureau_Volet",
         "type": 1,
         "cat": [
           "button"
@@ -4818,7 +4818,7 @@
         "part": 3,
         "id": "171-3",
         "hexId": "AB-3",
-        "name": "",
+        "name": "Bureau_PC-Burea",
         "type": 1,
         "cat": [
           "button"
@@ -4835,7 +4835,7 @@
         "part": 4,
         "id": "171-4",
         "hexId": "AB-4",
-        "name": "",
+        "name": "Bureau_D-Bureau",
         "type": 1,
         "cat": [
           "button"
@@ -4852,7 +4852,7 @@
         "part": 5,
         "id": "171-5",
         "hexId": "AB-5",
-        "name": "",
+        "name": "Bureau_",
         "type": 1,
         "cat": [
           "button"
@@ -4869,7 +4869,7 @@
         "part": 6,
         "id": "171-6",
         "hexId": "AB-6",
-        "name": "",
+        "name": "Bureau_",
         "type": 1,
         "cat": [
           "button"
@@ -4886,7 +4886,7 @@
         "part": 7,
         "id": "171-7",
         "hexId": "AB-7",
-        "name": "",
+        "name": "Bureau_",
         "type": 1,
         "cat": [
           "button"
@@ -4903,7 +4903,7 @@
         "part": 8,
         "id": "171-8",
         "hexId": "AB-8",
-        "name": "",
+        "name": "Bureau_",
         "type": 1,
         "cat": [
           "button"
@@ -4920,7 +4920,7 @@
         "part": 1,
         "id": "172-1",
         "hexId": "AC-1",
-        "name": "",
+        "name": "Bureau_Spot",
         "type": 11,
         "cat": [
           "button",
@@ -4938,7 +4938,7 @@
         "part": 2,
         "id": "172-2",
         "hexId": "AC-2",
-        "name": "",
+        "name": "Bureau_volet",
         "type": 11,
         "cat": [
           "button",
@@ -4956,7 +4956,7 @@
         "part": 3,
         "id": "172-3",
         "hexId": "AC-3",
-        "name": "",
+        "name": "Bureau_Spot40",
         "type": 11,
         "cat": [
           "button",
@@ -4974,7 +4974,7 @@
         "part": 4,
         "id": "172-4",
         "hexId": "AC-4",
-        "name": "",
+        "name": "Bureau_Prise",
         "type": 11,
         "cat": [
           "button",
@@ -4992,7 +4992,7 @@
         "part": 5,
         "id": "172-5",
         "hexId": "AC-5",
-        "name": "",
+        "name": "Bureau_L(M)",
         "type": 11,
         "cat": [
           "button",
@@ -5010,7 +5010,7 @@
         "part": 6,
         "id": "172-6",
         "hexId": "AC-6",
-        "name": "",
+        "name": "Bureau_chd-ECO",
         "type": 11,
         "cat": [
           "button",
@@ -5028,7 +5028,7 @@
         "part": 7,
         "id": "172-7",
         "hexId": "AC-7",
-        "name": "",
+        "name": "Bureau",
         "type": 11,
         "cat": [
           "button",
@@ -5046,7 +5046,7 @@
         "part": 8,
         "id": "172-8",
         "hexId": "AC-8",
-        "name": "",
+        "name": "Bureau_chd-CONF",
         "type": 11,
         "cat": [
           "button",
@@ -5064,7 +5064,7 @@
         "part": 1,
         "id": "173-1",
         "hexId": "AD-1",
-        "name": "",
+        "name": "Coul-RdC_L-1er",
         "type": 11,
         "cat": [
           "button",
@@ -5082,7 +5082,7 @@
         "part": 2,
         "id": "173-2",
         "hexId": "AD-2",
-        "name": "",
+        "name": "Coul-RdC_V-Up",
         "type": 11,
         "cat": [
           "button",
@@ -5100,7 +5100,7 @@
         "part": 3,
         "id": "173-3",
         "hexId": "AD-3",
-        "name": "",
+        "name": "Coul-RdC_L-RdC",
         "type": 11,
         "cat": [
           "button",
@@ -5118,7 +5118,7 @@
         "part": 4,
         "id": "173-4",
         "hexId": "AD-4",
-        "name": "",
+        "name": "Coul-RdC_V-Down",
         "type": 11,
         "cat": [
           "button",
@@ -5136,7 +5136,7 @@
         "part": 5,
         "id": "173-5",
         "hexId": "AD-5",
-        "name": "",
+        "name": "Coul-RdC_V-Puit",
         "type": 11,
         "cat": [
           "button",
@@ -5154,7 +5154,7 @@
         "part": 6,
         "id": "173-6",
         "hexId": "AD-6",
-        "name": "",
+        "name": "Coul-RdC_V1-Up",
         "type": 11,
         "cat": [
           "button",
@@ -5172,7 +5172,7 @@
         "part": 7,
         "id": "173-7",
         "hexId": "AD-7",
-        "name": "",
+        "name": "Coul-RdC_V-Gren",
         "type": 11,
         "cat": [
           "button",
@@ -5190,7 +5190,7 @@
         "part": 8,
         "id": "173-8",
         "hexId": "AD-8",
-        "name": "",
+        "name": "Coul-RdC_V1-Dow",
         "type": 11,
         "cat": [
           "button",
@@ -5208,7 +5208,7 @@
         "part": 1,
         "id": "177-1",
         "hexId": "B1-1",
-        "name": "",
+        "name": "Ch.Pa_Plafond",
         "type": 1,
         "cat": [
           "button"
@@ -5225,7 +5225,7 @@
         "part": 2,
         "id": "177-2",
         "hexId": "B1-2",
-        "name": "",
+        "name": "Ch.Pa_Volet",
         "type": 1,
         "cat": [
           "button"
@@ -5242,7 +5242,7 @@
         "part": 3,
         "id": "177-3",
         "hexId": "B1-3",
-        "name": "",
+        "name": "Ch.Pa_Chevets",
         "type": 1,
         "cat": [
           "button"
@@ -5259,7 +5259,7 @@
         "part": 4,
         "id": "177-4",
         "hexId": "B1-4",
-        "name": "",
+        "name": "Ch.Pa_Couloir",
         "type": 1,
         "cat": [
           "button"
@@ -5276,7 +5276,7 @@
         "part": 5,
         "id": "177-5",
         "hexId": "B1-5",
-        "name": "",
+        "name": "Ch.Pa_PC-SdB0",
         "type": 1,
         "cat": [
           "button"
@@ -5293,7 +5293,7 @@
         "part": 6,
         "id": "177-6",
         "hexId": "B1-6",
-        "name": "",
+        "name": "Ch.Pa_",
         "type": 1,
         "cat": [
           "button"
@@ -5310,7 +5310,7 @@
         "part": 7,
         "id": "177-7",
         "hexId": "B1-7",
-        "name": "",
+        "name": "Ch.Pa_L-SdB-P",
         "type": 1,
         "cat": [
           "button"
@@ -5327,7 +5327,7 @@
         "part": 8,
         "id": "177-8",
         "hexId": "B1-8",
-        "name": "",
+        "name": "Ch.Pa_L-SdB0",
         "type": 1,
         "cat": [
           "button"
@@ -5344,7 +5344,7 @@
         "part": 1,
         "id": "178-1",
         "hexId": "B2-1",
-        "name": "",
+        "name": "bt-WC-rdc_L-Off",
         "type": 1,
         "cat": [
           "button"
@@ -5361,7 +5361,7 @@
         "part": 2,
         "id": "178-2",
         "hexId": "B2-2",
-        "name": "",
+        "name": "bt-WC-rdc_L-0%",
         "type": 1,
         "cat": [
           "button"
@@ -5378,7 +5378,7 @@
         "part": 3,
         "id": "178-3",
         "hexId": "B2-3",
-        "name": "",
+        "name": "bt-WC-rdc_L-100",
         "type": 1,
         "cat": [
           "button"
@@ -5395,7 +5395,7 @@
         "part": 4,
         "id": "178-4",
         "hexId": "B2-4",
-        "name": "",
+        "name": "bt-WC-rdc_L-10%",
         "type": 1,
         "cat": [
           "button"
@@ -5412,7 +5412,7 @@
         "part": 5,
         "id": "178-5",
         "hexId": "B2-5",
-        "name": "",
+        "name": "bt-esc_L-1er",
         "type": 1,
         "cat": [
           "button"
@@ -5429,7 +5429,7 @@
         "part": 6,
         "id": "178-6",
         "hexId": "B2-6",
-        "name": "",
+        "name": "bt-esc_rien-6",
         "type": 1,
         "cat": [
           "button"
@@ -5446,7 +5446,7 @@
         "part": 7,
         "id": "178-7",
         "hexId": "B2-7",
-        "name": "",
+        "name": "bt-esc_rien-7",
         "type": 1,
         "cat": [
           "button"
@@ -5463,7 +5463,7 @@
         "part": 8,
         "id": "178-8",
         "hexId": "B2-8",
-        "name": "",
+        "name": "bt-esc_L-RdC",
         "type": 1,
         "cat": [
           "button"
@@ -5480,7 +5480,7 @@
         "part": 1,
         "id": "179-1",
         "hexId": "B3-1",
-        "name": "",
+        "name": "bt-RdC_P.Garage",
         "type": 1,
         "cat": [
           "button"
@@ -5497,7 +5497,7 @@
         "part": 2,
         "id": "179-2",
         "hexId": "B3-2",
-        "name": "",
+        "name": "bt-RdC_L-RdC",
         "type": 1,
         "cat": [
           "button"
@@ -5514,7 +5514,7 @@
         "part": 3,
         "id": "179-3",
         "hexId": "B3-3",
-        "name": "",
+        "name": "bt-RdC_L-Buand.",
         "type": 1,
         "cat": [
           "button"
@@ -5531,7 +5531,7 @@
         "part": 4,
         "id": "179-4",
         "hexId": "B3-4",
-        "name": "",
+        "name": "bt-RdC_L-Clr1er",
         "type": 1,
         "cat": [
           "button"
@@ -5548,7 +5548,7 @@
         "part": 5,
         "id": "179-5",
         "hexId": "B3-5",
-        "name": "",
+        "name": "bt-RdC_rien5",
         "type": 1,
         "cat": [
           "button"
@@ -5565,7 +5565,7 @@
         "part": 6,
         "id": "179-6",
         "hexId": "B3-6",
-        "name": "",
+        "name": "bt-RdC_rien6",
         "type": 1,
         "cat": [
           "button"
@@ -5582,7 +5582,7 @@
         "part": 7,
         "id": "179-7",
         "hexId": "B3-7",
-        "name": "",
+        "name": "bt-RdC_rien7",
         "type": 1,
         "cat": [
           "button"
@@ -5599,7 +5599,7 @@
         "part": 8,
         "id": "179-8",
         "hexId": "B3-8",
-        "name": "",
+        "name": "bt-RdC_rien8",
         "type": 1,
         "cat": [
           "button"
@@ -5616,7 +5616,7 @@
         "part": 1,
         "id": "193-1",
         "hexId": "C1-1",
-        "name": "",
+        "name": "bt-SdB1_L-Miroi",
         "type": 1,
         "cat": [
           "button"
@@ -5633,7 +5633,7 @@
         "part": 2,
         "id": "193-2",
         "hexId": "C1-2",
-        "name": "",
+        "name": "bt-SdB1_L-Plafo",
         "type": 1,
         "cat": [
           "button"
@@ -5650,7 +5650,7 @@
         "part": 3,
         "id": "193-3",
         "hexId": "C1-3",
-        "name": "",
+        "name": "Push button 3",
         "type": 1,
         "cat": [
           "button"
@@ -5667,7 +5667,7 @@
         "part": 4,
         "id": "193-4",
         "hexId": "C1-4",
-        "name": "",
+        "name": "bt-SdB1_PC-SdB1",
         "type": 1,
         "cat": [
           "button"
@@ -5684,7 +5684,7 @@
         "part": 5,
         "id": "193-5",
         "hexId": "C1-5",
-        "name": "",
+        "name": "Push button 5",
         "type": 1,
         "cat": [
           "button"
@@ -5701,7 +5701,7 @@
         "part": 6,
         "id": "193-6",
         "hexId": "C1-6",
-        "name": "",
+        "name": "Push button 6",
         "type": 1,
         "cat": [
           "button"
@@ -5718,7 +5718,7 @@
         "part": 7,
         "id": "193-7",
         "hexId": "C1-7",
-        "name": "",
+        "name": "Push button 7",
         "type": 1,
         "cat": [
           "button"
@@ -5735,7 +5735,7 @@
         "part": 8,
         "id": "193-8",
         "hexId": "C1-8",
-        "name": "",
+        "name": "Push button 8",
         "type": 1,
         "cat": [
           "button"
@@ -5752,7 +5752,7 @@
         "part": 1,
         "id": "195-1",
         "hexId": "C3-1",
-        "name": "",
+        "name": "Gre_L-Grenier",
         "type": 1,
         "cat": [
           "button"
@@ -5769,7 +5769,7 @@
         "part": 2,
         "id": "195-2",
         "hexId": "C3-2",
-        "name": "",
+        "name": "Gre_V-Grenier",
         "type": 1,
         "cat": [
           "button"
@@ -5786,7 +5786,7 @@
         "part": 3,
         "id": "195-3",
         "hexId": "C3-3",
-        "name": "",
+        "name": "Gre_Prise",
         "type": 1,
         "cat": [
           "button"
@@ -5803,7 +5803,7 @@
         "part": 4,
         "id": "195-4",
         "hexId": "C3-4",
-        "name": "",
+        "name": "Gre_L-Couloir",
         "type": 1,
         "cat": [
           "button"
@@ -5820,7 +5820,7 @@
         "part": 5,
         "id": "195-5",
         "hexId": "C3-5",
-        "name": "",
+        "name": "Gre_",
         "type": 1,
         "cat": [
           "button"
@@ -5837,7 +5837,7 @@
         "part": 6,
         "id": "195-6",
         "hexId": "C3-6",
-        "name": "",
+        "name": "Gre_",
         "type": 1,
         "cat": [
           "button"
@@ -5854,7 +5854,7 @@
         "part": 7,
         "id": "195-7",
         "hexId": "C3-7",
-        "name": "",
+        "name": "Gre_",
         "type": 1,
         "cat": [
           "button"
@@ -5871,7 +5871,7 @@
         "part": 8,
         "id": "195-8",
         "hexId": "C3-8",
-        "name": "",
+        "name": "Gre_",
         "type": 1,
         "cat": [
           "button"
@@ -5888,7 +5888,7 @@
         "part": 1,
         "id": "196-1",
         "hexId": "C4-1",
-        "name": "",
+        "name": "Gre_L-Plafond",
         "type": 11,
         "cat": [
           "button",
@@ -5906,7 +5906,7 @@
         "part": 2,
         "id": "196-2",
         "hexId": "C4-2",
-        "name": "",
+        "name": "Gre_Volet",
         "type": 11,
         "cat": [
           "button",
@@ -5924,7 +5924,7 @@
         "part": 3,
         "id": "196-3",
         "hexId": "C4-3",
-        "name": "",
+        "name": "Gre_Prise",
         "type": 11,
         "cat": [
           "button",
@@ -5942,7 +5942,7 @@
         "part": 4,
         "id": "196-4",
         "hexId": "C4-4",
-        "name": "",
+        "name": "Gre_Velux",
         "type": 11,
         "cat": [
           "button",
@@ -5960,7 +5960,7 @@
         "part": 5,
         "id": "196-5",
         "hexId": "C4-5",
-        "name": "",
+        "name": "Gre_Present",
         "type": 11,
         "cat": [
           "button",
@@ -5978,7 +5978,7 @@
         "part": 6,
         "id": "196-6",
         "hexId": "C4-6",
-        "name": "",
+        "name": "Gre_Absent",
         "type": 11,
         "cat": [
           "button",
@@ -5996,7 +5996,7 @@
         "part": 7,
         "id": "196-7",
         "hexId": "C4-7",
-        "name": "",
+        "name": "Gre_7",
         "type": 11,
         "cat": [
           "button",
@@ -6014,7 +6014,7 @@
         "part": 8,
         "id": "196-8",
         "hexId": "C4-8",
-        "name": "",
+        "name": "Gre_8",
         "type": 11,
         "cat": [
           "button",
@@ -6032,7 +6032,7 @@
         "part": 1,
         "id": "198-1",
         "hexId": "C6-1",
-        "name": "",
+        "name": "Bast-in_L(M)",
         "type": 1,
         "cat": [
           "button"
@@ -6049,7 +6049,7 @@
         "part": 2,
         "id": "198-2",
         "hexId": "C6-2",
-        "name": "",
+        "name": "Bast-in_Volet-B",
         "type": 1,
         "cat": [
           "button"
@@ -6066,7 +6066,7 @@
         "part": 3,
         "id": "198-3",
         "hexId": "C6-3",
-        "name": "",
+        "name": "Bast-in_Prise",
         "type": 1,
         "cat": [
           "button"
@@ -6083,7 +6083,7 @@
         "part": 4,
         "id": "198-4",
         "hexId": "C6-4",
-        "name": "",
+        "name": "Basti-in_Chevet",
         "type": 1,
         "cat": [
           "button"
@@ -6100,7 +6100,7 @@
         "part": 5,
         "id": "198-5",
         "hexId": "C6-5",
-        "name": "",
+        "name": "Bastien_L(M)",
         "type": 1,
         "cat": [
           "button"
@@ -6117,7 +6117,7 @@
         "part": 6,
         "id": "198-6",
         "hexId": "C6-6",
-        "name": "",
+        "name": "Bastien_Volet",
         "type": 1,
         "cat": [
           "button"
@@ -6134,7 +6134,7 @@
         "part": 7,
         "id": "198-7",
         "hexId": "C6-7",
-        "name": "",
+        "name": "Bastien_L-Balco",
         "type": 1,
         "cat": [
           "button"
@@ -6151,7 +6151,7 @@
         "part": 8,
         "id": "198-8",
         "hexId": "C6-8",
-        "name": "",
+        "name": "Bastien_PC-Bast",
         "type": 1,
         "cat": [
           "button"
@@ -6168,7 +6168,7 @@
         "part": 1,
         "id": "199-1",
         "hexId": "C7-1",
-        "name": "",
+        "name": "Bastien_Chevet",
         "type": 11,
         "cat": [
           "button",
@@ -6186,7 +6186,7 @@
         "part": 2,
         "id": "199-2",
         "hexId": "C7-2",
-        "name": "",
+        "name": "Bastien_Chevet-",
         "type": 11,
         "cat": [
           "button",
@@ -6204,7 +6204,7 @@
         "part": 3,
         "id": "199-3",
         "hexId": "C7-3",
-        "name": "",
+        "name": "Bastien_L-Plafo",
         "type": 11,
         "cat": [
           "button",
@@ -6222,7 +6222,7 @@
         "part": 4,
         "id": "199-4",
         "hexId": "C7-4",
-        "name": "",
+        "name": "Bastien_SOS",
         "type": 11,
         "cat": [
           "button",
@@ -6240,7 +6240,7 @@
         "part": 5,
         "id": "199-5",
         "hexId": "C7-5",
-        "name": "",
+        "name": "Bastien_Volet",
         "type": 11,
         "cat": [
           "button",
@@ -6258,7 +6258,7 @@
         "part": 6,
         "id": "199-6",
         "hexId": "C7-6",
-        "name": "",
+        "name": "Bastien_",
         "type": 11,
         "cat": [
           "button",
@@ -6276,7 +6276,7 @@
         "part": 7,
         "id": "199-7",
         "hexId": "C7-7",
-        "name": "",
+        "name": "Bastien_",
         "type": 11,
         "cat": [
           "button",
@@ -6294,7 +6294,7 @@
         "part": 8,
         "id": "199-8",
         "hexId": "C7-8",
-        "name": "",
+        "name": "Bastien_Prise",
         "type": 11,
         "cat": [
           "button",
@@ -6312,7 +6312,7 @@
         "part": 1,
         "id": "201-1",
         "hexId": "C9-1",
-        "name": "",
+        "name": "Alex_Chevet",
         "type": 11,
         "cat": [
           "button",
@@ -6330,7 +6330,7 @@
         "part": 2,
         "id": "201-2",
         "hexId": "C9-2",
-        "name": "",
+        "name": "Alex_Chevet-8%",
         "type": 11,
         "cat": [
           "button",
@@ -6348,7 +6348,7 @@
         "part": 3,
         "id": "201-3",
         "hexId": "C9-3",
-        "name": "",
+        "name": "Alex_L-Plafond",
         "type": 11,
         "cat": [
           "button",
@@ -6366,7 +6366,7 @@
         "part": 4,
         "id": "201-4",
         "hexId": "C9-4",
-        "name": "",
+        "name": "Alex_SOS",
         "type": 11,
         "cat": [
           "button",
@@ -6384,7 +6384,7 @@
         "part": 5,
         "id": "201-5",
         "hexId": "C9-5",
-        "name": "",
+        "name": "Alex_Volet",
         "type": 11,
         "cat": [
           "button",
@@ -6402,7 +6402,7 @@
         "part": 6,
         "id": "201-6",
         "hexId": "C9-6",
-        "name": "",
+        "name": "Alex_",
         "type": 11,
         "cat": [
           "button",
@@ -6420,7 +6420,7 @@
         "part": 7,
         "id": "201-7",
         "hexId": "C9-7",
-        "name": "",
+        "name": "Alex_",
         "type": 11,
         "cat": [
           "button",
@@ -6438,7 +6438,7 @@
         "part": 8,
         "id": "201-8",
         "hexId": "C9-8",
-        "name": "",
+        "name": "Alex_Prise",
         "type": 11,
         "cat": [
           "button",
@@ -6456,7 +6456,7 @@
         "part": 1,
         "id": "202-1",
         "hexId": "CA-1",
-        "name": "",
+        "name": "Ch.Amis_L-Plafo",
         "type": 1,
         "cat": [
           "button"
@@ -6473,7 +6473,7 @@
         "part": 2,
         "id": "202-2",
         "hexId": "CA-2",
-        "name": "",
+        "name": "Ch.Amis_Volet",
         "type": 1,
         "cat": [
           "button"
@@ -6490,7 +6490,7 @@
         "part": 3,
         "id": "202-3",
         "hexId": "CA-3",
-        "name": "",
+        "name": "Ch.Amis_Prise",
         "type": 1,
         "cat": [
           "button"
@@ -6507,7 +6507,7 @@
         "part": 4,
         "id": "202-4",
         "hexId": "CA-4",
-        "name": "",
+        "name": "Ch.Amis_Chevet",
         "type": 1,
         "cat": [
           "button"
@@ -6524,7 +6524,7 @@
         "part": 5,
         "id": "202-5",
         "hexId": "CA-5",
-        "name": "",
+        "name": "Clr1er_L-Clr1er",
         "type": 1,
         "cat": [
           "button"
@@ -6541,7 +6541,7 @@
         "part": 6,
         "id": "202-6",
         "hexId": "CA-6",
-        "name": "",
+        "name": "Clr1er_V-1erUP",
         "type": 1,
         "cat": [
           "button"
@@ -6558,7 +6558,7 @@
         "part": 7,
         "id": "202-7",
         "hexId": "CA-7",
-        "name": "",
+        "name": "Clr1er_V-1erDOW",
         "type": 1,
         "cat": [
           "button"
@@ -6575,7 +6575,7 @@
         "part": 8,
         "id": "202-8",
         "hexId": "CA-8",
-        "name": "",
+        "name": "Clr1er_D-Couloi",
         "type": 1,
         "cat": [
           "button"
@@ -6592,7 +6592,7 @@
         "part": 1,
         "id": "203-1",
         "hexId": "CB-1",
-        "name": "",
+        "name": "1.1_L(M)_Alex",
         "type": 1,
         "cat": [
           "button"
@@ -6609,7 +6609,7 @@
         "part": 2,
         "id": "203-2",
         "hexId": "CB-2",
-        "name": "",
+        "name": "1.2_Volet_Alex",
         "type": 1,
         "cat": [
           "button"
@@ -6626,7 +6626,7 @@
         "part": 3,
         "id": "203-3",
         "hexId": "CB-3",
-        "name": "",
+        "name": "1.3_PC_Alex",
         "type": 1,
         "cat": [
           "button"
@@ -6643,7 +6643,7 @@
         "part": 4,
         "id": "203-4",
         "hexId": "CB-4",
-        "name": "",
+        "name": "1.4_Ch_Alex",
         "type": 1,
         "cat": [
           "button"
@@ -6660,7 +6660,7 @@
         "part": 5,
         "id": "203-5",
         "hexId": "CB-5",
-        "name": "",
+        "name": "2.5_L(M)_Alex",
         "type": 1,
         "cat": [
           "button"
@@ -6677,7 +6677,7 @@
         "part": 6,
         "id": "203-6",
         "hexId": "CB-6",
-        "name": "",
+        "name": "2.6_Volet_Alex",
         "type": 1,
         "cat": [
           "button"
@@ -6694,7 +6694,7 @@
         "part": 7,
         "id": "203-7",
         "hexId": "CB-7",
-        "name": "",
+        "name": "2.7_Balcon_Alex",
         "type": 1,
         "cat": [
           "button"
@@ -6711,7 +6711,7 @@
         "part": 8,
         "id": "203-8",
         "hexId": "CB-8",
-        "name": "",
+        "name": "2.8_PC_Alex",
         "type": 1,
         "cat": [
           "button"
@@ -6728,7 +6728,7 @@
         "part": 1,
         "id": "205-1",
         "hexId": "CD-1",
-        "name": "",
+        "name": "amis-f_L-plafo",
         "type": 1,
         "cat": [
           "button"
@@ -6745,7 +6745,7 @@
         "part": 2,
         "id": "205-2",
         "hexId": "CD-2",
-        "name": "",
+        "name": "amis-f_V-amis",
         "type": 1,
         "cat": [
           "button"
@@ -6762,7 +6762,7 @@
         "part": 3,
         "id": "205-3",
         "hexId": "CD-3",
-        "name": "",
+        "name": "amis-f_rien3",
         "type": 1,
         "cat": [
           "button"
@@ -6779,7 +6779,7 @@
         "part": 4,
         "id": "205-4",
         "hexId": "CD-4",
-        "name": "",
+        "name": "amis-f_ch-amis",
         "type": 1,
         "cat": [
           "button"
@@ -6796,7 +6796,7 @@
         "part": 5,
         "id": "205-5",
         "hexId": "CD-5",
-        "name": "",
+        "name": "amis_rien5",
         "type": 1,
         "cat": [
           "button"
@@ -6813,7 +6813,7 @@
         "part": 6,
         "id": "205-6",
         "hexId": "CD-6",
-        "name": "",
+        "name": "amis_rien6",
         "type": 1,
         "cat": [
           "button"
@@ -6830,7 +6830,7 @@
         "part": 7,
         "id": "205-7",
         "hexId": "CD-7",
-        "name": "",
+        "name": "amis_rien7",
         "type": 1,
         "cat": [
           "button"
@@ -6847,7 +6847,7 @@
         "part": 8,
         "id": "205-8",
         "hexId": "CD-8",
-        "name": "",
+        "name": "amis_rien8",
         "type": 1,
         "cat": [
           "button"
@@ -6864,7 +6864,7 @@
         "part": 1,
         "id": "206-1",
         "hexId": "CE-1",
-        "name": "",
+        "name": "1_Ch.Amis_Cheve",
         "type": 11,
         "cat": [
           "button",
@@ -6882,7 +6882,7 @@
         "part": 2,
         "id": "206-2",
         "hexId": "CE-2",
-        "name": "",
+        "name": "2_Ch.Amis_SOS",
         "type": 11,
         "cat": [
           "button",
@@ -6900,7 +6900,7 @@
         "part": 3,
         "id": "206-3",
         "hexId": "CE-3",
-        "name": "",
+        "name": "3_Ch.Amis_Plafo",
         "type": 11,
         "cat": [
           "button",
@@ -6918,7 +6918,7 @@
         "part": 4,
         "id": "206-4",
         "hexId": "CE-4",
-        "name": "",
+        "name": "4_Ch.Amis_Prise",
         "type": 11,
         "cat": [
           "button",
@@ -6936,7 +6936,7 @@
         "part": 5,
         "id": "206-5",
         "hexId": "CE-5",
-        "name": "",
+        "name": "5_Ch.Amis_",
         "type": 11,
         "cat": [
           "button",
@@ -6954,7 +6954,7 @@
         "part": 6,
         "id": "206-6",
         "hexId": "CE-6",
-        "name": "",
+        "name": "6_Ch.Amis_",
         "type": 11,
         "cat": [
           "button",
@@ -6972,7 +6972,7 @@
         "part": 7,
         "id": "206-7",
         "hexId": "CE-7",
-        "name": "",
+        "name": "7_Ch.Amis_",
         "type": 11,
         "cat": [
           "button",
@@ -6990,7 +6990,7 @@
         "part": 8,
         "id": "206-8",
         "hexId": "CE-8",
-        "name": "",
+        "name": "8_Ch.Amis_",
         "type": 11,
         "cat": [
           "button",
@@ -7008,7 +7008,7 @@
         "part": 1,
         "id": "209-1",
         "hexId": "D1-1",
-        "name": "",
+        "name": "WC1_L+VMC",
         "type": 1,
         "cat": [
           "button"
@@ -7025,7 +7025,7 @@
         "part": 2,
         "id": "209-2",
         "hexId": "D1-2",
-        "name": "",
+        "name": "WC1_L+VMC",
         "type": 1,
         "cat": [
           "button"
@@ -7042,7 +7042,7 @@
         "part": 3,
         "id": "209-3",
         "hexId": "D1-3",
-        "name": "",
+        "name": "Push button 3",
         "type": 1,
         "cat": [
           "button"
@@ -7059,7 +7059,7 @@
         "part": 4,
         "id": "209-4",
         "hexId": "D1-4",
-        "name": "",
+        "name": "Push button 4",
         "type": 1,
         "cat": [
           "button"
@@ -7076,7 +7076,7 @@
         "part": 5,
         "id": "209-5",
         "hexId": "D1-5",
-        "name": "",
+        "name": "Esc1_L-Coul",
         "type": 1,
         "cat": [
           "button"
@@ -7093,7 +7093,7 @@
         "part": 6,
         "id": "209-6",
         "hexId": "D1-6",
-        "name": "",
+        "name": "Esc1_V-Puit",
         "type": 1,
         "cat": [
           "button"
@@ -7110,7 +7110,7 @@
         "part": 7,
         "id": "209-7",
         "hexId": "D1-7",
-        "name": "",
+        "name": "WC 1er temporai",
         "type": 1,
         "cat": [
           "button"
@@ -7127,7 +7127,7 @@
         "part": 8,
         "id": "209-8",
         "hexId": "D1-8",
-        "name": "",
+        "name": "Esc1_D-RdC",
         "type": 1,
         "cat": [
           "button"
@@ -7151,16 +7151,16 @@
           "electricity"
         ],
         "status": {
-          "index": 85652237,
-          "power": 1192,
+          "index": 85715871,
+          "power": 907,
           "indexHC": 18073331,
-          "powerMax": 4948,
-          "powerMaxDate": "2025-05-07 20:56:30",
+          "powerMax": 3524,
+          "powerMaxDate": "2025-05-09 01:43:10",
           "message": "PAS DE MESSAGE",
-          "Urms": "242",
-          "Umoy": "E250507230000 240",
-          "timestamp": 1746651780027,
-          "dateRefresh": "E250507230301"
+          "Urms": "238",
+          "Umoy": "E250509062000 237",
+          "timestamp": 1746764520016,
+          "dateRefresh": "E250509062205"
         },
         "room": "",
         "zone": []
@@ -7180,15 +7180,15 @@
           "electricity"
         ],
         "status": {
-          "index": 23080058,
+          "index": 0,
           "power": 0,
-          "indexConso": 20493,
-          "Urms": "240",
-          "powerMax": 930,
-          "powerMaxDate": "2025-05-07 14:22:01",
-          "message": "PAS DE MESSAGE",
-          "timestamp": 1746651780027,
-          "dateRefresh": "E250507193648"
+          "indexConso": 0,
+          "Urms": "",
+          "powerMax": -1,
+          "powerMaxDate": "0000-00-00 00:00:00",
+          "message": "",
+          "timestamp": 1746764520016,
+          "dateRefresh": ""
         },
         "room": "",
         "zone": []
@@ -7208,14 +7208,14 @@
           "vmc"
         ],
         "status": {
-          "TotalRunningTime": "617d, 2h, 17m",
-          "current": 10.6,
-          "defaultStatus": 10.6,
-          "TempAdmission": 10.6,
-          "TempInsufflation": 17.7,
-          "TempExtraction": 19.3,
-          "TempOut": 13,
-          "humidity": 53,
+          "TotalRunningTime": "618d, 9h, 36m",
+          "current": 9.1,
+          "defaultStatus": 9.1,
+          "TempAdmission": 9.1,
+          "TempInsufflation": 17.4,
+          "TempExtraction": 19.4,
+          "TempOut": 11.9,
+          "humidity": 55,
           "bypass": 0,
           "boost": true,
           "fanInSpeed": 2460,
@@ -7229,10 +7229,10 @@
           "flowMax": 300,
           "Alarm": 0,
           "FilterStatus": 0,
-          "ReplaceFilterCountdown": 53,
-          "MotorUpTime": "617d, 2h, 17m",
-          "rendement": 81.6,
-          "timestamp": "23:02:52"
+          "ReplaceFilterCountdown": 52,
+          "MotorUpTime": "618d, 9h, 36m",
+          "rendement": 80.6,
+          "timestamp": "06:21:55"
         },
         "room": "",
         "zone": []

@@ -58,22 +58,37 @@ const DEBUG = 1		// 0 not log, 1 only error/warn, 2 = all
 // =                                    Functions for internal use                                            =
 // ============================================================================================================
 
-// Manipulation of subModuleList
-function setSubModuleList(addresspart, module) {
-	subModuleList.set(addresspart, module)
+/**
+ * Setter for subModuleList
+ * @param {String} key module address-part (ex. 122-1)
+ * @param {VMBsubmodule} module 
+ */
+function setSubModuleList(key, module) {
+	subModuleList.set(key, module)
 }
-function getSubModuleList(addresspart) {
-	return subModuleList.get(addresspart)
+
+/**
+ * Getter for submodule
+ * @param {String} key module address-part (ex. 122-1)
+ * @returns {VMBsubmodule}
+ */
+function getSubModuleList(key) {
+	return subModuleList.get(key)
 }
+
+/**
+ * Getter for full list submodule
+ * @returns {VMBsubmodule[]}
+ */
 function fullSubModuleList() {
 	return subModuleList
 }
-function lenSubModuleList() {
-	console.log("subModuleList size", subModuleList.size)
-	return subModuleList.size
-}
 
-// Preload or save modules and submodules file
+/**
+ * Save modules list and submodules list in JSON file
+ * @param {VMBmodule[]} ModuleList 
+ * @param {VMBsubmodule[]} subModuleList 
+ */
 function saveMapData(ModuleList, subModuleList) {
 	const data = {
 		ModuleList: Array.from(ModuleList.entries()),
@@ -89,6 +104,10 @@ function saveMapData(ModuleList, subModuleList) {
 	})
 }
 
+/**
+ * Load modules list and submodules list from JSON file
+ * @return {number} VMBsubmodule size list as proof of loading
+ */
 function loadMapData() {
 	logInfo(0, "💾 Trying to load previous scanned Velbus devices from "+ModulesFile+" -------------");
 
@@ -128,7 +147,7 @@ function loadMapData() {
 // #region FRAME functions
 /** ---------------------------------------------------------------------------------------------
  * This function split messages that are in the same frame. Example 0F...msg1...04 / 0F...msg2...04
- * @param {*} data RAW frame that could contains multiple messages
+ * @param {rawData} data RAW frame that could contains multiple messages
  * @returns array containing one message by cell
  * --------------------------------------------------------------------------------------------*/
 const Cut = (data) => {
@@ -157,27 +176,27 @@ const Cut = (data) => {
 
 /** --------------------------------------------------------------------------------------------
  * toHexa convert a buffer into a table containing hexa code (2 chars) for each byte
- * @param {Array} donnees byte buffer
+ * @param {Array<number>} donnees byte buffer
  * @returns Hexadecimal string
  * -------------------------------------------------------------------------------------------*/
 function toHexa(donnees) {
 	if (donnees !== undefined) {
-		let c = '';
-		let dhex = [];
+		let frameByte = '';
+		let dataHex = [];
 		for (const donnee of donnees) {
-			c = donnee.toString(16).toUpperCase();
-			if (c.length < 2) c = '0' + c;
-			dhex.push(c);
+			frameByte = donnee.toString(16).toUpperCase();
+			if (frameByte.length < 2) frameByte = '0' + frameByte;
+			dataHex.push(frameByte);
 		}
-		return dhex;
+		return dataHex;
 	} else { return "" }
 }
 
 
 /** ------------------------------------------------------------------------------------------
  * toButtons convert a binary value into an array with active bit (ex. 0b00110 => [2,4])
- * @param {*} value 
- * @param {*} nb bits number to read (8 by default)
+ * @param {number} value from 0 to 2^nb
+ * @param {number} nb bits number to read (8 by default)
  * @returns array of active button's number
  * -----------------------------------------------------------------------------------------*/
 function toButtons(value, nb=8) {
@@ -192,11 +211,10 @@ function toButtons(value, nb=8) {
 	return response;
 }
 
-
 /** -----------------------------------------------------------------------------------------
  * Convert Binary digit to human part number (0b0100 => 3)
- * @param {*} binValue 
- * @param {*} offset 
+ * @param {number} binValue must be a binary value (1, 2, 4, 8, 16... max: 128)
+ * @param {number} offset optional offset if needed (by default is 0)
  * @returns human readable part
  * ---------------------------------------------------------------------------------------*/
 function Bin2Part(binValue, offset = 0) {
@@ -237,7 +255,6 @@ function resume() {
  * @param {number[]} element Frame received (element[4] should be F0, F1 or F2 for name's functions)
  * ------------------------------------------------------------------------------------------------------*/
 function CheckName(element) {
-	console.log("Entering CheckName() for", element)
 	let key = element[2]+"-"
 	//specific part for blind VMB2BL
 	if (element[5] == 0x03 || element[5] == 0x0C) {
@@ -436,7 +453,7 @@ function analyze2Texte(element) {
 	let buttonPress, buttonRelease, buttonLongPress
 	let keyModule = ""
 
-	logInfo(1, "analyze2Texte with module "+addrByte+" message: "+toHexa(element))
+	logInfo(-1, "analyze2Texte with module "+addrByte+" message: "+toHexa(element))
 	switch (functionByte) {
 		case 0x00:
 			// Button pressed, released or long pressed (> 0.85 sec.)
@@ -767,18 +784,18 @@ const LongPressButton = (address, part) => {
 // #endregion
 
 /**
- * Automatic console message with icon and text
+ * Automatic console message with icon and text.
  * @param {String|number} priority show an icon (nothing, info, warning, error)
  * @param {String} text string to show
  */
 function logInfo(priority, text) {
-	if (DEBUG && priority>-1) {
+	if (DEBUG && (priority>0 || priority != 'NOTHING')) {
 		const symbols = ['🤖','🟢', '🔼', '❌']
-		const priorityNames = ['NOTHING', 'INFO', 'WARNING', 'ERROR']
+		const priorityNames = ['NOTHING', 'EMPTY', 'INFO', 'WARNING', 'ERROR']
 		if (typeof(priority) == 'string') {
 			priority = priorityNames.indexOf(priority.toUpperCase())
 		} 
-		if (priority<-1 || priority>=priorityNames.length) {
+		if (priority<0 || priority>=priorityNames.length) {
 			priority = 0
 		}
 		const now = new Date();
@@ -790,7 +807,7 @@ function logInfo(priority, text) {
 		const symbol = symbols[priority] || '🤖'
 		const priorityName = priorityNames[priority] || 'UNKNOWN'
 		switch (priorityName) {
-			case "NOTHING":
+			case "EMPTY":
 				console.info(`${symbol} [${timeString}] [${priorityName}] ${text}`)
 				break
 			case "WARNING":
@@ -928,7 +945,7 @@ VelbusConnexion.once('close', () => {
 
 
 export {
-	setSubModuleList, getSubModuleList, lenSubModuleList, fullSubModuleList,
+	setSubModuleList, getSubModuleList, fullSubModuleList,
 	CheckSum,
 	Cut,
 	toHexa, Part2Bin,
