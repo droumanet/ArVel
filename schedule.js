@@ -24,7 +24,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 // console.log(__dirname)      // "/Users/Sam/dirname-example/src/api"
 // console.log(process.cwd())  // "/Users/Sam/dirname-example"
 // programming action when out of house
-const filePath = path.join(__dirname, 'config/prog_absence.txt')
+const filePath = path.join(__dirname, 'config/prog_presence.txt')
 const sunset = getSunset(appProfile.locationX, appProfile.locationY)
 
 
@@ -96,8 +96,8 @@ const everyMinut = schedule.scheduleJob('*/1 * * * *', () => {
     }
 
     // ⏰📖 Reading and parsing file for programmed actions (new version)
-    const scheduleActions = parseScheduleFile(filePath)
-    const actionsToCheck = getActionsToExecute(scheduleActions, currentDate)
+    const scheduleActions = parseScheduleFile(filePath)                         // ✅ Checked up and running
+    const actionsToCheck = getActionsToExecute(scheduleActions, currentDate)    // ✅ Checked up and running
     if (actionsToCheck) console.log("ACTIONS TO CHECK : ",actionsToCheck)
     // checkAndExecuteActions(actionsToCheck, moduleStates)
     // console.log(velbuslib.getSubModuleList("400-1").status)

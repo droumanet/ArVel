@@ -90,16 +90,19 @@ export function executeCommand(action, modules) {
                 console.log(`Action "relayblink" exécutée sur le module ${moduleAddress}-${modulePart} avec une durée de ${blinkDuration}s.`);
                 break;
             }
+            case 'on':
             case 'relayon': {
                 velbuslib.VMBWrite(velbuslib.RelayOn(moduleAddress, modulePart));
                 console.log(`Action "relayOn" exécutée sur le module ${moduleAddress}-${modulePart}.`);
                 break;
             }
+            case 'off':
             case 'relayoff': {
                 velbuslib.VMBWrite(velbuslib.RelayOff(moduleAddress, modulePart));
                 console.log(`Action "relayOff" exécutée sur le module ${moduleAddress}-${modulePart}.`);
                 break;
             }
+            case 'up':
             case 'blindup': {
                 const blindDuration = duration || null;
                 if (blindDuration) {
@@ -111,6 +114,7 @@ export function executeCommand(action, modules) {
                 }
                 break;
             }
+            case 'down':
             case 'blinddown': {
                 const blindDuration = duration || null;
                 if (blindDuration) {
@@ -122,15 +126,24 @@ export function executeCommand(action, modules) {
                 }
                 break;
             }
+            case 'stop':
             case 'blindstop': {
                 velbuslib.VMBWrite(velbuslib.BlindStop(moduleAddress, modulePart));
                 console.log(`Action "blindStop" exécutée sur le module ${moduleAddress}-${modulePart}.`);
                 break;
             }
-            case 'clicbutton': {
+            case 'pressbutton': {
                 velbuslib.VMBWrite(velbuslib.FrameSendButton(moduleAddress, modulePart, 1));
                 velbuslib.VMBWrite(velbuslib.FrameSendButton(moduleAddress, modulePart, 0));
                 console.log(`Action "clicButton" exécutée sur le module ${moduleAddress}-${modulePart}.`);
+                break;
+            }
+            case 'longpressbutton': {
+                velbuslib.VMBWrite(velbuslib.FrameSendButton(moduleAddress, modulePart, 1));
+                setTimeout(() => {
+                    velbuslib.VMBWrite(velbuslib.FrameSendButton(moduleAddress, modulePart, 0));
+                    console.log(`Action "clicButton" exécutée sur le module ${moduleAddress}-${modulePart}.`);
+                }, 1000);
                 break;
             }
             default: {
@@ -141,9 +154,9 @@ export function executeCommand(action, modules) {
 }
 
 /**
- * Vérifie et exécute les actions dont les conditions sont remplies
- * @param {Array} actionsToCheck Actions à vérifier et potentiellement exécuter
- * @param {Object} moduleStates État actuel des modules
+ * Check and execute all actions where conditions are satisfied
+ * @param {Array} actionsToCheck Actions to check and then to execute
+ * @param {Object} moduleStates Present status for modules
  */
 export function checkAndExecuteActions(actionsToCheck, moduleStates = {}) {
     // Obtenir l'heure actuelle formatée pour les logs

@@ -1,5 +1,6 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'fs'
+import path from 'path'
+import { isDaylightSavingTime, TimeStamp2Date } from '../utils.js'
 
 /*
     The parser part should parse a file where each line contains an action by hour, day, type of action, module address-part.
@@ -10,56 +11,83 @@ import path from 'path';
     # Actions: relayBlink, relayTimer, relayOff, relayOn, PressButton, LongPressButton, blindUp, blindDown, blindStop
 */
 
-// Fonction pour lire et analyser le fichier
+// Read and analyze the file transmitted
 export function parseScheduleFile(filePath) {
     try {
-        const fileContent = fs.readFileSync(filePath, 'utf-8');
+        const fileContent = fs.readFileSync(filePath, 'utf-8')
         const lines = fileContent.split('\n').filter(line => {
-            return line.trim() !== '' && !line.trim().startsWith('#');
+            return line.trim() !== '' && !line.trim().startsWith('#')
         });
 
         const schedule = lines.map(line => {
             // Extract parts: time, days, action
-            const parts = line.split(' ');
-            const time = parts[0];
-            const days = parts[1];
-            const action = parts[2];
+            const parts = line.split(' ')
+            let   time = parts[0]
+            const days = parts[1]
+            const action = parts[2]
             
+            // case where time (ex: 08:33) isn't a time but key word 'sunset' or 'sunrise'
+            if (time.includes('sunset') || time.includes('sunrise')) {
+                let offset = 0
+                if (time.includes('+')) {
+                    offset = parseInt(time.split('+')[1], 10) * 60 * 1000
+                } else if (time.includes('-')) {
+                    offset = -parseInt(time.split('-')[1], 10) * 60 * 1000
+                }
+
+                let summerTime = isDaylightSavingTime() ? 60 * 60 * 1000 : 0
+                let brutTime
+                if (time.includes('sunset')) {
+                    brutTime = getSunset(appProfile.locationX, appProfile.locationY)
+                } else if (time.includes('sunrise')) {
+                    brutTime = getSunrise(appProfile.locationX, appProfile.locationY)
+                }
+                let adjustedTime = new Date(brutTime.getTime() - summerTime + offset)
+                time = adjustedTime.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+            }
+
             const [hour, minute] = time.split(':').map(Number);
 
             // Process modules with their parameters
-            const modules = [];
-            let currentIndex = 3; // Start after action
+            const modules = []
+            let currentIndex = 3 // Start after action
             
             // Process all modules (starting with $)
             while (currentIndex < parts.length && parts[currentIndex].startsWith('$')) {
-                const modulePart = parts[currentIndex];
+                const parsedModule = parts[currentIndex]
                 
                 // Check if module has a duration parameter (=)
-                if (modulePart.includes('=')) {
-                    const [moduleStr, durationStr] = modulePart.split('=');
-                    const [moduleAddress, modulePart] = moduleStr.replace('$', '').split('-').map(part => parseInt(part, 16));
+                if (parsedModule.includes('=')) {
+                    const [moduleStr, durationStr] = parsedModule.split('=')
+                    const parts = parsedModule.replace("$", "").split("-")
+                    const moduleAddress = parseInt(parts[0], 16)
+                    const parsedModulePart = parseInt(parts[1], 10)
+                    //const [moduleAddress, modulePart] = moduleStr.replace('$', '').split('-').map(part => parseInt(part, 16));
                     
                     modules.push({
                         moduleAddress,
-                        modulePart,
+                        parsedModulePart,
                         duration: parseInt(durationStr, 10)
-                    });
+                    })
                 } else {
-                    const [moduleAddress, modulePart] = modulePart.replace('$', '').split('-').map(part => parseInt(part, 16));
+                    const parts = parsedModule.replace("$", "").split("-")
+                    const moduleAddress = parseInt(parts[0], 16)
+                    const parsedModulePart = parseInt(parts[1], 10)
+
+                    // const [moduleAddress, modulePart] = modulePart.replace('$', '').split('-').map(part => parseInt(part, 16));
                     
                     modules.push({
                         moduleAddress,
-                        modulePart,
+                        parsedModulePart,
                         duration: null
-                    });
+                    })
                 }
                 
-                currentIndex++;
+                currentIndex++
             }
             
             // Check for pre-alert
-            const preAlert = line.includes(' ! ') || parts.includes('!');
+            const preAlert = line.includes(' ! ') || parts.includes('!')
             
             // Extract all conditions with attribute support
             const conditionRegexes = [
@@ -79,20 +107,20 @@ export function parseScheduleFile(filePath) {
             const conditions = [];
             
             for (const regex of conditionRegexes) {
-                let match;
+                let match
                 regex.lastIndex = 0; // Reset regex state
                 
                 while ((match = regex.exec(line)) !== null) {
                     // Determine operator type based on regex
-                    let operator = '==';
-                    let isNumeric = true;
+                    let operator = '=='
+                    let isNumeric = true
                     
                     if (regex.toString().includes('>')) {
-                        operator = '>';
+                        operator = '>'
                     } else if (regex.toString().includes('<')) {
-                        operator = '<';
+                        operator = '<'
                     } else if (regex.toString().includes('=="')) {
-                        operator = '==';
+                        operator = '=='
                         isNumeric = false;
                     }
                     
@@ -103,7 +131,7 @@ export function parseScheduleFile(filePath) {
                         operator,
                         expectedStatus: isNumeric ? parseInt(match[4], 10) : match[4],
                         isNumeric
-                    });
+                    })
                 }
             }
             
@@ -115,13 +143,13 @@ export function parseScheduleFile(filePath) {
                 modules, // Tableau de modules avec leurs paramètres
                 preAlert,
                 conditions // Tableau de conditions
-            };
-        });
+            }
+        })
 
         return schedule;
     } catch (error) {
-        console.error('❌ Command_Parser: Error while reading or parsing the file: ', error.message);
-        return [];
+        console.error('❌ Command_Parser: Error while reading or parsing the file: ', error.message)
+        return []
     }
 }
 
@@ -132,15 +160,15 @@ export function parseScheduleFile(filePath) {
  * @returns List of actions to do
  */
 export function getActionsToExecute(schedule, now) {
-    const currentHour = now.getHours();
-    const currentMinute = now.getMinutes();
-    const dayMap = ['D', 'L', 'M', 'M', 'J', 'V', 'S']; // Dimanche à Samedi
-    const currentDay = dayMap[now.getDay()];
+    const currentHour = now.getHours()
+    const currentMinute = now.getMinutes()
+    const dayMap = ['D', 'L', 'M', 'M', 'J', 'V', 'S'] // Dimanche à Samedi
+    const currentDay = dayMap[now.getDay()]
     
     // Filtrer par heure et jour
     return schedule.filter(item => {
         return item.hour === currentHour && 
                item.minute === currentMinute &&
-               item.days.charAt(now.getDay()) !== '-';
-    });
+               item.days.charAt(now.getDay()) !== '-'
+    })
 }
