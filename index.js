@@ -12,20 +12,22 @@
  */
 'use strict';
 
+// Import from official frameworks
 import path from 'path'
 import { dirname } from 'path'
 import express from 'express'
 import cors from "cors"
 import http from 'http'
-import { Server } from 'socket.io'
-import { Router } from './routes/routes.js'
 import { fileURLToPath } from 'url'
 import schedule from 'node-schedule'
+import { getSunrise, getSunset } from 'sunrise-sunset-js'
+
+// Import from self frameworks
+import { Router } from './routes/routes.js'
 import VMBserver from './config/VMBServer.json' assert {type: "json"}    // settings for Velbus server TCP port and address
 import appProfile from './config/appProfile.json' assert {type: "json"}
 import * as velbuslib from "./modules/velbuslib.js"
 import { VMBmodule, VMBsubmodule } from './models/velbuslib_class.mjs'
-import { getSunrise, getSunset } from 'sunrise-sunset-js'
 import { writePowerByDay, writeEnergy } from './controllers/CtrlDatabase.mjs'
 import * as TeleInfo from './modules/teleinfo.js'
 import * as VMC from './modules/VMC.js'
@@ -35,9 +37,6 @@ import { checkAndExecuteActions } from './modules/command_Executor.mjs'
 // GPS coordonates for Grenoble (sunrise and sunset value)
 const sunset = getSunset(appProfile.locationX, appProfile.locationY)
 
-
-// global.subModuleList = new Map()
-
 const __dirname = dirname(fileURLToPath(import.meta.url))
 console.log(__dirname)      // "/Users/Sam/dirname-example/src/api"
 console.log(process.cwd())  // "/Users/Sam/dirname-example"
@@ -45,6 +44,10 @@ console.log(process.cwd())  // "/Users/Sam/dirname-example"
 const filePath = path.join(__dirname, 'config/prog_absence.txt')
 
 
+/* ===============================================================================================================
+    Starting application
+   ===============================================================================================================
+*/
 let app = express()
 
 // Make the app available through an ADSL box (WAN) and adding CORS to SocketIO + App
@@ -60,9 +63,7 @@ app.use('/', Router)
 
 // Launch Velbus network (connect to velserv)
 velbuslib.VelbusStart(VMBserver.host, VMBserver.port)
-// create websocket with existing port HTTP for web client
 let myhttp = http.createServer(app);
-// NOTE - running Velbus server on port 8001
 let portWeb = appProfile.listenPort;
 myhttp.listen(portWeb, () => {
     console.log("ARVEL - Velbus Service listening on port ", portWeb)
