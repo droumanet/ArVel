@@ -1,5 +1,15 @@
+# FICHIER DE PROGRAMMATION DOMOTIQUE QUAND PRESENCE À LA MAISON
+# -------------------------------------------------------------
+#
 # Format : 07:25 LMM-V-- relayblink $07-4=x !
 # Actions: relayBlink, relayTimer, relayOff, relayOn, PressButton, LongPressButton, blindUp, blindDown, blindStop
+#
+# Exemple 1 : faire clignoter une lampe à 7h25 le weekend
+# 07:25 -----SD relayblink $07-4
+#
+# Exemple 2 : faire baisser un volet (pendant 12 secondes) à 14h00 toute la semaine si la température extérieure > 25°C
+# 14:00 LMMJVSD blindDown $21-2=12 [$400-1.temp>25]
+# -------------------------------------------------------------
 
 # Lever tous les volets
 # 07:35 LMMJVSD pressButton $AA-6 !
@@ -8,7 +18,7 @@
 # Baisser les volets ouest : 21-2 (Ch. amis), 23-2 (Cuisine ouest), 37-2 (bureau)
 14:00 LMMJVSD blindDown $21-2=12 [$400-1.temp>25]
 14:00 LMMJVSD blindDown $23-2=10 [$400-1.temp>25]
-14:00 LMMJVSD blindDown $37-2=12
+14:00 LMMJVSD blindDown $37-2=12 [$400-1.temp>25]
 
 # Simulation présence
 # 20:35 LMMJVSD relayTimer $2E-1=900
@@ -18,4 +28,4 @@
 22:58 LMMJVSD pressButton $AA-8 !
 
 # Test 
-22:42 LMMJVSD pressButton $AA-9 !
+18:45 LMMJVSD relayTimer $2E-1=10 [$400-1.temp>29]

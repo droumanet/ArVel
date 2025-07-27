@@ -95,13 +95,6 @@ const everyMinut = schedule.scheduleJob('*/1 * * * *', () => {
         }, 20000);
     }
 
-    // ⏰📖 Reading and parsing file for programmed actions (new version)
-    const scheduleActions = parseScheduleFile(filePath)                         // ✅ Checked up and running
-    const actionsToCheck = getActionsToExecute(scheduleActions, currentDate)    // ✅ Checked up and running
-    if (actionsToCheck) console.log("ACTIONS TO CHECK : ",actionsToCheck)
-    // checkAndExecuteActions(actionsToCheck, moduleStates)
-    // console.log(velbuslib.getSubModuleList("400-1").status)
-
     // scan external modules (TeleInfo & VMC)
     console.log("⚡🌀  Synchronizing external modules (TeleInfo & VMC)  ⚡🌀")
     let tableCompteur = TeleInfo.resume()
@@ -111,6 +104,15 @@ const everyMinut = schedule.scheduleJob('*/1 * * * *', () => {
     velbuslib.setSubModuleList("300-1", tableCompteur[0])
     velbuslib.setSubModuleList("300-2", tableCompteur[1])
     velbuslib.setSubModuleList("400-1", VMCModule)
+
+    // ⏰📖 Reading and parsing file for programmed actions (new version)
+    const scheduleActions = parseScheduleFile(filePath)                         // ✅ Checked up and running
+    const actionsToCheck = getActionsToExecute(scheduleActions, currentDate)    // ✅ Checked up and running
+    if (actionsToCheck) console.log("ACTIONS TO CHECK : ",actionsToCheck)
+    checkAndExecuteActions(actionsToCheck)
+    // TODO 💣️ moduleStates n'existe pas 💣️💣️💣️💣️💣️💣️💣️💣️💣️💣️💣️💣️💣️💣️💣️
+    // console.log(velbuslib.getSubModuleList("400-1").status)
+
 
     // Scan all module and search for a function
     let subList = velbuslib.fullSubModuleList()
