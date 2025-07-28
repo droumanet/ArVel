@@ -87,7 +87,7 @@ const everyMinut = schedule.scheduleJob('*/1 * * * *', () => {
 
     // 🌙🪟 Automatically lower the blinds/shutters
     if (sunsetTime == nowTime) {
-        console.log("Lower the blinds/shutters", nowTime)
+        console.log("Lower the blinds/shutters", nowTime) // 🖥️
         velbuslib.VMBWrite(velbuslib.RelayBlink(7, 4, 5))
         velbuslib.VMBWrite(velbuslib.RelayBlink(46, 1, 5))
         setTimeout(() => {
@@ -110,9 +110,6 @@ const everyMinut = schedule.scheduleJob('*/1 * * * *', () => {
     const actionsToCheck = getActionsToExecute(scheduleActions, currentDate)    // ✅ Checked up and running
     if (actionsToCheck) console.log("ACTIONS TO CHECK : ",actionsToCheck)
     checkAndExecuteActions(actionsToCheck)
-    // TODO 💣️ moduleStates n'existe pas 💣️💣️💣️💣️💣️💣️💣️💣️💣️💣️💣️💣️💣️💣️💣️
-    // console.log(velbuslib.getSubModuleList("400-1").status)
-
 
     // Scan all module and search for a function
     let subList = velbuslib.fullSubModuleList()

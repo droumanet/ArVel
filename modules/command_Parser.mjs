@@ -44,6 +44,7 @@ export function parseScheduleFile(filePath) {
                 }
                 let adjustedTime = new Date(brutTime.getTime() - summerTime + offset)
                 time = adjustedTime.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+                console.log(`SUNSET/SUNRISE at ${time} TODAY`)
             }
 
             const [hour, minute] = time.split(':').map(Number);
@@ -59,10 +60,10 @@ export function parseScheduleFile(filePath) {
                 // Check if module has a duration parameter (=)
                 if (parsedModule.includes('=')) {
                     const [moduleStr, durationStr] = parsedModule.split('=')
+                    const flagHexa = parsedModule.includes('$')
                     const parts = parsedModule.replace("$", "").split("-")
-                    const moduleAddress = parseInt(parts[0], 16)
+                    const moduleAddress = flagHexa ? parseInt(parts[0], 16) : parseInt(parts[0], 10);
                     const parsedModulePart = parseInt(parts[1], 10)
-                    //const [moduleAddress, modulePart] = moduleStr.replace('$', '').split('-').map(part => parseInt(part, 16));
                     
                     modules.push({
                         moduleAddress,
@@ -70,12 +71,11 @@ export function parseScheduleFile(filePath) {
                         duration: parseInt(durationStr, 10)
                     })
                 } else {
+                    const flagHexa = parsedModule.includes('$')
                     const parts = parsedModule.replace("$", "").split("-")
-                    const moduleAddress = parseInt(parts[0], 16)
+                    const moduleAddress = flagHexa ? parseInt(parts[0], 16) : parseInt(parts[0], 10);
                     const parsedModulePart = parseInt(parts[1], 10)
 
-                    // const [moduleAddress, modulePart] = modulePart.replace('$', '').split('-').map(part => parseInt(part, 16));
-                    
                     modules.push({
                         moduleAddress,
                         parsedModulePart,
@@ -125,7 +125,7 @@ export function parseScheduleFile(filePath) {
                     }
                     
                     conditions.push({
-                        moduleAddress: parseInt(match[1], 16),
+                        moduleAddress: match[1].includes('$') ? parseInt(match[1], 16) : parseInt(match[1], 10),
                         modulePart: parseInt(match[2], 10),
                         attribute: match[3], // Attribut comme 'temp' ou 'power'
                         operator,

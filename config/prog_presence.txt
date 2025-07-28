@@ -13,19 +13,26 @@
 
 # Lever tous les volets
 # 07:35 LMMJVSD pressButton $AA-6 !
-19:02 LMMJVSD relayTimer $2E-2=180 !
+
+# Lever volet Alexandre
+11:30 LMMJVSD blindUp $25-1=15
 
 # Baisser les volets ouest : 21-2 (Ch. amis), 23-2 (Cuisine ouest), 37-2 (bureau)
 14:00 LMMJVSD blindDown $21-2=12 [$400-1.temp>25]
 14:00 LMMJVSD blindDown $23-2=10 [$400-1.temp>25]
 14:00 LMMJVSD blindDown $37-2=12 [$400-1.temp>25]
 
+# Je ne sais pas
+19:02 LMMJVSD relayTimer $2E-2=180 !
+
 # Simulation présence
 # 20:35 LMMJVSD relayTimer $2E-1=900
 # 21:55 LMMJVSD relayTimer $0C-2=900
 
-# Fermer tous les volets si l'automatisme ne fonctionne pas
-22:58 LMMJVSD pressButton $AA-8 !
+# Fermer tous les volets au coucher du soleil puis forcer à 22h30
+SUNSET+30 LMMJVSD pressButton $AA-8 !
+22:30 LMMJVSD pressButton $AA-8
 
 # Test 
-18:45 LMMJVSD relayTimer $2E-1=10 [$400-1.temp>29]
+# 18:45 LMMJVSD relayTimer $2E-1=10 [$400-1.temp>29]
+15:11 LMMJVSD blindUp $35-1=10

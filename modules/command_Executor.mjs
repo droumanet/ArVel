@@ -79,10 +79,9 @@ export function checkConditions(conditions) {
  * @param {Array} modules Liste des modules avec leurs paramètres
  */
 export function executeCommand(action, modules) {
-    // Convertir l'action en minuscules pour insensibilité à la casse
     const actionLower = action.toLowerCase();
     
-    console.warn("module ----- ", modules)
+    console.warn("module ----- ", modules) // 🖥️
     modules.forEach(module => {
         const { moduleAddress, parsedModulePart, duration } = module;
         
@@ -114,10 +113,10 @@ export function executeCommand(action, modules) {
             case 'blindup': {
                 const blindDuration = duration || null;
                 if (blindDuration) {
-                    velbuslib.VMBWrite(velbuslib.BlindUpWithTimer(moduleAddress, parsedModulePart, blindDuration));
+                    velbuslib.VMBWrite(velbuslib.BlindMove(moduleAddress, parsedModulePart, 1, blindDuration));
                     console.log(`Action "blindUp" avec timer ${blindDuration}s sur le module ${moduleAddress}-${parsedModulePart}.`);
                 } else {
-                    velbuslib.VMBWrite(velbuslib.BlindUp(moduleAddress, parsedModulePart));
+                    velbuslib.VMBWrite(velbuslib.BlindMove(moduleAddress, parsedModulePart, 1));
                     console.log(`Action "blindUp" exécutée sur le module ${moduleAddress}-${parsedModulePart}.`);
                 }
                 break;
@@ -126,10 +125,10 @@ export function executeCommand(action, modules) {
             case 'blinddown': {
                 const blindDuration = duration || null;
                 if (blindDuration) {
-                    velbuslib.VMBWrite(velbuslib.BlindDownWithTimer(moduleAddress, parsedModulePart, blindDuration));
+                    velbuslib.VMBWrite(velbuslib.BlindMove(moduleAddress, parsedModulePart, -1, blindDuration));
                     console.log(`Action "blindDown" avec timer ${blindDuration}s sur le module ${moduleAddress}-${parsedModulePart}.`);
                 } else {
-                    velbuslib.VMBWrite(velbuslib.BlindDown(moduleAddress, parsedModulePart));
+                    velbuslib.VMBWrite(velbuslib.BlindMove(moduleAddress, parsedModulePart, -1));
                     console.log(`Action "blindDown" exécutée sur le module ${moduleAddress}-${parsedModulePart}.`);
                 }
                 break;
