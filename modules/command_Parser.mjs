@@ -1,6 +1,9 @@
 import fs from 'fs'
 import path from 'path'
+import { getSunrise, getSunset } from 'sunrise-sunset-js'
 import { isDaylightSavingTime, TimeStamp2Date } from '../utils.js'
+import appProfile from '../config/appProfile.json' assert {type: "json"}
+
 
 /*
     The parser part should parse a file where each line contains an action by hour, day, type of action, module address-part.
@@ -22,12 +25,12 @@ export function parseScheduleFile(filePath) {
         const schedule = lines.map(line => {
             // Extract parts: time, days, action
             const parts = line.split(' ')
-            let   time = parts[0]
+            let   time = parts[0].toLowerCase()
             const days = parts[1]
-            const action = parts[2]
+            const action = parts[2].toLowerCase()
             
             // case where time (ex: 08:33) isn't a time but key word 'sunset' or 'sunrise'
-            if (time.includes('sunset') || time.includes('sunrise')) {
+            if (time.startsWith('sunset') || time.startsWith('sunrise')) {
                 let offset = 0
                 if (time.includes('+')) {
                     offset = parseInt(time.split('+')[1], 10) * 60 * 1000
@@ -37,9 +40,9 @@ export function parseScheduleFile(filePath) {
 
                 let summerTime = isDaylightSavingTime() ? 60 * 60 * 1000 : 0
                 let brutTime
-                if (time.includes('sunset')) {
+                if (time.startsWith('sunset')) {
                     brutTime = getSunset(appProfile.locationX, appProfile.locationY)
-                } else if (time.includes('sunrise')) {
+                } else if (time.startsWith('sunrise')) {
                     brutTime = getSunrise(appProfile.locationX, appProfile.locationY)
                 }
                 let adjustedTime = new Date(brutTime.getTime() - summerTime + offset)
@@ -60,7 +63,7 @@ export function parseScheduleFile(filePath) {
                 // Check if module has a duration parameter (=)
                 if (parsedModule.includes('=')) {
                     const [moduleStr, durationStr] = parsedModule.split('=')
-                    const flagHexa = parsedModule.includes('$')
+                    const flagHexa = parsedModule.startsWith('$')
                     const parts = parsedModule.replace("$", "").split("-")
                     const moduleAddress = flagHexa ? parseInt(parts[0], 16) : parseInt(parts[0], 10);
                     const parsedModulePart = parseInt(parts[1], 10)
@@ -71,7 +74,7 @@ export function parseScheduleFile(filePath) {
                         duration: parseInt(durationStr, 10)
                     })
                 } else {
-                    const flagHexa = parsedModule.includes('$')
+                    const flagHexa = parsedModule.startsWith('$')
                     const parts = parsedModule.replace("$", "").split("-")
                     const moduleAddress = flagHexa ? parseInt(parts[0], 16) : parseInt(parts[0], 10);
                     const parsedModulePart = parseInt(parts[1], 10)
