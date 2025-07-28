@@ -47,7 +47,7 @@ export function parseScheduleFile(filePath) {
                 }
                 let adjustedTime = new Date(brutTime.getTime() - summerTime + offset)
                 time = adjustedTime.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
-                console.log(`SUNSET/SUNRISE at ${time} TODAY`)
+                console.log(`SUNSET/SUNRISE at ${time} TODAY (${action})`)
             }
 
             const [hour, minute] = time.split(':').map(Number);
