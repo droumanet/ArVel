@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Modules API</title>
+  <style>
+    .card {
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      padding: 10px;
+      margin-bottom: 10px;
+      width: 300px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Modules</h1>
+<div id="moduleList"></div>
+
+<script>
+  async function fetchModules() {
+    const response = await fetch('http://192.168.168.248:8001/modules');
+    return await response.json();
+  }
+
+  function displayModules(modules) {
+    const moduleList = document.getElementById('moduleList');
+
+    for (const moduleId in modules) {
+      const module = modules[moduleId];
+
+      const card = document.createElement('div');
+      card.classList.add('card');
+
+      const name = document.createElement('h2');
+      name.textContent = module.name;
+      card.appendChild(name);
+
+      const status = document.createElement('p');
+
+      if (module.cat.includes('energy')) {
+        status.textContent = `Puissance: ${module.status.power} W`;
+      } else if (module.cat.includes('temp')) {
+        status.textContent = `Temprature: ${module.status.temp} C`;
+      }
+
+      card.appendChild(status);
+      moduleList.appendChild(card);
+    }
+  }
+
+  fetchModules()
+    .then(displayModules);
+</script>
+</body>
+</html>
