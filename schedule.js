@@ -83,18 +83,6 @@ const everyMinut = schedule.scheduleJob('*/1 * * * *', () => {
     let sunsetTime = sunset.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
     let nowTime = currentDate.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
 
-    console.log(`⏰ ARVEL CRON 1 minute: (now=${nowTime}, sunset=${sunsetTime})`)
-
-    // 🌙🪟 Automatically lower the blinds/shutters
-    if (sunsetTime == nowTime) {
-        console.log("Lower the blinds/shutters", nowTime) // 🖥️
-        velbuslib.VMBWrite(velbuslib.RelayBlink(7, 4, 5))
-        velbuslib.VMBWrite(velbuslib.RelayBlink(46, 1, 5))
-        setTimeout(() => {
-            velbuslib.PressButton(0xAA, 8)
-        }, 20000);
-    }
-
     // scan external modules (TeleInfo & VMC)
     console.log("⚡🌀  Synchronizing external modules (TeleInfo & VMC)  ⚡🌀")
     let tableCompteur = TeleInfo.resume()
@@ -134,7 +122,7 @@ const everyMinut = schedule.scheduleJob('*/1 * * * *', () => {
                         lastSubModuleTime = new Date(SubModTmp.status.timestamp)
                         eventDate=TimeStamp2Date(lastSubModuleTime)
                         writeEnergy([SubModTmp.address, SubModTmp.part, eventDate, SubModTmp.status.index, SubModTmp.status.power])
-                        console.log(`📀 STORE IN DB:  ${SubModTmp.address}-${SubModTmp.part} \t${SubModTmp.status.power}w \tINDEX: ${SubModTmp.status.index} \ton ${eventDate}`)
+                        console.log(`📀 STORE IN DB:  ${SubModTmp.address}-${SubModTmp.part} \t${SubModTmp.status.power}w \tINDEX: ${SubModTmp.status.index} \ton ${eventDate} \t [${SubModTmp.name}]`)
                     }
                 }
                 // Search for Velbus module able to manage energy counting

@@ -3,10 +3,11 @@
 */
 
 import * as express from 'express'
-const Router = express.Router()
-
 import * as CtrlModules from '../controllers/CtrlModules.mjs'
 import * as CtrlRelay from '../controllers/CtrlRelay.mjs'
+
+const Router = express.Router()
+Router.use(express.static('public'))
 
 // routes list
 Router.get('/modules', CtrlModules.getModules)
@@ -16,6 +17,11 @@ Router.get('/scan', CtrlModules.scanModules)
 // TODO POST and not GET ?
 Router.get("/name/:addr/:part", CtrlRelay.getName)
 Router.get("/relay/:addr/:part/:status", CtrlRelay.setRelayStatus)
+
+// TODO remove later
+Router.get('/index_listes.html', (req, res) => {
+  res.sendFile(path.join(process.cwd(), 'index_listes.html'));
+});
 
 
 // default routes

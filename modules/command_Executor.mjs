@@ -18,7 +18,7 @@ export function checkConditions(conditions) {
         // Check each condition (AND logic)
         for (const condition of conditions) {
             // format a modulekey with condition's attribute (ex: '$3C-1') then search in list
-            const moduleKey = `${condition.moduleAddress.toString(16).padStart(2, '0')}-${condition.modulePart}`;
+            const moduleKey = `${condition.moduleAddress.toString(10).padStart(2, '0')}-${condition.modulePart}`;
             if (modulesList.has(moduleKey)) {
                 queriedModule = modulesList.get(moduleKey);
             } else {
