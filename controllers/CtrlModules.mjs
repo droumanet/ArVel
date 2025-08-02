@@ -11,7 +11,7 @@ import * as velbuslib from "../modules/velbuslib.js"
  * @returns 
  */
 export function subModulesToJSON(req, res) {
-  let httpStatus = 400
+  let httpStatus = 200
   let httpResponse
   let x = velbuslib.fullSubModuleList()
   let filter = req.query;
@@ -26,10 +26,10 @@ export function subModulesToJSON(req, res) {
         y.set(key, value);
       } else if (!Array.isArray(moduleData.cat) ) {
         console.log("⚠️ Error on filtered request with ", key, moduleData)
+        httpStatus = 400
       }
     }
     httpResponse = Object.fromEntries(y);
-    httpStatus = 400
   } else {
     console.log("*** API CTRL-Module : request without filter ***")
     httpResponse = Object.fromEntries(x); // Convertir la Map en objet
