@@ -66,19 +66,17 @@ export function scanModulesToJSON(req, res) {
 }
 
 export function getNameToJSON(req, res) {
-    const addr = req.params.addr;
-    const part = req.params.part;
-    const key = addr+"-"+part
+    const key = req.params.key;
     const x = velbuslib.subModulesList
     let httpStatus = 400
-    let response = ""
+    let response = undefined
     
     console.log("🕸️", key, `request to get name of ${key}`)
-    if (addr && part) {
+    if (key) {
         let subModule = x.get(key)
         if (subModule) {
           response = subModule.name
-          httpResponse = 200
+          httpStatus = 200
         } 
     }
     res.setHeader('content-type', 'application/json')
@@ -86,4 +84,25 @@ export function getNameToJSON(req, res) {
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
     res.header('Access-Control-Allow-Headers', 'Content-Type');
     res.status(httpStatus).json({name:response})
+}
+
+export function getStatusToJSON(req, res) {
+    const key = req.params.key;
+    const x = velbuslib.subModulesList
+    let httpStatus = 400
+    let response = undefined
+    
+    console.log("🕸️", key, `request to get status of ${key}`)
+    if (key) {
+        let subModule = x.get(key)
+        if (subModule) {
+          response = subModule.status
+          httpStatus = 200
+        } 
+    }
+    res.setHeader('content-type', 'application/json')
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    res.status(httpStatus).json(response)
 }
