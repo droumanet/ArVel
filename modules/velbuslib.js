@@ -44,10 +44,10 @@ const ModulesFile = "VelbusMapData.json"
 
 // General list for event
 /** @type {Map<byte, import('../models/velbuslib_class.mjs').VMBmodule>} */
-let moduleList = new Map()
+let modulesList = new Map()
 
 /** @type {Map<byte, import('../models/velbuslib_class.mjs').VMBsubmodule>} */
-let subModuleList = new Map()
+let subModulesList = new Map()
 
 /** @type {Map<string, {address: string, name: string, n1: string, n2: string, n3: string, flag: number}>}  */
 let VMBNameStatus = new Map()
@@ -64,16 +64,16 @@ const DEBUG = 1		// 0 not log, 1 only error/warn, 2 = all
  * @param {VMBsubmodule} module 
  */
 function setSubModuleList(key, module) {
-	subModuleList.set(key, module)
+	subModulesList.set(key, module)
 }
 
 /**
  * Getter for submodule
- * @param {String} key module address-part (ex. 122-1)
+ * @param {String} key module address-part (ex. 122-1 in decimal, not hexa)
  * @returns {VMBsubmodule}
  */
 function getSubModuleList(key) {
-	return subModuleList.get(key)
+	return subModulesList.get(key)
 }
 
 /**
@@ -81,7 +81,7 @@ function getSubModuleList(key) {
  * @returns {VMBsubmodule[]}
  */
 function fullSubModuleList() {
-	return subModuleList
+	return subModulesList
 }
 
 /**
@@ -116,10 +116,10 @@ function loadMapData() {
 		try {
 			const data = fs.readFileSync(ModulesFile, 'utf8');
 			const parsedData = JSON.parse(data);
-			moduleList = new Map(parsedData.ModuleList);
-			subModuleList = new Map(parsedData.subModuleList);
-			logInfo(0, '💾 Success loading '+ModulesFile+`\nFound ${subModuleList.size} subModules`);
-			return subModuleList.size;
+			modulesList = new Map(parsedData.ModuleList);
+			subModulesList = new Map(parsedData.subModuleList);
+			logInfo(0, '💾 Success loading '+ModulesFile+`\nFound ${subModulesList.size} subModules`);
+			return subModulesList.size;
 		} catch (err) {
 			logInfo(3, '💾 Error while loading Velbus data from file : '+err);
 			return 0;
@@ -133,7 +133,7 @@ function loadMapData() {
   // AUTO save (every hour check the VMBModification variable)
   function hourlyCheck() {
 	if (VMBModification) {
-	  saveMapData(moduleList, subModuleList);
+	  saveMapData(modulesList, subModulesList);
 	  VMBModification = false;
 	}
   }
@@ -146,23 +146,23 @@ function loadMapData() {
 
 // #region FRAME functions
 /** ---------------------------------------------------------------------------------------------
- * This function split messages that are in the same frame. Example 0F...msg1...04 / 0F...msg2...04
- * @param {rawData} data RAW frame that could contains multiple messages
- * @returns array containing one message by cell
+ * This function split messages that are in the same raw data. Example 0F...msg1...04 / 0F...msg2...04
+ * @param {rawData} rawData RAW frame that could contains multiple messages
+ * @returns array list containing one message by cell
  * --------------------------------------------------------------------------------------------*/
-const Cut = (data) => {
-	let table = [];
-	let longueur, VMBSize;
+const Cut = (rawData) => {
+	let messageList = [];
+	let VMBLength, VMBSize;
 	let i = 0;
 	// search for 0x0F header, then look at size byte and check if end byte is in good place
-	while (i < data.length) {
-		if (data[i] == 0x0F && i + 3 < data.length) {
-			longueur = data[i + 3];
-			VMBSize = longueur + 3 + 1 + 1;     // message length + offset 3 + checksum + end byte
-			if (data[i + VMBSize] == 0x04) {
-				// push de i à VMBSize dans tableau
+	while (i < rawData.length) {
+		if (rawData[i] == 0x0F && i + 3 < rawData.length) {
+			VMBLength = rawData[i + 3];
+			VMBSize = VMBLength + 3 + 1 + 1;     // message length + offset 3 + checksum + end byte
+			if (rawData[i + VMBSize] == 0x04) {
+				// push from i to VMBSize in a table
 				// console.log("trame OK à position ",i, " longueur ", VMBSize);
-				table.push(data.slice(i, i + VMBSize + 1));     // slice utilise position début et position fin
+				messageList.push(rawData.slice(i, i + VMBSize + 1));     // slice utilise position début et position fin
 				i = i + VMBSize;
 			} else {
 				// console.log("octet à longueur VMBSize : ",data[i+VMBSize])
@@ -170,7 +170,7 @@ const Cut = (data) => {
 		}
 		i++;
 	}
-	return table;
+	return messageList;
 }
 
 
@@ -227,8 +227,8 @@ function Bin2Part(binValue, offset = 0) {
 
 /** ------------------------------------------------------------------------------------------------------
  * Convert human part number to binary element (5 => 0b10000)
- * @param {number} partValue 
- * @returns {number} binary number of partValue (2^partValue)
+ * @param {number} partValue (ie 1, 2, 3, 4, 5...)
+ * @returns {number} binary number of partValue (ie 3 => 2² = 8)
  * -----------------------------------------------------------------------------------------------------*/
 function Part2Bin(partValue) {
 	return 2 ** (partValue - 1)
@@ -240,13 +240,13 @@ function Part2Bin(partValue) {
  * @returns string name
  * -----------------------------------------------------------------------------------------------------*/
 function LocalModuleName(key) {
-	let myModule = subModuleList.get(key)
+	let myModule = subModulesList.get(key)
 	if (myModule) return myModule.name
 	return "****"
 }
 
 function resume() {
-	return moduleList;
+	return modulesList;
 }
 
 
@@ -306,12 +306,12 @@ function CheckName(element) {
 	// in case name is complete (flag = 100 | 010 | 001)
 	let thisName = VMBNameStatus.get(key)
 	if (thisName.flag == 0b111) {
-		let thisSubModule = subModuleList.get(key)
+		let thisSubModule = subModulesList.get(key)
 		if (thisSubModule) {
 			thisSubModule.name = thisName.name
 			myModule.name = thisSubModule.name
 			VMBModification = true
-			logInfo(0, "📌 VELBUS submodule " + key + " is named " + subModuleList.get(key).name)
+			logInfo(0, "📌 VELBUS submodule " + key + " is named " + subModulesList.get(key).name)
 		} else {
 			logInfo(3, "Erreur de lecture du module "+key+" (flag:"+flag+", f:"+f)
 		}
@@ -331,9 +331,9 @@ function CheckModule(VMBmessage) {
 	let buildYear = VMBmessage[9]
 	let buildWeek = VMBmessage[10]
 
-	if (moduleList.has(addrByte)) {
+	if (modulesList.has(addrByte)) {
 		
-		let newModule = moduleList.get(addrByte)
+		let newModule = modulesList.get(addrByte)
 
 		// MODULE exist, check if it still same type ?
 		if (functionByte == 0xFF) {
@@ -341,8 +341,13 @@ function CheckModule(VMBmessage) {
 				// MODULE type has changed (physical changed module)
 				VMBModification = true
 				// (1) Remove SubModules and change module
-				moduleList.set(addrByte, ChangeModule(addrByte, typeByte, VMBmessage))
+				for (let index = 0; index < newModule.partNumber; index++) {
+					subModulesList.delete(addrByte+"-"+index)					
+				}
+				// (2) Change Module destination
+				modulesList.set(addrByte, ChangeModule(addrByte, typeByte, VMBmessage))
 				// (3) Create subModules (names and status)
+				scanModulesToJSON(addrByte)
 
 				// WIP scan new part...
 
@@ -350,14 +355,14 @@ function CheckModule(VMBmessage) {
 				// Take Year/Week information
 				newModule.buildYear = buildYear
 				newModule.buildWeek = buildWeek
-				moduleList.set(addrByte, newModule)
+				modulesList.set(addrByte, newModule)
 			}
 			logInfo(0,"CheckModule on existing module address: "+addrByte)
 
 			let key, subModTemp
 			for (let i=0; i<newModule.partNumber; i++) {
 				key=addrByte+"-"+(i+1)
-				subModTemp = subModuleList.get(key)
+				subModTemp = subModulesList.get(key)
 	
 				console.log("  Looking at Name for "+key)
 				// 2025-05-04 pour les modules blind VMB2BL uniquement, les numéros de parties sont 3 et 12
@@ -388,7 +393,7 @@ function CheckModule(VMBmessage) {
 			newModule.powerConsumption = VMB.getPowerFromType(typeByte)
 			console.log("CREATE TYPE:", newModule.modType)
 			newModule.partNumber = VMB.getPartFromCode(newModule.modType)	// Fixed 2024-04-07
-			moduleList.set(addrByte, newModule)							// Fixed 2024-04-12
+			modulesList.set(addrByte, newModule)							// Fixed 2024-04-12
 			// Now we have enough information to create SUBMODULE
 			for (let i=0; i<newModule.partNumber; i++) {
 				key=addrByte+"-"+(i+1)
@@ -425,10 +430,10 @@ function CheckModule(VMBmessage) {
  * @returns {VMBModule} The new module type
  */
 function ChangeModule(addr, VelbusType, VelbusMsg) {
-	let newModule = moduleList.get(addr)
+	let newModule = modulesList.get(addr)
 	for (let t=1; t <= newModule.part; t++) {
-		if (subModuleList.get(addr+'-'+t)) {
-			subModuleList.delete(addr+'-'+t)
+		if (subModulesList.get(addr+'-'+t)) {
+			subModulesList.delete(addr+'-'+t)
 		}
 	}
 	newModule.modType = VelbusType										// new type
@@ -486,15 +491,15 @@ function analyze2Texte(element) {
 			let errorRX = element[6]
 			let errorBO = element[7]
 			texte += `ERROR Counter: TX=${errorTX}, RX=${errorRX}, BusOFF=${errorBO}`
-			if (moduleList.get(addrByte)) {
+			if (modulesList.get(addrByte)) {
 				// update existing module with current value
 				let dt = new Date()
-				let moduleTmp = moduleList.get(addrByte)
+				let moduleTmp = modulesList.get(addrByte)
 				moduleTmp.busErrorTX = element[5]
 				moduleTmp.busErrorRX = element[6]
 				moduleTmp.busErrorBOFF = element[7]
 				moduleTmp.busRefreshDate = dt.now()
-				moduleList.set(addrByte, moduleTmp)
+				modulesList.set(addrByte, moduleTmp)
 			}
 			break
 		}
@@ -653,10 +658,10 @@ function TempMaxCalculation(msg) {
  * @param {Object} value specific status information (temp, counter, etc.)
  */
 function UpdateModule(key, value) {
-	let m = moduleList.get(key)
+	let m = modulesList.get(key)
 	if (m != undefined) {
 		m.status = value
-		moduleList.set(key, m)
+		modulesList.set(key, m)
 		return true
 	} else {
 		// unexistant module
@@ -687,10 +692,10 @@ function surveyTempStatus() {
 			let status = { "defaultStatus": currentTemperature, "current": currentTemperature, "min": minTemperature, "max": maxTemperature, "timestamp": Date.now() }
 
 			// ajout pour gestion avec subModuleList
-			let subModTemp = subModuleList.get(key)
+			let subModTemp = subModulesList.get(key)
 			if (subModTemp) {
 				subModTemp.status = status
-				subModuleList.set(key, subModTemp)
+				subModulesList.set(key, subModTemp)
 				if (subModTemp.name == undefined) {
 					// if it has no name, ask it
 					VMBWrite(FrameRequestName(msg.RAW[2], 1))
@@ -708,7 +713,7 @@ async function VMBRequestTemp(adr, part) {
 	let trame = FrameRequestTemp(adr, part);
 	VMBWrite(trame);
 	await sleep(200);
-	let result = subModuleList.get(adr + "-" + part)
+	let result = subModulesList.get(adr + "-" + part)
 	if (result) return result.status;
 	return { "defaultStatus": 1000, "current": 1000, "min": 1000, "max": 1000, "timestamp": Date.now() };
 
@@ -729,10 +734,10 @@ function surveyEnergyStatus() {
 			let status = { "defaultStatus":power, "index": rawcounter, "power": power, "timestamp": Date.now() }
 
 			// ajout pour gestion avec subModuleList
-			let subModTmp = subModuleList.get(key)
+			let subModTmp = subModulesList.get(key)
 			if (subModTmp) {
 				subModTmp.status = status
-				subModuleList.set(key, subModTmp)
+				subModulesList.set(key, subModTmp)
 			}
 		}
 	})
@@ -745,7 +750,7 @@ async function VMBRequestEnergy(adr, part) {
 		VMBWrite(trame);
 		await sleep(200); // VMBEmitter isn't synchronous, need to wait few milliseconds to be sure answer is back
 		// Received answer
-		let result = subModuleList.get(adr+"-"+part)
+		let result = subModulesList.get(adr+"-"+part)
 		if (result) return result.status;
 		return { "power": undefined, "index": undefined, "timestamp": Date.now() };
 	} else {
@@ -755,10 +760,10 @@ async function VMBRequestEnergy(adr, part) {
 		VMBWrite(trame);
 
 		await sleep(200);
-		tableModule.push(subModuleList.get(adr + "-1").status);
-		tableModule.push(subModuleList.get(adr + "-2").status);
-		tableModule.push(subModuleList.get(adr + "-3").status);
-		tableModule.push(subModuleList.get(adr + "-4").status);
+		tableModule.push(subModulesList.get(adr + "-1").status);
+		tableModule.push(subModulesList.get(adr + "-2").status);
+		tableModule.push(subModulesList.get(adr + "-3").status);
+		tableModule.push(subModulesList.get(adr + "-4").status);
 		return tableModule;
 	}
 
@@ -835,6 +840,7 @@ function logInfo(priority, text) {
 const CNX = { host: "127.0.0.1", port: 8445 }
 import net from 'net'
 import { get } from 'http';
+import { scanModulesToJSON } from '../controllers/CtrlModules.mjs';
 
 const connectVelbus = (TCPConnexion) => {
 	let velbusConnexion = new net.Socket();
@@ -871,14 +877,14 @@ VelbusConnexion.once('connect', () => {
 	let fileRead = loadMapData()
 	logInfo(2,"💾 Reading file give "+fileRead+" submodules")
 	if (fileRead<5) {
-		console.log("subModuleList size", subModuleList.size)
+		console.log("subModuleList size", subModulesList.size)
 		setTimeout(() => {
 			// VMBscanAll() after 1 second
 			logInfo(0, "🔎 Now scanning all devices on BUS")
 			VMBscanAll(0)
 		}, 1000)
 		setTimeout(() => {
-			saveMapData(moduleList, subModuleList) // after 90 second
+			saveMapData(modulesList, subModulesList) // after 90 second
 			logInfo(0,"💾 List saved after scan on BUS")
 		}, 90000)		
 	} else {
@@ -945,6 +951,7 @@ VelbusConnexion.once('close', () => {
 
 
 export {
+	modulesList, subModulesList,
 	setSubModuleList, getSubModuleList, fullSubModuleList,
 	CheckSum,
 	Cut,

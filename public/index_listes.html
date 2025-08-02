@@ -35,6 +35,7 @@
     <script>
         // Liste des catégories à afficher
         const CATEGORIES = ['blind', 'relay', 'dimmer', 'button'];
+        let activeCategory = 'relay';
 
         // Stockage des modules par catégorie
         let modulesByCategory = {};
@@ -167,6 +168,7 @@
 
         // Active l'onglet sélectionné
         function activateTab(category) {
+            activeCategory = category;
             document.querySelectorAll('.tab-button').forEach(btn => {
                 btn.classList.toggle('active', btn.textContent.toLowerCase() === category);
             });
@@ -194,6 +196,7 @@
             modulesByCategory = groupModulesByCategory(modules);
             renderTabs(CATEGORIES);
             renderTabContents(modulesByCategory);
+            activateTab(activeCategory);
         }
 
         // Initialisation au chargement
