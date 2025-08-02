@@ -180,7 +180,7 @@
         // Fonction globale pour changer l'état d'un relais
         window.setRelayStatus = async function(address, part, status) {
             try {
-                const url = `/relay/${address}/${part}/${status}`;
+                const url = `/relay/${address}-${part}/${status}`;
                 const response = await fetch(url);
                 if (!response.ok) throw new Error('Erreur lors de la commande');
                 // Rafraîchir la liste après action

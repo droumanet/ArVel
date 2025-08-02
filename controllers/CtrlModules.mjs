@@ -13,13 +13,12 @@ import * as velbuslib from "../modules/velbuslib.js"
 export function subModulesToJSON(req, res) {
   let httpStatus = 200
   let httpResponse
-  let x = velbuslib.fullSubModuleList()
   let filter = req.query;
   if (filter.cat) {
     console.log("*** API CTRL-Module : request with Filter", filter)
     let y = new Map()
-    for (const [key, value] of x) {
-      const moduleData = x.get(key);
+    for (const [key, value] of velbuslib.subModulesList) {
+      const moduleData = velbuslib.subModulesList.get(key);
       // Vérification complète avant d'utiliser .some()
       if (moduleData && moduleData.cat && Array.isArray(moduleData.cat) && 
           moduleData.cat.some(cat => cat === filter.cat)) {
@@ -32,7 +31,7 @@ export function subModulesToJSON(req, res) {
     httpResponse = Object.fromEntries(y);
   } else {
     console.log("*** API CTRL-Module : request without filter ***")
-    httpResponse = Object.fromEntries(x); // Convertir la Map en objet
+    httpResponse = Object.fromEntries(velbuslib.subModulesList);
   }
 
   res.setHeader('content-type', 'application/json')

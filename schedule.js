@@ -100,12 +100,11 @@ const everyMinut = schedule.scheduleJob('*/1 * * * *', () => {
     checkAndExecuteActions(actionsToCheck)
 
     // Scan all module and search for a function
-    let subList = velbuslib.fullSubModuleList()
-    if (subList.size > 0) {
-        console.log("THERE ARE ",subList.size," MODULES")
+     if (velbuslib.subModulesList.size > 0) {
+        console.log("THERE ARE ",velbuslib.subModulesList.size," MODULES")
         let lastSubModuleTime
         let eventDate=""
-        subList.forEach((SubModTmp, k) => {
+        velbuslib.subModulesList.forEach((SubModTmp, k) => {
             try {
                 // Search for Velbus module able to manage energy counting
                 if (SubModTmp.cat.includes("energy") && SubModTmp.address < 256) {

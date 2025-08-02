@@ -9,7 +9,7 @@ import * as CtrlRelay from '../controllers/CtrlRelay.mjs'
 const Router = express.Router()
 Router.use(express.static('public'))
 
-// routes list
+// routes list with generic API functions first
 Router.get('/modules/name/:key', CtrlModules.getNameToJSON)
 Router.get('/modules/status/:key', CtrlModules.getStatusToJSON)
 Router.get('/modules', CtrlModules.subModulesToJSON)
@@ -17,8 +17,7 @@ Router.get('/scan', CtrlModules.scanModulesToJSON)
 
 // Route pour activer/désactiver un relais
 // TODO POST and not GET ?
-Router.get("/name/:addr/:part", CtrlRelay.getName)
-Router.get("/relay/:addr/:part/:status", CtrlRelay.setRelayStatus)
+Router.get("/relay/:key/:status", CtrlRelay.setRelayStatus)
 
 // TODO remove later
 Router.get('/index_listes.html', (req, res) => {

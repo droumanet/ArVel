@@ -12,17 +12,16 @@ export function checkConditions(conditions) {
         return true;
     }
     
-    const modulesList = velbuslib.fullSubModuleList()
     let queriedModule
     try {
         // Check each condition (AND logic)
         for (const condition of conditions) {
-            // format a modulekey with condition's attribute (ex: '$3C-1') then search in list
+            // format a modulekey with condition's attribute (ex: '123-1' in decimal) then search in list
             const moduleKey = `${condition.moduleAddress.toString(10).padStart(2, '0')}-${condition.modulePart}`;
-            if (modulesList.has(moduleKey)) {
-                queriedModule = modulesList.get(moduleKey);
+            if (velbuslib.subModulesList.has(moduleKey)) {
+                queriedModule = velbuslib.subModulesList.get(moduleKey);
             } else {
-                queriedModule = velbuslib.getSubModuleList(moduleKey);
+                return false
             }
             
             console.log("Queried SubModule", moduleKey, queriedModule)

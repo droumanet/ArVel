@@ -8,7 +8,6 @@ import * as VMBRelay from "../modules/velbuslib_blind.mjs"
 import * as VMBGeneric from "../modules/velbuslib_generic.mjs"
 
 export function setBlindStatus(req, res) {
-    let x = velbuslib.fullSubModuleList()
     const addr = req.params.addr;
     const part = req.params.part;
     const status = req.params.status;
@@ -16,7 +15,7 @@ export function setBlindStatus(req, res) {
     let key = addr+"-"+part
     console.log("🪟", key, "blind status need to change to ", status*1)
     if (addr && part && status) {
-        if (x.get(key)) {
+        if (velbuslib.subModulesList.get(key)) {
             // TODO test du type de module
             if (status < 2 && status > -1) {
                 console.log(" ", "writing order ON/OFF on Velbus")
