@@ -10,6 +10,7 @@ const Router = express.Router()
 Router.use(express.static('public'))
 
 // routes list
+Router.get('/modules/name/:addr/:part', CtrlModules.getNameToJSON)
 Router.get('/modules', CtrlModules.subModulesToJSON)
 Router.get('/scan', CtrlModules.scanModulesToJSON)
 
