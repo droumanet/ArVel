@@ -679,7 +679,82 @@ async function sleep(timeout) {
 	await new Promise(r => setTimeout(r, timeout));
 }
 
-/** 🌡️ GESTION TEMPERATURE
+
+/** 📍 MANAGE RELAY STATUS
+ *  This function use an emitter to receive specific message, then analyze and update module status
+ */
+function surveyRelayStatus() {
+	VMBEmitter.on("RelayStatus", (msg) => {
+		if (msg.RAW[4] == 0xFB) {
+			// TODO get relays status and fill subModulesList with them
+			// msg.RAW[5] contains binary number of relay and msg.RAW[7] contains it status
+			// 
+			logInfo("warning", `Relay ${msg.RAW[2]} status : ${msg.RAW[7]} (${toButtons(msg.RAW[7])}) DATABYTE2 = ${Bin2Part(msg.RAW[5])}`)
+			let subModTemp, key, btnStatus, x
+			btnStatus = toButtons(msg.RAW[7])
+			btnStatus.forEach(element => {
+				key = msg.RAW[2] + '-' + element
+				subModTemp = subModulesList.get(key)
+				try {
+					x = subModTemp.name ? subModTemp.name : "undefined module"
+				} catch {
+					x = "..."
+				}
+				console.log("🔑",key, x, `DATABYTE2 = ${Bin2Part(msg.RAW[5])}`)
+			});
+			/* let status = { "defaultStatus": currentTemperature, "current": currentTemperature, "min": minTemperature, "max": maxTemperature, "timestamp": Date.now() }
+
+			// ajout pour gestion avec subModuleList
+			let subModTemp = subModulesList.get(key)
+			if (subModTemp) {
+				subModTemp.status = status
+				subModulesList.set(key, subModTemp)
+				if (subModTemp.name == undefined) {
+					// if it has no name, ask it
+					VMBWrite(FrameRequestName(msg.RAW[2], 1))
+				}
+				if (subModTemp.cat == "") {
+					subModTemp.cat = "temp"
+				}
+			}
+			*/
+		}
+	})
+}
+
+/** 🪟 MANAGE BLIND STATUS
+ *  This function use an emitter to receive specific message, then analyze and update module status
+ */
+function surveyBlindStatus() {
+	VMBEmitter.on("BlindStatus", (msg) => {
+		if (msg.RAW[4] == 0xEC) {
+			// TODO get relays status and fill subModulesList with them
+			// msg.RAW[5] contains number (3 or 12) of relay and msg.RAW[7] contains it status : 1/10 up/down, 0100/1000 up/down
+			// 
+			logInfo("warning", `Blind ${msg.RAW[2]} status : ${msg.RAW[7]} (${msg.RAW[7].toString(2).padStart(4, '0')}) DATABYTE2 = ${Bin2Part(msg.RAW[5])}`)
+			let subModTemp, key, btnStatus, x
+			
+			/* let status = { "defaultStatus": currentTemperature, "current": currentTemperature, "min": minTemperature, "max": maxTemperature, "timestamp": Date.now() }
+
+			// ajout pour gestion avec subModuleList
+			let subModTemp = subModulesList.get(key)
+			if (subModTemp) {
+				subModTemp.status = status
+				subModulesList.set(key, subModTemp)
+				if (subModTemp.name == undefined) {
+					// if it has no name, ask it
+					VMBWrite(FrameRequestName(msg.RAW[2], 1))
+				}
+				if (subModTemp.cat == "") {
+					subModTemp.cat = "temp"
+				}
+			}
+			*/
+		}
+	})
+}
+
+/** 🌡️ MANAGE TEMPERATURE
  *  This function use an emitter to receive specific message, then analyze and update module status
  */
 function surveyTempStatus() {
@@ -708,7 +783,7 @@ function surveyTempStatus() {
 	})
 }
 
-// 🌡️ GESTION TEMPERATURE
+// 🌡️ REQUEST TEMPERATURE
 async function VMBRequestTemp(adr, part) {
 	let trame = FrameRequestTemp(adr, part);
 	VMBWrite(trame);
@@ -719,8 +794,8 @@ async function VMBRequestTemp(adr, part) {
 
 }
 
-// 
-/** ☢️ GESTION ENERGIE
+
+/** ☢️ MANAGE ENERGY
  *  This function use an emitter to receive specific message, then analyze and update module status
  */
 function surveyEnergyStatus() {
@@ -743,6 +818,12 @@ function surveyEnergyStatus() {
 	})
 }
 
+/**
+ * ☢️ REQUEST ENERGY STATUS
+ * @param {decimal} adr submodule address
+ * @param {*} part submodule part
+ * @returns 
+ */
 async function VMBRequestEnergy(adr, part) {
 	if (part < 5) {
 		// Send request to a specific part
@@ -855,13 +936,16 @@ const VelbusStart = (host, port) => {
 let ReconnectTimer
 let DisconnectDate
 
-
-
+// -------------------------------------------------------------------------------------------------------------------
+// PREPARING ALL LISTENERS : 
+// -------------------------------------------------------------------------------------------------------------------
 VelbusConnexion.on('connect', () => {
 	console.log("ARVEL - Connexion to Velbus server TCP)  > ", VelbusConnexion.remoteAddress, ":", VelbusConnexion.remotePort);
 	console.log("--------------------------------------------------------------", '\n\n')
 	surveyTempStatus()
 	surveyEnergyStatus()
+	surveyRelayStatus()
+	surveyBlindStatus()
 
 	if (ReconnectTimer != undefined) {
 		let duration = ((Date.now() - DisconnectDate) / 1000)
@@ -909,17 +993,23 @@ VelbusConnexion.on('data', (data) => {
 		VMBEmitter.emit("msg", VMBmessage)
 
 		switch (element[4]) {
+			case 0x00:
+				break;
+			case 0xFB:
+				VMBEmitter.emit("RelayStatus", VMBmessage)
+				break;
+			case 0xEC:
+				VMBEmitter.emit("BlindStatus", VMBmessage)
+				break;
 			case 0xBE:
 				VMBEmitter.emit("EnergyStatus", VMBmessage)
 				break;
 			case 0xE6:
 				VMBEmitter.emit("TempStatus", VMBmessage)
 				break;
-			case 0xF0:
-			case 0xF1:
-			case 0xF2:
-				// CheckName(element)
-				break
+			case 0xEE:
+				VMBEmitter.emit("DimmerStatus", VMBmessage)
+				break;
 
 			default:
 				break
