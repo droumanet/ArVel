@@ -690,34 +690,34 @@ function surveyRelayStatus() {
 			// msg.RAW[5] contains binary number of relay and msg.RAW[7] contains it status
 			// 
 			logInfo("warning", `Relay ${msg.RAW[2]} status : ${msg.RAW[7]} (${toButtons(msg.RAW[7])}) DATABYTE2 = ${Bin2Part(msg.RAW[5])}`)
-			let subModTemp, key, btnStatus, x
-			btnStatus = toButtons(msg.RAW[7])
-			btnStatus.forEach(element => {
-				key = msg.RAW[2] + '-' + element
-				subModTemp = subModulesList.get(key)
-				try {
-					x = subModTemp.name ? subModTemp.name : "undefined module"
-				} catch {
-					x = "..."
-				}
-				console.log("🔑",key, x, `DATABYTE2 = ${Bin2Part(msg.RAW[5])}`)
-			});
-			/* let status = { "defaultStatus": currentTemperature, "current": currentTemperature, "min": minTemperature, "max": maxTemperature, "timestamp": Date.now() }
+			let subModTemp, key
+			let relayNumber = Bin2Part(msg.RAW[5])
 
-			// ajout pour gestion avec subModuleList
-			let subModTemp = subModulesList.get(key)
+			key = msg.RAW[2]+'-'+relayNumber
+			subModTemp = subModulesList.get(key)
 			if (subModTemp) {
-				subModTemp.status = status
+				let oldStatus = subModTemp.status
+				let newStatus
+				let relaisOnStatus = msg.RAW[7] & msg.RAW[5] > 0
+				let relaisBlinkStatus = msg.RAW[7]>>4 & msg.RAW[5] > 0
+				if (relaisBlinkStatus) {
+					newStatus = {"status": "blink", "since": Date.now(), "previousState": oldStatus.status, "previousStateDuration": Date.now()-oldStatus.since}
+				} else if (relaisOnStatus) {
+					newStatus = {"status": "on", "since": Date.now(), "previousState": oldStatus.status, "previousStateDuration": Date.now()-oldStatus.since}
+				} else {
+					newStatus = {"status": "off", "since": Date.now(), "previousState": oldStatus.status, "previousStateDuration": Date.now()-oldStatus.since}
+				}
+				subModTemp.status = newStatus
+				if (subModTemp.cat == "") {
+					subModTemp.cat = "relay"
+				}
 				subModulesList.set(key, subModTemp)
 				if (subModTemp.name == undefined) {
 					// if it has no name, ask it
-					VMBWrite(FrameRequestName(msg.RAW[2], 1))
-				}
-				if (subModTemp.cat == "") {
-					subModTemp.cat = "temp"
+					VMBWrite(FrameRequestName(msg.RAW[2], relayNumber))
 				}
 			}
-			*/
+
 		}
 	})
 }
@@ -922,6 +922,7 @@ const CNX = { host: "127.0.0.1", port: 8445 }
 import net from 'net'
 import { get } from 'http';
 import { scanModulesToJSON } from '../controllers/CtrlModules.mjs';
+import { timeStamp } from 'console';
 
 const connectVelbus = (TCPConnexion) => {
 	let velbusConnexion = new net.Socket();

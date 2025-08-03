@@ -135,7 +135,7 @@
             if (!mod.status) return '';
             if (category === 'relay') {
                 // Supposons que status.on est l'état du relais
-                return mod.status.on
+                return mod.status.status == "on"
                     ? '<span class="status-on">ON</span>'
                     : '<span class="status-off">OFF</span>';
             }
