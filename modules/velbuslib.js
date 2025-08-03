@@ -697,29 +697,70 @@ function surveyRelayStatus() {
 			subModTemp = subModulesList.get(key)
 			if (subModTemp) {
 				let oldStatus = subModTemp.status
+				console.log("OLD STATUS", oldStatus)
 				let newStatus
 				let relaisOnStatus = msg.RAW[7] & msg.RAW[5] > 0
 				let relaisBlinkStatus = msg.RAW[7]>>4 & msg.RAW[5] > 0
 				if (relaisBlinkStatus) {
-					newStatus = {"status": "blink", "since": Date.now(), "previousState": oldStatus.status, "previousStateDuration": Date.now()-oldStatus.since}
+					newStatus = {"current": "blink", "since": Date.now(), "previousState": oldStatus.current, "previousStateDuration": Date.now()-oldStatus.since}
 				} else if (relaisOnStatus) {
-					newStatus = {"status": "on", "since": Date.now(), "previousState": oldStatus.status, "previousStateDuration": Date.now()-oldStatus.since}
+					newStatus = {"current": "on", "since": Date.now(), "previousState": oldStatus.current, "previousStateDuration": Date.now()-oldStatus.since}
 				} else {
-					newStatus = {"status": "off", "since": Date.now(), "previousState": oldStatus.status, "previousStateDuration": Date.now()-oldStatus.since}
+					newStatus = {"current": "off", "since": Date.now(), "previousState": oldStatus.current, "previousStateDuration": Date.now()-oldStatus.since}
 				}
 				subModTemp.status = newStatus
 				if (subModTemp.cat == "") {
 					subModTemp.cat = "relay"
 				}
+				subModTemp.status = newStatus
 				subModulesList.set(key, subModTemp)
 				if (subModTemp.name == undefined) {
 					// if it has no name, ask it
 					VMBWrite(FrameRequestName(msg.RAW[2], relayNumber))
 				}
+
+				initializeRelayStatus(msg.RAW[2], msg)
+			} else {
+				VMBWrite(FrameModuleScan(msg.RAW[2]))
 			}
+			// Manage status for all relays on same module
+
+
 
 		}
 	})
+}
+
+function initializeRelayStatus(addr, msg) {
+	let partNumber = modulesList.get(addr).partNumber
+	if (partNumber) {
+		for (let index = 1; index <= partNumber; index++) {
+			const key = addr+"-"+index
+			const subModTemp = subModulesList.get(key)
+			let newStatus
+			if (!subModTemp.status.current) {
+				console.log("Analyzing relay status because status is undefined", key, subModTemp.status.current)
+				let relaisOnStatus = msg.RAW[7] & Part2Bin(index) > 0
+				let relaisBlinkStatus = msg.RAW[7]>>4 & Part2Bin(index) > 0
+				if (relaisBlinkStatus) {
+					newStatus = {"current": "blink", "since": Date.now(), "previousState": "blink", "previousStateDuration": Date.now()}
+				} else if (relaisOnStatus) {
+					newStatus = {"current": "on", "since": Date.now(), "previousState": "on", "previousStateDuration": Date.now()}
+				} else {
+					newStatus = {"current": "off", "since": Date.now(), "previousState": "off", "previousStateDuration": Date.now()}
+				}
+				subModTemp.status = newStatus
+				if (subModTemp.cat == "") {
+					subModTemp.cat = modulesList.cat
+				}
+				subModulesList.set(key, subModTemp)
+			} else {
+				console.log("Status correctly defined : ", key, subModTemp.status.current)
+			}
+		}
+	} else {
+		console.log("not able to determine number of part")
+	}
 }
 
 /** 🪟 MANAGE BLIND STATUS
@@ -764,7 +805,7 @@ function surveyTempStatus() {
 			let minTemperature = TempMinCalculation(msg.RAW)
 			let maxTemperature = TempMaxCalculation(msg.RAW)
 			let key = msg.RAW[2] + "-1"
-			let status = { "defaultStatus": currentTemperature, "current": currentTemperature, "min": minTemperature, "max": maxTemperature, "timestamp": Date.now() }
+			let status = { "current": currentTemperature, "min": minTemperature, "max": maxTemperature, "timestamp": Date.now() }
 
 			// ajout pour gestion avec subModuleList
 			let subModTemp = subModulesList.get(key)
@@ -790,7 +831,7 @@ async function VMBRequestTemp(adr, part) {
 	await sleep(200);
 	let result = subModulesList.get(adr + "-" + part)
 	if (result) return result.status;
-	return { "defaultStatus": 1000, "current": 1000, "min": 1000, "max": 1000, "timestamp": Date.now() };
+	return { "current": 1000, "min": 1000, "max": 1000, "timestamp": Date.now() };
 
 }
 
@@ -806,7 +847,7 @@ function surveyEnergyStatus() {
 			let addr = msg.RAW[2]
 			let part = (msg.RAW[5] & 3) + 1
 			let key = addr + "-" + part
-			let status = { "defaultStatus":power, "index": rawcounter, "power": power, "timestamp": Date.now() }
+			let status = { "current":power, "index": rawcounter, "power": power, "timestamp": Date.now() }
 
 			// ajout pour gestion avec subModuleList
 			let subModTmp = subModulesList.get(key)
