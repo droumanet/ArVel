@@ -697,17 +697,19 @@ function surveyRelayStatus() {
 			subModTemp = subModulesList.get(key)
 			if (subModTemp) {
 				let oldStatus = subModTemp.status
-				console.log("OLD STATUS", oldStatus)
+				console.log("OLD STATUS", oldStatus.current)
 				let newStatus
-				let relaisOnStatus = msg.RAW[7] & msg.RAW[5] > 0
-				let relaisBlinkStatus = msg.RAW[7]>>4 & msg.RAW[5] > 0
-				if (relaisBlinkStatus) {
+				let relayOnStatus = (msg.RAW[7] & msg.RAW[5]) > 0
+				let relayBlinkStatus = ((msg.RAW[7]>>4) & msg.RAW[5]) > 0
+				console.log(`STATUS DEBUG (State|${msg.RAW[7]}==Channel|${msg.RAW[5]} ?): relayOn: ${relayOnStatus} relayBlink: ${relayBlinkStatus}`)
+				if (relayBlinkStatus) {
 					newStatus = {"current": "blink", "since": Date.now(), "previousState": oldStatus.current, "previousStateDuration": Date.now()-oldStatus.since}
-				} else if (relaisOnStatus) {
+				} else if (relayOnStatus) {
 					newStatus = {"current": "on", "since": Date.now(), "previousState": oldStatus.current, "previousStateDuration": Date.now()-oldStatus.since}
 				} else {
 					newStatus = {"current": "off", "since": Date.now(), "previousState": oldStatus.current, "previousStateDuration": Date.now()-oldStatus.since}
 				}
+				console.log("NEW STATUS : ", newStatus.current)
 				subModTemp.status = newStatus
 				if (subModTemp.cat == "") {
 					subModTemp.cat = "relay"
@@ -719,7 +721,7 @@ function surveyRelayStatus() {
 					VMBWrite(FrameRequestName(msg.RAW[2], relayNumber))
 				}
 
-				initializeRelayStatus(msg.RAW[2], msg)
+				initializeRelayStatus(msg)
 			} else {
 				VMBWrite(FrameModuleScan(msg.RAW[2]))
 			}
@@ -731,7 +733,8 @@ function surveyRelayStatus() {
 	})
 }
 
-function initializeRelayStatus(addr, msg) {
+function initializeRelayStatus(msg) {
+	let addr = msg.RAW[2]
 	let partNumber = modulesList.get(addr).partNumber
 	if (partNumber) {
 		for (let index = 1; index <= partNumber; index++) {
@@ -760,6 +763,7 @@ function initializeRelayStatus(addr, msg) {
 		}
 	} else {
 		console.log("not able to determine number of part")
+		VMBWrite(FrameModuleScan(addr))
 	}
 }
 

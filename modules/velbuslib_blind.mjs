@@ -5,6 +5,7 @@
 
 import * as VMB from './velbuslib_constant.js'
 import * as Velbus from './velbuslib_generic.mjs'
+import { Part2Bin } from './velbuslib.js';
 
 /**
  * Function to create frame for moving UP or DOWN blind on a module
@@ -39,7 +40,7 @@ function BlindStop(adr, part) {
 	if (part > 2) part = 0x0F
 	let trame = new Uint8Array(8)
 	trame[0] = VMB.StartX
-	trame[1] = PrioHi
+	trame[1] = VMB.PrioHi
 	trame[2] = adr
 	trame[3] = 0x02     // len
 	trame[4] = 0x04     // stop

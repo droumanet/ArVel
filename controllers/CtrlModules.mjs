@@ -85,6 +85,30 @@ export function getNameToJSON(req, res) {
     res.status(httpStatus).json({name:response})
 }
 
+export function setNameToJSON(req, res) {
+    const key = req.params.key;
+    const name = req.body.name.substring(0, 15)
+    const x = velbuslib.subModulesList
+    let httpStatus = 400
+    let response = undefined
+    
+    if (key) {
+        console.log("🕸️", key, `request to set name of ${key} to ${name}`)
+        let subModule = x.get(key)
+        if (subModule) {
+          subModule.name = name
+          velbuslib.subModulesList.set(key, subModule)
+          response = subModule.name
+          httpStatus = 200
+        }
+    }
+    res.setHeader('content-type', 'application/json')
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    res.status(httpStatus).json({"name": response})
+}
+
 export function getStatusToJSON(req, res) {
     const key = req.params.key;
     const x = velbuslib.subModulesList

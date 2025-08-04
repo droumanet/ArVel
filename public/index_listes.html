@@ -22,8 +22,8 @@
         table { border-collapse: collapse; width: 100%; margin-top: 1em; }
         th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
         th { background: #f5f5f5; }
-        .status-on { color: green; font-weight: bold; }
-        .status-off { color: red; font-weight: bold; }
+        .status-on { color: orangered; font-weight: bold; }
+        .status-off { color: black; font-weight: bold; }
         .action-btn { padding: 4px 8px; margin: 0 2px; }
     </style>
 </head>
@@ -104,7 +104,7 @@
                 <th>Nom</th>
                 <th>Adresse-Part</th>
                 <th>État</th>
-                ${category === 'relay' ? '<th>Action</th>' : ''}
+                ${(category != 'temp') ? '<th>Action</th>' : ''}
             `;
             thead.appendChild(tr);
             table.appendChild(thead);
@@ -112,16 +112,27 @@
             const tbody = document.createElement('tbody');
             if (modules.length === 0) {
                 const trEmpty = document.createElement('tr');
-                trEmpty.innerHTML = `<td colspan="${category === 'relay' ? 4 : 3}">Aucun module</td>`;
+                trEmpty.innerHTML = `<td colspan="${category != 'temp' ? 4 : 3}">Aucun module</td>`;
                 tbody.appendChild(trEmpty);
             } else {
                 modules.forEach(mod => {
                     const tr = document.createElement('tr');
+                    let action
+                    switch (category) {
+                        case 'relay':
+                            action = `<td>${renderRelayActions(mod)}</td>`
+                            break;
+                        case 'blind':
+                            action = `<td>${renderBlindActions(mod)}</td>`
+                            break;
+                        default:
+                            break;
+                    }
                     tr.innerHTML = `
                         <td>${mod.name || mod.id || ''}</td>
                         <td>${mod.address}-${mod.part}</td>
                         <td>${formatStatus(mod, category)}</td>
-                        ${category === 'relay' ? `<td>${renderRelayActions(mod)}</td>` : ''}
+                        ${action}
                     `;
                     tbody.appendChild(tr);
                 });
@@ -135,35 +146,27 @@
             if (!mod.status) return '';
             if (category === 'relay') {
                 // Supposons que status.on est l'état du relais
-                return mod.status.current == "on"
+                return (mod.status.current == "on" || mod.status.current == "blink")
                     ? '<span class="status-on">ON</span>'
                     : '<span class="status-off">OFF</span>';
             }
             if (category === 'dimmer') {
-                return typeof mod.status.level !== 'undefined'
-                    ? mod.status.level + '%'
+                return typeof mod.status.current !== 'undefined'
+                    ? mod.status.current + '%'
                     : '';
             }
             if (category === 'blind') {
-                return mod.status.position !== undefined
-                    ? 'Position: ' + mod.status.position
-                    : '';
+                return 'Fermé à : ' + mod.status.closedPourcent + '% ('+mod.status.current+')';
             }
             if (category === 'button') {
                 return mod.status.pressed
                     ? '<span class="status-on">Appuyé</span>'
                     : '<span class="status-off">Relâché</span>';
             }
+            if (category === 'temp') {
+                return '<span>'+mod.status.current+'°C</span>';
+            }
             return JSON.stringify(mod.status);
-        }
-
-        // Génère les boutons d'action pour les relais
-        function renderRelayActions(mod) {
-            // On suppose que l'API attend /relay/:addr/:part/:status (status = 1 ou 0)
-            return `
-                <button class="action-btn" onclick="setRelayStatus(${mod.address},${mod.part},1)">ON</button>
-                <button class="action-btn" onclick="setRelayStatus(${mod.address},${mod.part},0)">OFF</button>
-            `;
         }
 
         // Active l'onglet sélectionné
@@ -177,6 +180,50 @@
             });
         }
 
+        // Charge les modules et affiche tout
+        async function loadAndRender() {
+            await new Promise(resolve => setTimeout(resolve, 100));
+            const modules = await fetchModules();
+            modulesByCategory = groupModulesByCategory(modules);
+            renderTabs(CATEGORIES);
+            renderTabContents(modulesByCategory);
+            activateTab(activeCategory);
+        }
+
+        // GESTION BLIND ----------------------------------------------------------------------------------
+        // Génère les boutons d'action pour les volets
+        function renderBlindActions(mod) {
+            // On suppose que l'API attend /relay/:key/:status (status = 1 ou 0)
+            return `
+                <button class="action-btn" onclick="setBlindStatus(${mod.address},${mod.part},1)">UP</button>
+                <button class="action-btn" onclick="setBlindStatus(${mod.address},${mod.part},-1)">DOWN</button>
+                <button class="action-btn" onclick="setBlindStatus(${mod.address},${mod.part},0)">STOP</button>
+                <button class="action-btn" onclick="setSubModuleName(${mod.address},${mod.part})">✏️</button>
+            `;
+        }
+        // Fonction globale pour changer l'état d'un volet
+        window.setBlindStatus = async function(address, part, status) {
+            try {
+                const url = `/blind/${address}-${part}/${status}`;
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Erreur lors de la commande');
+                // Rafraîchir la liste après action
+                await loadAndRender();
+            } catch (err) {
+                alert('Erreur: ' + err.message);
+            }
+        };
+
+        // GESTION RELAY ----------------------------------------------------------------------------------
+        // Génère les boutons d'action pour les relais
+        function renderRelayActions(mod) {
+            // On suppose que l'API attend /relay/:key/:status (status = 1 ou 0)
+            return `
+                <button class="action-btn" onclick="setRelayStatus(${mod.address},${mod.part},1)">ON</button>
+                <button class="action-btn" onclick="setRelayStatus(${mod.address},${mod.part},0)">OFF</button>
+                <button class="action-btn" onclick="setSubModuleName(${mod.address},${mod.part})">✏️</button>
+            `;
+        }
         // Fonction globale pour changer l'état d'un relais
         window.setRelayStatus = async function(address, part, status) {
             try {
@@ -189,15 +236,25 @@
                 alert('Erreur: ' + err.message);
             }
         };
-
-        // Charge les modules et affiche tout
-        async function loadAndRender() {
-            const modules = await fetchModules();
-            modulesByCategory = groupModulesByCategory(modules);
-            renderTabs(CATEGORIES);
-            renderTabContents(modulesByCategory);
-            activateTab(activeCategory);
-        }
+        // Fonction globale pour changer le d'un relais
+        window.setSubModuleName = async function(address, part) {
+            name = prompt(`Nouveau nom pour ${address}-${part}?`)
+            try {
+                const url = `/modules/name/${address}-${part}`;
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name: name })
+                });
+                if (!response.ok) throw new Error('Erreur lors de la commande');
+                // Rafraîchir la liste après action
+                await loadAndRender();
+            } catch (err) {
+                alert('Erreur: ' + err.message);
+            }
+        };
 
         // Initialisation au chargement
         loadAndRender();

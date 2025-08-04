@@ -13,21 +13,20 @@ export function setRelayStatus(req, res) {
     let httpStatus = 200
     let httpResponse = {}
 
-    console.log("🕸️", key, "API change relay status to ", newState*1)
     if (newState) {
         if (velbuslib.subModulesList.get(key)) {
             // TODO test du type de module
             const addr = key.split('-')[0]
             const part = key.split('-')[1]
             if (newState < 2 && newState > -1) {
-                console.log(" ", "writing order ON/OFF on Velbus")
-                velbuslib.VMBWrite(VMBRelay.RelaySet(addr, velbuslib.Part2Bin(part), newState*1))
+                console.log(" ", "writing order ON/OFF on Velbus", addr+'-'+part)
+                velbuslib.VMBWrite(VMBRelay.RelaySet(addr, part, newState*1))
             } else if (newState > 1 && newState < 11) {
-                console.log(" ", "writing order Blinking on Velbus")
-                velbuslib.VMBWrite(VMBRelay.RelayBlink(addr, velbuslib.Part2Bin(part), newState*1))
+                console.log(" ", "writing order Blinking on Velbus", addr+'-'+part)
+                velbuslib.VMBWrite(VMBRelay.RelayBlink(addr, part, newState*1))
             } else {
-                console.log(" ", "writing order TIMER on Velbus")
-                velbuslib.VMBWrite(VMBRelay.RelayTimer(addr, velbuslib.Part2Bin(part), newState*1))
+                console.log(" ", "writing order TIMER on Velbus", addr+'-'+part)
+                velbuslib.VMBWrite(VMBRelay.RelayTimer(addr, part, newState*1))
             }
         }
         // let filter = req.query;
