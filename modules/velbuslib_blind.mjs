@@ -15,11 +15,13 @@ import { Part2Bin } from './velbuslib.js';
  * @param {int} duration in seconds, default 30 seconds
  * @returns Velbus frame ready to emit
  */
- function BlindMove(adr, part, state, duration = 30) {
+ function BlindMove(adr, part, state, duration = 0, vmb2bl=true) {
+	if (vmb2bl) {
+		if (part == 1) { part = 0b0011 }
+		else if (part == 2) { part = 0b1100 }
+		else { part = 0b1111 }
+	}
 	if (state > 0) { state = 0x05 } else { state = 0x06 }
-	if (part == 1) { part = 0x03 }
-	else if (part == 2) { part = 0x0C }
-	else { part = 0x0F }
 	let trame = new Uint8Array(11)
 	trame[0] = VMB.StartX
 	trame[1] = VMB.PrioHi
@@ -34,10 +36,12 @@ import { Part2Bin } from './velbuslib.js';
 	trame[10] = VMB.EndX
 	return trame
 }
-function BlindStop(adr, part) {
-	if (part == 1) part = 0x03
-	if (part == 2) part = 0x0C
-	if (part > 2) part = 0x0F
+function BlindStop(adr, part, vmb2bl=true) {
+	if (vmb2bl) {
+		if (part == 1) { part = 0b0011 }
+		else if (part == 2) { part = 0b1100 }
+		else { part = 0b1111 }
+	}
 	let trame = new Uint8Array(8)
 	trame[0] = VMB.StartX
 	trame[1] = VMB.PrioHi

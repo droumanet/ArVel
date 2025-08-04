@@ -9,21 +9,21 @@ import * as VMBGeneric from "../modules/velbuslib_generic.mjs"
 
 export function setBlindStatus(req, res) {
     const key = req.params.key;
-    const newState = req.params.status;
+    const newState = Number(req.params.status);
     let httpStatus = 200
     let httpResponse = {}
 
-    if (newState) {
+    if (newState != NaN) {
         if (velbuslib.subModulesList.get(key)) {
             // TODO test du type de module
             const addr = key.split('-')[0]
             const part = key.split('-')[1]
             if (newState > 0) {
                 console.log(" ", "writing order UP on Velbus", addr+'-'+part)
-                velbuslib.VMBWrite(VMBBlind.BlindMove(addr, part, newState*1))
+                velbuslib.VMBWrite(VMBBlind.BlindMove(addr, part, newState, 30, true))
             } else if (newState < 0) {
-                console.log(" ", "writing order DOWN on Velbus", addr+'-'+part)
-                velbuslib.VMBWrite(VMBBlind.BlindMove(addr, part, newState*1))
+                console.log(" ", "writing order DOWN on Velbus", addr+'-'+part, 30)
+                velbuslib.VMBWrite(VMBBlind.BlindMove(addr, part, newState, 0, true))
             } else {
                 console.log(" ", "writing order STOP on Velbus", addr+'-'+part)
                 velbuslib.VMBWrite(VMBBlind.BlindStop(addr, part))
