@@ -774,27 +774,80 @@ function surveyBlindStatus() {
 	VMBEmitter.on("BlindStatus", (msg) => {
 		if (msg.RAW[4] == 0xEC) {
 			// TODO get relays status and fill subModulesList with them
-			// msg.RAW[5] contains number (3 or 12) of relay and msg.RAW[7] contains it status : 1/10 up/down, 0100/1000 up/down
+			// msg.RAW[5] contains binary number of relay and msg.RAW[7] contains it status
 			// 
-			logInfo("warning", `Blind ${msg.RAW[2]} status : ${msg.RAW[7]} (${msg.RAW[7].toString(2).padStart(4, '0')}) DATABYTE2 = ${Bin2Part(msg.RAW[5])}`)
-			let subModTemp, key, btnStatus, x
-			
-			/* let status = { "defaultStatus": currentTemperature, "current": currentTemperature, "min": minTemperature, "max": maxTemperature, "timestamp": Date.now() }
+			logInfo("warning", `Blind ${msg.RAW[2]} status : ${msg.RAW[7]} (${toButtons(msg.RAW[7])}) DATABYTE2 = ${Bin2Part(msg.RAW[5])}`)
+			let subModTemp, key, blindChannel, blindStatus
 
-			// ajout pour gestion avec subModuleList
-			let subModTemp = subModulesList.get(key)
+			key = msg.RAW[2]+'-'+msg.RAW[5]
+			subModTemp = subModulesList.get(key)
 			if (subModTemp) {
-				subModTemp.status = status
+				blindChannel = msg.RAW[5]
+			} else {
+				// Old VMB2BL module
+				blindChannel = msg.RAW[5] == 0b0011 ? 1 : 2
+				key = msg.RAW[2]+'-'+ blindChannel
+				subModTemp = subModulesList.get(key)
+			}
+			console.log("BlindChannel = ", blindChannel)
+			if (subModTemp) {
+				let oldStatus = subModTemp.status
+				console.log("OLD STATUS", oldStatus.current)
+				let newStatus, totalTime, closedPourcent, calcTime, currentStatus
+				if (blindChannel == 1) {
+					blindStatus = (msg.RAW[7] & msg.RAW[5])
+				} else {
+					blindStatus = ((msg.RAW[7]>>2) & (msg.RAW[5]>>2))
+				}
+				let blindUpStatus = (blindStatus & 0b01) > 0
+				let blindDownStatus = (blindStatus & 0b10) > 0
+
+				totalTime = 15 * Math.pow(2, msg.RAW[6])
+				if (oldStatus.since) {
+					calcTime = Math.round(((Date.now() - oldStatus.since)/1000)/totalTime*100)
+				} else {
+					calcTime = 0
+					oldStatus.closedPourcent = 0
+				}
+				console.log("CalcTime ", calcTime, "% de ", totalTime, "old... since", oldStatus.since)
+				if (blindDownStatus) {
+					closedPourcent = oldStatus.closedPourcent + calcTime
+					currentStatus = "down"
+				} else if (blindUpStatus) {
+					closedPourcent = oldStatus.closedPourcent - calcTime
+					currentStatus = "up"					
+				} else {
+					// TODO réfléchir à la formule
+					closedPourcent = oldStatus.closedPourcent
+				}
+				
+
+				console.log(`STATUS DEBUG (State|${msg.RAW[7]}==Channel|${msg.RAW[5]} ?): blindUp: ${blindUpStatus} blinDown: ${blindDownStatus}`)
+				if (blindDownStatus || blindUpStatus) {
+					newStatus = {"current": currentStatus, "since": Date.now(), "previousState": oldStatus.current, "previousStateDuration": Date.now()-oldStatus.since, "closedPourcent": closedPourcent}
+				} else {
+					newStatus = {"current": "stop", "since": Date.now(), "previousState": oldStatus.current, "previousStateDuration": Date.now()-oldStatus.since, "closedPourcent": closedPourcent}
+				}
+				console.log("NEW STATUS : ", newStatus.current)
+				subModTemp.status = newStatus
+				if (subModTemp.cat == "") {
+					subModTemp.cat = "relay"
+				}
+				subModTemp.status = newStatus
 				subModulesList.set(key, subModTemp)
 				if (subModTemp.name == undefined) {
 					// if it has no name, ask it
-					VMBWrite(FrameRequestName(msg.RAW[2], 1))
+					VMBWrite(FrameRequestName(msg.RAW[2], msg.RAW[5]))
 				}
-				if (subModTemp.cat == "") {
-					subModTemp.cat = "temp"
-				}
+
+				// initializeRelayStatus(msg)
+			} else {
+				VMBWrite(FrameModuleScan(msg.RAW[2]))
 			}
-			*/
+			// Manage status for all relays on same module
+
+
+
 		}
 	})
 }
