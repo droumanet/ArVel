@@ -15,8 +15,9 @@ Router.use(express.json())
 Router.get('/modules/name/:key', CtrlModules.getNameToJSON)
 Router.post('/modules/name/:key', CtrlModules.setNameToJSON)
 Router.get('/modules/status/:key', CtrlModules.getStatusToJSON)
+Router.get('/modules/scan', CtrlModules.scanModulesToJSON)
 Router.get('/modules', CtrlModules.subModulesToJSON)
-Router.get('/scan', CtrlModules.scanModulesToJSON)
+
 
 // Route pour activer/désactiver un relais
 // TODO POST and not GET ?

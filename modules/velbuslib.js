@@ -6,7 +6,7 @@
  * information from https://github.com/velbus/moduleprotocol
  */
 
-// [ ] Etat Relais
+// [x] Etat Relais
 // [ ] Fonctions relais
 // [ ] Liste bouton
 // [ ] Appui bouton
@@ -579,7 +579,7 @@ function VMBSetTime(day, hour, minute) {
  * -------------------------------------------------------------------------------------------------*/
 function VMBscanAll(addrModule = 0) {
 	if (addrModule == 0) {
-		for (let t = 0; t < 256; t++) {
+		for (let t = 1; t < 255; t++) {
 			VMBWrite(FrameModuleScan(t))
 		}
 	} else {
