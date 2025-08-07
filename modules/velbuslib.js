@@ -6,14 +6,14 @@
  * information from https://github.com/velbus/moduleprotocol
  */
 
-// [ ] Etat Relais
+// [x] Etat Relais
 // [ ] Fonctions relais
 // [ ] Liste bouton
 // [ ] Appui bouton
 // [ ] Etat dimmer
 // [ ] Fonctions dimmer
 // [ ] Etat volet
-// [ ] Etat température
+// [x] Etat température
 // [x] Etat énergie (compteurs)
 
 
@@ -43,11 +43,14 @@ const VMBEmitter = new EventEmitter()
 const ModulesFile = "VelbusMapData.json"
 
 // General list for event
-let moduleList = new Map()		// class VMBmodule
-let subModuleList = new Map()	// class VMBsubmodule (child of a VMBmodule)
+/** @type {Map<byte, import('../models/velbuslib_class.mjs').VMBmodule>} */
+let modulesList = new Map()
+
+/** @type {Map<byte, import('../models/velbuslib_class.mjs').VMBsubmodule>} */
+let subModulesList = new Map()
+
+/** @type {Map<string, {address: string, name: string, n1: string, n2: string, n3: string, flag: number}>}  */
 let VMBNameStatus = new Map()
-let VMBTempStatus = new Map()
-let VMBEnergyStatus = new Map()
 let VMBModification = false
 const DEBUG = 1		// 0 not log, 1 only error/warn, 2 = all
 
@@ -55,22 +58,37 @@ const DEBUG = 1		// 0 not log, 1 only error/warn, 2 = all
 // =                                    Functions for internal use                                            =
 // ============================================================================================================
 
-// Manipulation of subModuleList
-function setSubModuleList(addresspart, module) {
-	subModuleList.set(addresspart, module)
-}
-function getSubModuleList(addresspart) {
-	return subModuleList.get(addresspart)
-}
-function fullSubModuleList() {
-	return subModuleList
-}
-function lenSubModuleList() {
-	console.log("subModuleList size", subModuleList.size)
-	return subModuleList.size
+/**
+ * Setter for subModuleList
+ * @param {String} key module address-part (ex. 122-1)
+ * @param {VMBsubmodule} module 
+ */
+function setSubModuleList(key, module) {
+	subModulesList.set(key, module)
 }
 
-// Preload or save modules and submodules file
+/**
+ * Getter for submodule
+ * @param {String} key module address-part (ex. 122-1 in decimal, not hexa)
+ * @returns {VMBsubmodule}
+ */
+function getSubModuleList(key) {
+	return subModulesList.get(key)
+}
+
+/**
+ * Getter for full list submodule
+ * @returns {VMBsubmodule[]}
+ */
+function fullSubModuleList() {
+	return subModulesList
+}
+
+/**
+ * Save modules list and submodules list in JSON file
+ * @param {VMBmodule[]} ModuleList 
+ * @param {VMBsubmodule[]} subModuleList 
+ */
 function saveMapData(ModuleList, subModuleList) {
 	const data = {
 		ModuleList: Array.from(ModuleList.entries()),
@@ -86,6 +104,10 @@ function saveMapData(ModuleList, subModuleList) {
 	})
 }
 
+/**
+ * Load modules list and submodules list from JSON file
+ * @return {number} VMBsubmodule size list as proof of loading
+ */
 function loadMapData() {
 	logInfo(0, "💾 Trying to load previous scanned Velbus devices from "+ModulesFile+" -------------");
 
@@ -94,10 +116,10 @@ function loadMapData() {
 		try {
 			const data = fs.readFileSync(ModulesFile, 'utf8');
 			const parsedData = JSON.parse(data);
-			moduleList = new Map(parsedData.ModuleList);
-			subModuleList = new Map(parsedData.subModuleList);
-			logInfo(0, '💾 Success loading '+ModulesFile+`\nFound ${subModuleList.size} subModules`);
-			return subModuleList.size;
+			modulesList = new Map(parsedData.ModuleList);
+			subModulesList = new Map(parsedData.subModuleList);
+			logInfo(0, '💾 Success loading '+ModulesFile+`\nFound ${subModulesList.size} subModules`);
+			return subModulesList.size;
 		} catch (err) {
 			logInfo(3, '💾 Error while loading Velbus data from file : '+err);
 			return 0;
@@ -111,7 +133,7 @@ function loadMapData() {
   // AUTO save (every hour check the VMBModification variable)
   function hourlyCheck() {
 	if (VMBModification) {
-	  saveMapData(moduleList, subModuleList);
+	  saveMapData(modulesList, subModulesList);
 	  VMBModification = false;
 	}
   }
@@ -124,23 +146,23 @@ function loadMapData() {
 
 // #region FRAME functions
 /** ---------------------------------------------------------------------------------------------
- * This function split messages that are in the same frame. Example 0F...msg1...04 / 0F...msg2...04
- * @param {*} data RAW frame that could contains multiple messages
- * @returns array containing one message by cell
+ * This function split messages that are in the same raw data. Example 0F...msg1...04 / 0F...msg2...04
+ * @param {rawData} rawData RAW frame that could contains multiple messages
+ * @returns array list containing one message by cell
  * --------------------------------------------------------------------------------------------*/
-const Cut = (data) => {
-	let table = [];
-	let longueur, VMBSize;
+const Cut = (rawData) => {
+	let messageList = [];
+	let VMBLength, VMBSize;
 	let i = 0;
 	// search for 0x0F header, then look at size byte and check if end byte is in good place
-	while (i < data.length) {
-		if (data[i] == 0x0F && i + 3 < data.length) {
-			longueur = data[i + 3];
-			VMBSize = longueur + 3 + 1 + 1;     // message length + offset 3 + checksum + end byte
-			if (data[i + VMBSize] == 0x04) {
-				// push de i à VMBSize dans tableau
+	while (i < rawData.length) {
+		if (rawData[i] == 0x0F && i + 3 < rawData.length) {
+			VMBLength = rawData[i + 3];
+			VMBSize = VMBLength + 3 + 1 + 1;     // message length + offset 3 + checksum + end byte
+			if (rawData[i + VMBSize] == 0x04) {
+				// push from i to VMBSize in a table
 				// console.log("trame OK à position ",i, " longueur ", VMBSize);
-				table.push(data.slice(i, i + VMBSize + 1));     // slice utilise position début et position fin
+				messageList.push(rawData.slice(i, i + VMBSize + 1));     // slice utilise position début et position fin
 				i = i + VMBSize;
 			} else {
 				// console.log("octet à longueur VMBSize : ",data[i+VMBSize])
@@ -148,33 +170,33 @@ const Cut = (data) => {
 		}
 		i++;
 	}
-	return table;
+	return messageList;
 }
 
 
 /** --------------------------------------------------------------------------------------------
  * toHexa convert a buffer into a table containing hexa code (2 chars) for each byte
- * @param {Array} donnees byte buffer
+ * @param {Array<number>} donnees byte buffer
  * @returns Hexadecimal string
  * -------------------------------------------------------------------------------------------*/
 function toHexa(donnees) {
 	if (donnees !== undefined) {
-		let c = '';
-		let dhex = [];
+		let frameByte = '';
+		let dataHex = [];
 		for (const donnee of donnees) {
-			c = donnee.toString(16).toUpperCase();
-			if (c.length < 2) c = '0' + c;
-			dhex.push(c);
+			frameByte = donnee.toString(16).toUpperCase();
+			if (frameByte.length < 2) frameByte = '0' + frameByte;
+			dataHex.push(frameByte);
 		}
-		return dhex;
+		return dataHex;
 	} else { return "" }
 }
 
 
 /** ------------------------------------------------------------------------------------------
  * toButtons convert a binary value into an array with active bit (ex. 0b00110 => [2,4])
- * @param {*} value 
- * @param {*} nb bits number to read (8 by default)
+ * @param {number} value from 0 to 2^nb
+ * @param {number} nb bits number to read (8 by default)
  * @returns array of active button's number
  * -----------------------------------------------------------------------------------------*/
 function toButtons(value, nb=8) {
@@ -189,11 +211,10 @@ function toButtons(value, nb=8) {
 	return response;
 }
 
-
 /** -----------------------------------------------------------------------------------------
  * Convert Binary digit to human part number (0b0100 => 3)
- * @param {*} binValue 
- * @param {*} offset 
+ * @param {number} binValue must be a binary value (1, 2, 4, 8, 16... max: 128)
+ * @param {number} offset optional offset if needed (by default is 0)
  * @returns human readable part
  * ---------------------------------------------------------------------------------------*/
 function Bin2Part(binValue, offset = 0) {
@@ -206,8 +227,8 @@ function Bin2Part(binValue, offset = 0) {
 
 /** ------------------------------------------------------------------------------------------------------
  * Convert human part number to binary element (5 => 0b10000)
- * @param {*} partValue 
- * @returns binary number of partValue
+ * @param {number} partValue (ie 1, 2, 3, 4, 5...)
+ * @returns {number} binary number of partValue (ie 3 => 2² = 8)
  * -----------------------------------------------------------------------------------------------------*/
 function Part2Bin(partValue) {
 	return 2 ** (partValue - 1)
@@ -219,19 +240,19 @@ function Part2Bin(partValue) {
  * @returns string name
  * -----------------------------------------------------------------------------------------------------*/
 function LocalModuleName(key) {
-	let myModule = subModuleList.get(key)
+	let myModule = subModulesList.get(key)
 	if (myModule) return myModule.name
 	return "****"
 }
 
 function resume() {
-	return moduleList;
+	return modulesList;
 }
 
 
 /** -------------------------------------------------------------------------------------------------------
  * This function try to reassemble each frame to create a full name for submodule
- * @param {*} element Frame received (should be F0, F1 or F2 for name)
+ * @param {number[]} element Frame received (element[4] should be F0, F1 or F2 for name's functions)
  * ------------------------------------------------------------------------------------------------------*/
 function CheckName(element) {
 	let key = element[2]+"-"
@@ -242,7 +263,7 @@ function CheckName(element) {
 		key += Bin2Part(element[5])
 	}
 	logInfo(0, "CheckName for "+key)
-	let fctVelbus = element[4]
+	let functionByte = element[4]
 
 	// if VMBNameStatus doesn't exist, create one and get it value 
 	let myModule = VMBNameStatus.get(key)
@@ -255,18 +276,18 @@ function CheckName(element) {
 
 
 	// In case it's first part name response, reset flag: make possible to update full name dynamically
-	if (fctVelbus == 0xF0) {
+	if (functionByte == 0xF0) {
 		myModule.flag = 0
 	}
 
 	// Prepare to read 6 bytes (0xF0 and 0xF1) or 4 bytes (0xF2)
 	let max = 6
-	if (fctVelbus == 0xF2) max = 4
+	if (functionByte == 0xF2) max = 4
 
-	let idx = fctVelbus - 0xF0	// idx could be 2, 1 or 0
+	let idx = functionByte - 0xF0	// idx could be 2, 1 or 0
 	let flag = 2 ** idx			// 2^n transformation (bit 1, 2 or 4)
 	let f = myModule.flag		// flag use a OR binary operation with 2⁰, 2¹ and 2²
-	logInfo(0, "CheckName "+key+" flag:"+flag+"  f:"+f)
+	logInfo(-1, "CheckName "+key+" flag:"+flag+"  f:"+f)
 	// Filling name char by char (n1 et n2 => max=6, n3 => max=4 as 15 char)
 	for (let t = 0; t < max; t++) {
 		if (element[6 + t] != 0xFF) {
@@ -280,85 +301,119 @@ function CheckName(element) {
 		name[idx] = nameTmp[idx]
 	}
 
+	VMBNameStatus.set(key, { "address": element[2], "name": name[0] + name[1] + name[2], "n1": name[0], "n2": name[1], "n3": name[2], "flag": flag | f })
+
 	// in case name is complete (flag = 100 | 010 | 001)
-	if ((f & flag) == 0b111) {
-		let thisSubModule = subModuleList.get(key)
+	let thisName = VMBNameStatus.get(key)
+	if (thisName.flag == 0b111) {
+		let thisSubModule = subModulesList.get(key)
 		if (thisSubModule) {
-			thisSubModule.name = name[0]+name[1]+name[2]
+			thisSubModule.name = thisName.name
 			myModule.name = thisSubModule.name
-			logInfo(0, "📌 VELBUS submodule " + key + " is named " + subModuleList.get(key).name)
+			VMBModification = true
+			logInfo(0, "📌 VELBUS submodule " + key + " is named " + subModulesList.get(key).name)
 		} else {
 			logInfo(3, "Erreur de lecture du module "+key+" (flag:"+flag+", f:"+f)
 		}
 	}
-	VMBNameStatus.set(key, { "address": element[2], "name": name[0] + name[1] + name[2], "n1": name[0], "n2": name[1], "n3": name[2], "flag": flag | f })
 }
 
 
 /** ---------------------------------------------------------------------------------------------
  * Check if a module address is already in the list : if yes, it check if it still the same, else
  * it create it, using some constants. 
- * @param {*} VMBmessage message from Velbus bus.
+ * @param {ByteArray} VMBmessage message from Velbus bus.
  * --------------------------------------------------------------------------------------------*/
 function CheckModule(VMBmessage) {
-	let adrVelbus = VMBmessage[2]
-	let fctVelbus = Number(VMBmessage[4])
-	let typVelbus = VMBmessage[5]
+	let addrByte = VMBmessage[2]
+	let functionByte = Number(VMBmessage[4])
+	let typeByte = VMBmessage[5]
 	let buildYear = VMBmessage[9]
 	let buildWeek = VMBmessage[10]
 
-	if (moduleList.has(adrVelbus)) {
+	if (modulesList.has(addrByte)) {
+		
+		let newModule = modulesList.get(addrByte)
+
 		// MODULE exist, check if it still same type ?
-		let newModule = moduleList.get(adrVelbus)
-		if (fctVelbus == 0xFF) {
-			if (typVelbus != newModule.modType) {
+		if (functionByte == 0xFF) {
+			if (typeByte != newModule.modType) {
 				// MODULE type has changed (physical changed module)
 				VMBModification = true
-				moduleList.set(adrVelbus, ChangeModule(adrVelbus, typVelbus, VMBmessage))
+				// (1) Remove SubModules and change module
+				for (let index = 0; index < newModule.partNumber; index++) {
+					subModulesList.delete(addrByte+"-"+index)					
+				}
+				// (2) Change Module destination
+				modulesList.set(addrByte, ChangeModule(addrByte, typeByte, VMBmessage))
+				// (3) Create subModules (names and status)
+				scanModulesToJSON(addrByte)
+
+				// WIP scan new part...
+
 			} else {
 				// Take Year/Week information
 				newModule.buildYear = buildYear
 				newModule.buildWeek = buildWeek
-				moduleList.set(adrVelbus, newModule)
+				modulesList.set(addrByte, newModule)
 			}
-			logInfo(0,"CheckModule on existing module address: "+adrVelbus)
+			logInfo(0,"CheckModule on existing module address: "+addrByte)
+
+			let key, subModTemp
+			for (let i=0; i<newModule.partNumber; i++) {
+				key=addrByte+"-"+(i+1)
+				subModTemp = subModulesList.get(key)
+	
+				console.log("  Looking at Name for "+key)
+				// 2025-05-04 pour les modules blind VMB2BL uniquement, les numéros de parties sont 3 et 12
+				if (subModTemp.name == "" || subModTemp.flag != 0b111) {
+					if (typeByte == 0x03 || typeByte == 0x09) {
+						let blindPart = [0x03, 0x0C]
+						VMBWrite(FrameRequestName(addrByte, blindPart[i]))
+						console.log("NAME request on blind module",key, blindPart[i])
+					} else {
+						VMBWrite(FrameRequestName(addrByte, Part2Bin(i+1)))
+						console.log("NAME request on normal module",key, Part2Bin(i+1))
+					}
+				}
+			}
 		}
 
 	} else {
 		// module doesn't exist : Create MODULE
-		logInfo(0,"CheckModule on new module address: "+adrVelbus)
+		logInfo(0,"CheckModule on new module address: "+addrByte)
 		VMBModification = true
-		let newModule = new VMBmodule(adrVelbus, 0x00)
+		let newModule = new VMBmodule(addrByte, 0x00)
 		let key, subModTmp
-		if (fctVelbus == 0xFF) {
-			newModule.modType = typVelbus
-			newModule.modCat = VMB.getCatFromCode(typVelbus)
+		if (functionByte == 0xFF) {
+			newModule.modType = typeByte
+			newModule.modCat = VMB.getCatFromCode(typeByte)
 			newModule.buildYear = buildYear
 			newModule.buildWeek = buildWeek
-			newModule.powerConsumption = VMB.getPowerFromType(typVelbus)
+			newModule.powerConsumption = VMB.getPowerFromType(typeByte)
 			console.log("CREATE TYPE:", newModule.modType)
 			newModule.partNumber = VMB.getPartFromCode(newModule.modType)	// Fixed 2024-04-07
-			moduleList.set(adrVelbus, newModule)							// Fixed 2024-04-12
+			modulesList.set(addrByte, newModule)							// Fixed 2024-04-12
 			// Now we have enough information to create SUBMODULE
 			for (let i=0; i<newModule.partNumber; i++) {
-				key=adrVelbus+"-"+(i+1)
-				subModTmp = new VMBsubmodule(adrVelbus, i+1, key, "", {})
-				subModTmp.hexId = toHexa([adrVelbus])+"-"+(i+1)
-				subModTmp.type = typVelbus
+				key=addrByte+"-"+(i+1)
+				subModTmp = new VMBsubmodule(addrByte, i+1, key, "", {})
+				subModTmp.hexId = toHexa([addrByte])+"-"+(i+1)
+				subModTmp.type = typeByte
 				subModTmp.cat = newModule.modCat
-				if (typVelbus == 0x22 && i>=4) {	// VMB7IN : correcting 4 counters, 4+3 inputs
+				if (typeByte == 0x22 && i>=4) {	// VMB7IN : correcting 4 counters, 4+3 inputs
 					subModTmp.cat = ["input"]
 				}
 		
 				setSubModuleList(key, subModTmp)
 				console.log("  |_ CREATE", key, "TYPE:", subModTmp.type, "FUNCTION:",subModTmp.cat)
 				// 2025-05-04 pour les modules blind VMB2BL uniquement, les numéros de parties sont 3 et 12
-				if (typVelbus == 0x03 || typVelbus == 0x09) {
+				if (typeByte == 0x03 || typeByte == 0x09) {
 					let blindPart = [0x03, 0x0C]
-					VMBWrite(FrameRequestName(adrVelbus, blindPart[i]))
+					VMBWrite(FrameRequestName(addrByte, blindPart[i]))
 					console.log("NAME request on blind module",key, blindPart[i])
 				} else {
-					VMBWrite(FrameRequestName(adrVelbus, Part2Bin(i+1)))
+					VMBWrite(FrameRequestName(addrByte, Part2Bin(i+1)))
 					console.log("NAME request on normal module",key, Part2Bin(i+1))
 				}
 			}
@@ -367,11 +422,18 @@ function CheckModule(VMBmessage) {
 
 }
 
+/**
+ * Remove SubModule then create main Module
+ * @param {Byte} addr (1 to 255)
+ * @param {Byte} VelbusType (0x01 to 0xFF)
+ * @param {ByteArray} VelbusMsg (0F xxxx 04)
+ * @returns {VMBModule} The new module type
+ */
 function ChangeModule(addr, VelbusType, VelbusMsg) {
-	let newModule = moduleList.get(addr)
+	let newModule = modulesList.get(addr)
 	for (let t=1; t <= newModule.part; t++) {
-		if (subModuleList.get(addr+'-'+t)) {
-			subModuleList.delete(addr+'-'+t)
+		if (subModulesList.get(addr+'-'+t)) {
+			subModulesList.delete(addr+'-'+t)
 		}
 	}
 	newModule.modType = VelbusType										// new type
@@ -390,14 +452,14 @@ function ChangeModule(addr, VelbusType, VelbusMsg) {
  * @returns texte contening information like temperature, status, energy, etc.
  * ---------------------------------------------------------------------------------------------*/
 function analyze2Texte(element) {
-	let adrVelbus = element[2]
-	let fctVelbus = Number(element[4])
-	let texte = "@" + adrVelbus.toString(16) + " Fct:" + fctVelbus.toString(16).toUpperCase() + "(" + VMB.getFunctionName(fctVelbus) + ") ► "
+	let addrByte = element[2]
+	let functionByte = Number(element[4])
+	let texte = "@" + addrByte.toString(16) + " Fct:" + functionByte.toString(16).toUpperCase() + "(" + VMB.getFunctionName(functionByte) + ") ► "
 	let buttonPress, buttonRelease, buttonLongPress
 	let keyModule = ""
 
-	logInfo(1, "analyze2Texte with module "+adrVelbus+" message: "+toHexa(element))
-	switch (fctVelbus) {
+	logInfo(-1, "analyze2Texte with module "+addrByte+" message: "+toHexa(element))
+	switch (functionByte) {
 		case 0x00:
 			// Button pressed, released or long pressed (> 0.85 sec.)
 			buttonPress = toButtons(element[5], 8)
@@ -429,20 +491,20 @@ function analyze2Texte(element) {
 			let errorRX = element[6]
 			let errorBO = element[7]
 			texte += `ERROR Counter: TX=${errorTX}, RX=${errorRX}, BusOFF=${errorBO}`
-			if (moduleList.get(adrVelbus)) {
+			if (modulesList.get(addrByte)) {
 				// update existing module with current value
 				let dt = new Date()
-				let moduleTmp = moduleList.get(adrVelbus)
+				let moduleTmp = modulesList.get(addrByte)
 				moduleTmp.busErrorTX = element[5]
 				moduleTmp.busErrorRX = element[6]
 				moduleTmp.busErrorBOFF = element[7]
 				moduleTmp.busRefreshDate = dt.now()
-				moduleList.set(adrVelbus, moduleTmp)
+				modulesList.set(addrByte, moduleTmp)
 			}
 			break
 		}
 		case 0xE6:
-			keyModule = adrVelbus + "-1"
+			keyModule = addrByte + "-1"
 			texte += LocalModuleName(keyModule) + " " + TempCurrentCalculation(element) + "°C";
 			break;
 		case 0xEA:
@@ -452,11 +514,11 @@ function analyze2Texte(element) {
 		case 0xF1:
 		case 0xF2: {
 			CheckName(element)
-			logInfo(0, "CheckName on Element: "+toHexa(element))
-			let key = adrVelbus + "-"
+			let key = addrByte + "-"
 			if (element[5] == 0x03) { key += "1" }
 			else if (element[5] == 0x0C) {key += "2"}
 			else {key += Bin2Part(element[5])}
+			console.log("KEY: ",key)
 			texte += " Transmit it name '" + VMBNameStatus.get(key).name + "'"
 			break
 		}
@@ -472,7 +534,7 @@ function analyze2Texte(element) {
 		}
 		case 0xFF: { // Module Type Transmit
 			let moduleType = element[5]
-			console.log(adrVelbus, "Detected module type ", moduleType)
+			console.log("Address module ", addrByte, "contains module type ", moduleType, VMB.getNameFromCode(moduleType))
 			break
 		}
 		default:
@@ -489,8 +551,7 @@ function analyze2Texte(element) {
 
 /** --------------------------------------------------------------------------------------------------
  * This method write a Velbus frame to the TCP connexion
- * @param {Buffer} req RAW format Velbus frame
- * @param {*} res not used
+ * @param {ByteArray} req RAW format Velbus frame
  * -------------------------------------------------------------------------------------------------*/
 async function VMBWrite(req) {
 	if (DEBUG) {
@@ -502,10 +563,10 @@ async function VMBWrite(req) {
 
 
 /** --------------------------------------------------------------------------------------------------
- * Synchronize Velbus with host. If day/hour/minute are wrong (ie. 99) then use system date
- * @param {*} day if any field is wrong, function will use system date
- * @param {*} hour 
- * @param {*} minute 
+ * Synchronize Velbus with host. If day/hour/minute are wrong (ie. 99) then it use system date
+ * @param {Int} day if any field is wrong, sub function FrameTransmitTime() will use system date
+ * @param {Int} hour 
+ * @param {Int} minute 
  * -------------------------------------------------------------------------------------------------*/
 function VMBSetTime(day, hour, minute) {
 	VMBWrite(FrameTransmitTime(day, hour, minute))
@@ -514,15 +575,15 @@ function VMBSetTime(day, hour, minute) {
 
 /** --------------------------------------------------------------------------------------------------
  * Send a scan request for one or all module
- * @param {*} adrModule could be 0 (all) or any address (1-255)
+ * @param {number} addrModule could be 0 (all) or any address (1-255)
  * -------------------------------------------------------------------------------------------------*/
-function VMBscanAll(adrModule = 0) {
-	if (adrModule == 0) {
-		for (let t = 0; t < 256; t++) {
+function VMBscanAll(addrModule = 0) {
+	if (addrModule == 0) {
+		for (let t = 1; t < 255; t++) {
 			VMBWrite(FrameModuleScan(t))
 		}
 	} else {
-		VMBWrite(FrameModuleScan(adrModule))
+		VMBWrite(FrameModuleScan(addrModule))
 	}
 
 }
@@ -552,7 +613,12 @@ function EnergyPowerCalculation(msg) {
 	return power
 }
 
-// Function that calculate full digit for temperature. PartA is main part, partB is low digit part
+/**
+ * Function that calculate full digit for Velvus temperature. PartA is main part, partB is low digit part
+ * @param {Byte} partA main part
+ * @param {Byte} partB 
+ * @returns 
+ */
 function FineTempCalculation(partA, partB) {
 	return partA / 2 - Math.round(((4 - partB) >> 5) * 0.0625 * 10) / 10
 }
@@ -592,10 +658,10 @@ function TempMaxCalculation(msg) {
  * @param {Object} value specific status information (temp, counter, etc.)
  */
 function UpdateModule(key, value) {
-	let m = moduleList.get(key)
+	let m = modulesList.get(key)
 	if (m != undefined) {
 		m.status = value
-		moduleList.set(key, m)
+		modulesList.set(key, m)
 		return true
 	} else {
 		// unexistant module
@@ -604,12 +670,207 @@ function UpdateModule(key, value) {
 }
 
 
-// Function to wait before reading values (async problem)
+ 
+/**
+ * wait (asynchronously) a delay 
+ * @param {*} timeout delay in milliseconds
+ */
 async function sleep(timeout) {
 	await new Promise(r => setTimeout(r, timeout));
 }
 
-/** 🌡️ GESTION TEMPERATURE
+
+/** 📍 MANAGE RELAY STATUS
+ *  This function use an emitter to receive specific message, then analyze and update module status
+ */
+function surveyRelayStatus() {
+	VMBEmitter.on("RelayStatus", (msg) => {
+		if (msg.RAW[4] == 0xFB) {
+			// TODO get relays status and fill subModulesList with them
+			// msg.RAW[5] contains binary number of relay and msg.RAW[7] contains it status
+			// 
+			logInfo("warning", `Relay ${msg.RAW[2]} status : ${msg.RAW[7]} (${toButtons(msg.RAW[7])}) DATABYTE2 = ${Bin2Part(msg.RAW[5])}`)
+			let subModTemp, key
+			let relayNumber = Bin2Part(msg.RAW[5])
+
+			key = msg.RAW[2]+'-'+relayNumber
+			subModTemp = subModulesList.get(key)
+			if (subModTemp) {
+				let oldStatus = subModTemp.status
+				console.log("OLD STATUS", oldStatus.current)
+				let newStatus
+				let relayOnStatus = (msg.RAW[7] & msg.RAW[5]) > 0
+				let relayBlinkStatus = ((msg.RAW[7]>>4) & msg.RAW[5]) > 0
+				console.log(`STATUS DEBUG (State|${msg.RAW[7]}==Channel|${msg.RAW[5]} ?): relayOn: ${relayOnStatus} relayBlink: ${relayBlinkStatus}`)
+				if (relayBlinkStatus) {
+					newStatus = {"current": "blink", "since": Date.now(), "previousState": oldStatus.current, "previousStateDuration": Date.now()-oldStatus.since}
+				} else if (relayOnStatus) {
+					newStatus = {"current": "on", "since": Date.now(), "previousState": oldStatus.current, "previousStateDuration": Date.now()-oldStatus.since}
+				} else {
+					newStatus = {"current": "off", "since": Date.now(), "previousState": oldStatus.current, "previousStateDuration": Date.now()-oldStatus.since}
+				}
+				console.log("NEW STATUS : ", newStatus.current)
+				subModTemp.status = newStatus
+				if (subModTemp.cat == "") {
+					subModTemp.cat = "relay"
+				}
+				subModTemp.status = newStatus
+				subModulesList.set(key, subModTemp)
+				if (subModTemp.name == undefined) {
+					// if it has no name, ask it
+					VMBWrite(FrameRequestName(msg.RAW[2], relayNumber))
+				}
+
+				initializeRelayStatus(msg)
+			} else {
+				VMBWrite(FrameModuleScan(msg.RAW[2]))
+			}
+			// Manage status for all relays on same module
+
+
+
+		}
+	})
+}
+
+function initializeRelayStatus(msg) {
+	let addr = msg.RAW[2]
+	let partNumber = modulesList.get(addr).partNumber
+	if (partNumber) {
+		for (let index = 1; index <= partNumber; index++) {
+			const key = addr+"-"+index
+			const subModTemp = subModulesList.get(key)
+			let newStatus
+			if (!subModTemp.status.current) {
+				console.log("Analyzing relay status because status is undefined", key, subModTemp.status.current)
+				let relaisOnStatus = msg.RAW[7] & Part2Bin(index) > 0
+				let relaisBlinkStatus = msg.RAW[7]>>4 & Part2Bin(index) > 0
+				if (relaisBlinkStatus) {
+					newStatus = {"current": "blink", "since": Date.now(), "previousState": "blink", "previousStateDuration": Date.now()}
+				} else if (relaisOnStatus) {
+					newStatus = {"current": "on", "since": Date.now(), "previousState": "on", "previousStateDuration": Date.now()}
+				} else {
+					newStatus = {"current": "off", "since": Date.now(), "previousState": "off", "previousStateDuration": Date.now()}
+				}
+				subModTemp.status = newStatus
+				if (subModTemp.cat == "") {
+					subModTemp.cat = modulesList.cat
+				}
+				subModulesList.set(key, subModTemp)
+			} else {
+				console.log("Status correctly defined : ", key, subModTemp.status.current)
+			}
+		}
+	} else {
+		console.log("not able to determine number of part")
+		VMBWrite(FrameModuleScan(addr))
+	}
+}
+
+/** 🪟 MANAGE BLIND STATUS
+ *  This function use an emitter to receive specific message, then analyze and update module status
+ */
+function surveyBlindStatus() {
+	VMBEmitter.on("BlindStatus", (msg) => {
+		if (msg.RAW[4] == 0xEC) {
+			// TODO get relays status and fill subModulesList with them
+			// msg.RAW[5] contains binary number of relay and msg.RAW[7] contains it status
+			// 
+			logInfo("warning", `Blind ${msg.RAW[2]} status : ${msg.RAW[7]} (${toButtons(msg.RAW[7])}) DATABYTE2 = ${Bin2Part(msg.RAW[5])}`)
+			let subModTemp, key, blindChannel, blindStatus
+
+			key = msg.RAW[2]+'-'+msg.RAW[5]
+			subModTemp = subModulesList.get(key)
+			if (subModTemp) {
+				blindChannel = msg.RAW[5]
+			} else {
+				// Old VMB2BL module
+				blindChannel = msg.RAW[5] == 0b0011 ? 1 : 2
+				key = msg.RAW[2]+'-'+ blindChannel
+				subModTemp = subModulesList.get(key)
+			}
+			console.log("BlindChannel = ", blindChannel)
+			if (subModTemp) {
+				let oldStatus = subModTemp.status
+				console.log("OLD STATUS", oldStatus.current)
+				let realTime, deltaTime, relativePosition, currentStatus
+				let newStatus = {}
+				
+				// determine current blind status : up, down stop
+				if (blindChannel == 1) {
+					blindStatus = (msg.RAW[7] & msg.RAW[5])
+				} else {
+					blindStatus = ((msg.RAW[7]>>2) & (msg.RAW[5]>>2))
+				}
+				let blindUpStatus = (blindStatus & 0b01) > 0
+				let blindDownStatus = (blindStatus & 0b10) > 0
+
+				// Check if an old Status exist else give it a false value
+				if (!oldStatus.previousEventTime) {
+					oldStatus.previousState = "stop"
+					oldStatus.current = "stop"
+					oldStatus.currentNum = 0
+					oldStatus.previousEventTime = Date.now()
+					oldStatus.currentEventTime = Date.now()
+					oldStatus.previousClosedPosition = 100	// choose blind is full down
+					oldStatus.closedPosition = 100
+				}
+
+				if (oldStatus.currentClosedPosition == NaN || oldStatus.currentClosedPosition == undefined) {oldStatus.currentClosedPosition = 100}
+				newStatus.currentEventTime = Date.now()
+				newStatus.previousState = oldStatus.current
+				newStatus.previousStateNum = oldStatus.currentNum
+				newStatus.previousEventTime = oldStatus.currentEventTime
+				newStatus.previousClosedPosition = oldStatus.currentClosedPosition
+				if (blindDownStatus) {
+					newStatus.current = "down"
+					newStatus.currentNum = -1
+				} else if (blindUpStatus) {
+					newStatus.current = "up"
+					newStatus.currentNum = 1
+				} else {
+					newStatus.current = "stop"
+					newStatus.currentNum = 0
+				}
+				
+				// Calculate move time and percentage of blind between previous state and now
+				if (oldStatus.realTime) {
+					realTime = oldStatus.realTime	// TODO use real timed duration rather Velbus value
+					newStatus.realTime = oldStatus.realTime
+					console.log(`Using realTime = ${oldStatus.realTime}, newStatus.realTime=${newStatus.realTime}`)
+				} else {
+					realTime = 15 * Math.pow(2, msg.RAW[6])	// TODO use real timed duration rather Velbus value 
+				}
+				deltaTime = (newStatus.currentEventTime - newStatus.previousEventTime)/1000
+				if (newStatus.previousStateNum == NaN) newStatus.previousStateNum = 0	// FIXME bug correction, maybe removed
+				relativePosition = Math.round(deltaTime/realTime*100) * newStatus.previousStateNum
+				console.log("DeltaTime", deltaTime, "newStatus.previousStateNum", newStatus.previousStateNum, "realTime", realTime, "relativePositon", relativePosition)
+
+				if (oldStatus.currentClosedPosition == NaN) oldStatus.currentClosedPosition = 100 // FIXME bug correction, maybe removed
+				newStatus.currentClosedPosition = Math.max(0, Math.min(100, oldStatus.currentClosedPosition - relativePosition))
+				//console.log("oldStatus.currentClosedPosition", oldStatus.currentClosedPosition, "relativePositon", relativePosition, "newStatus.currentClosedPosition", newStatus.currentClosedPosition)
+
+				subModTemp.status = newStatus
+				subModulesList.set(key, subModTemp)
+
+				
+				console.log(`STATUS DEBUG BLIND ${key} (State=${newStatus.current} on Channel=${msg.RAW[5]} ?): position= ${newStatus.currentClosedPosition} %`)
+				
+				
+				if (subModTemp.name == undefined) {
+					// if it has no name, ask it
+					VMBWrite(FrameRequestName(msg.RAW[2], msg.RAW[5]))
+				}
+
+				} else {
+				VMBWrite(FrameModuleScan(msg.RAW[2]))
+			}
+
+		}
+	})
+}
+
+/** 🌡️ MANAGE TEMPERATURE
  *  This function use an emitter to receive specific message, then analyze and update module status
  */
 function surveyTempStatus() {
@@ -619,13 +880,13 @@ function surveyTempStatus() {
 			let minTemperature = TempMinCalculation(msg.RAW)
 			let maxTemperature = TempMaxCalculation(msg.RAW)
 			let key = msg.RAW[2] + "-1"
-			let status = { "defaultStatus": currentTemperature, "current": currentTemperature, "min": minTemperature, "max": maxTemperature, "timestamp": Date.now() }
+			let status = { "current": currentTemperature, "min": minTemperature, "max": maxTemperature, "timestamp": Date.now() }
 
 			// ajout pour gestion avec subModuleList
-			let subModTemp = subModuleList.get(key)
+			let subModTemp = subModulesList.get(key)
 			if (subModTemp) {
 				subModTemp.status = status
-				subModuleList.set(key, subModTemp)
+				subModulesList.set(key, subModTemp)
 				if (subModTemp.name == undefined) {
 					// if it has no name, ask it
 					VMBWrite(FrameRequestName(msg.RAW[2], 1))
@@ -638,19 +899,19 @@ function surveyTempStatus() {
 	})
 }
 
-// 🌡️ GESTION TEMPERATURE
+// 🌡️ REQUEST TEMPERATURE
 async function VMBRequestTemp(adr, part) {
 	let trame = FrameRequestTemp(adr, part);
 	VMBWrite(trame);
 	await sleep(200);
-	let result = subModuleList.get(adr + "-" + part)
+	let result = subModulesList.get(adr + "-" + part)
 	if (result) return result.status;
-	return { "defaultStatus": 1000, "current": 1000, "min": 1000, "max": 1000, "timestamp": Date.now() };
+	return { "current": 1000, "min": 1000, "max": 1000, "timestamp": Date.now() };
 
 }
 
-// 
-/** ☢️ GESTION ENERGIE
+
+/** ☢️ MANAGE ENERGY
  *  This function use an emitter to receive specific message, then analyze and update module status
  */
 function surveyEnergyStatus() {
@@ -661,18 +922,24 @@ function surveyEnergyStatus() {
 			let addr = msg.RAW[2]
 			let part = (msg.RAW[5] & 3) + 1
 			let key = addr + "-" + part
-			let status = { "defaultStatus":power, "index": rawcounter, "power": power, "timestamp": Date.now() }
+			let status = { "current":power, "index": rawcounter, "power": power, "timestamp": Date.now() }
 
 			// ajout pour gestion avec subModuleList
-			let subModTmp = subModuleList.get(key)
+			let subModTmp = subModulesList.get(key)
 			if (subModTmp) {
 				subModTmp.status = status
-				subModuleList.set(key, subModTmp)
+				subModulesList.set(key, subModTmp)
 			}
 		}
 	})
 }
 
+/**
+ * ☢️ REQUEST ENERGY STATUS
+ * @param {decimal} adr submodule address
+ * @param {*} part submodule part
+ * @returns 
+ */
 async function VMBRequestEnergy(adr, part) {
 	if (part < 5) {
 		// Send request to a specific part
@@ -680,7 +947,7 @@ async function VMBRequestEnergy(adr, part) {
 		VMBWrite(trame);
 		await sleep(200); // VMBEmitter isn't synchronous, need to wait few milliseconds to be sure answer is back
 		// Received answer
-		let result = subModuleList.get(adr+"-"+part)
+		let result = subModulesList.get(adr+"-"+part)
 		if (result) return result.status;
 		return { "power": undefined, "index": undefined, "timestamp": Date.now() };
 	} else {
@@ -690,10 +957,10 @@ async function VMBRequestEnergy(adr, part) {
 		VMBWrite(trame);
 
 		await sleep(200);
-		tableModule.push(subModuleList.get(adr + "-1").status);
-		tableModule.push(subModuleList.get(adr + "-2").status);
-		tableModule.push(subModuleList.get(adr + "-3").status);
-		tableModule.push(subModuleList.get(adr + "-4").status);
+		tableModule.push(subModulesList.get(adr + "-1").status);
+		tableModule.push(subModulesList.get(adr + "-2").status);
+		tableModule.push(subModulesList.get(adr + "-3").status);
+		tableModule.push(subModulesList.get(adr + "-4").status);
 		return tableModule;
 	}
 
@@ -718,15 +985,20 @@ const LongPressButton = (address, part) => {
 }*/
 // #endregion
 
+/**
+ * Automatic console message with icon and text.
+ * @param {String|number} priority show an icon (nothing, info, warning, error)
+ * @param {String} text string to show
+ */
 function logInfo(priority, text) {
-	if (DEBUG) {
+	if (DEBUG && (priority>0 || priority != 'NOTHING')) {
 		const symbols = ['🤖','🟢', '🔼', '❌']
-		const priorityNames = ['NOTHING', 'INFO', 'WARNING', 'ERROR']
+		const priorityNames = ['NOTHING', 'EMPTY', 'INFO', 'WARNING', 'ERROR']
 		if (typeof(priority) == 'string') {
 			priority = priorityNames.indexOf(priority.toUpperCase())
 		} 
 		if (priority<0 || priority>=priorityNames.length) {
-				priority = 0
+			priority = 0
 		}
 		const now = new Date();
 		const hours = String(now.getHours()).padStart(2, '0')
@@ -737,6 +1009,9 @@ function logInfo(priority, text) {
 		const symbol = symbols[priority] || '🤖'
 		const priorityName = priorityNames[priority] || 'UNKNOWN'
 		switch (priorityName) {
+			case "EMPTY":
+				console.info(`${symbol} [${timeString}] [${priorityName}] ${text}`)
+				break
 			case "WARNING":
 				console.warn(`${symbol} [${timeString}] [${priorityName}] ${text}`)
 				break
@@ -762,6 +1037,8 @@ function logInfo(priority, text) {
 const CNX = { host: "127.0.0.1", port: 8445 }
 import net from 'net'
 import { get } from 'http';
+import { scanModulesToJSON } from '../controllers/CtrlModules.mjs';
+import { timeStamp } from 'console';
 
 const connectVelbus = (TCPConnexion) => {
 	let velbusConnexion = new net.Socket();
@@ -776,13 +1053,16 @@ const VelbusStart = (host, port) => {
 let ReconnectTimer
 let DisconnectDate
 
-
-
+// -------------------------------------------------------------------------------------------------------------------
+// PREPARING ALL LISTENERS : 
+// -------------------------------------------------------------------------------------------------------------------
 VelbusConnexion.on('connect', () => {
 	console.log("ARVEL - Connexion to Velbus server TCP)  > ", VelbusConnexion.remoteAddress, ":", VelbusConnexion.remotePort);
 	console.log("--------------------------------------------------------------", '\n\n')
 	surveyTempStatus()
 	surveyEnergyStatus()
+	surveyRelayStatus()
+	surveyBlindStatus()
 
 	if (ReconnectTimer != undefined) {
 		let duration = ((Date.now() - DisconnectDate) / 1000)
@@ -798,14 +1078,14 @@ VelbusConnexion.once('connect', () => {
 	let fileRead = loadMapData()
 	logInfo(2,"💾 Reading file give "+fileRead+" submodules")
 	if (fileRead<5) {
-		console.log("subModuleList size", subModuleList.size)
+		console.log("subModuleList size", subModulesList.size)
 		setTimeout(() => {
 			// VMBscanAll() after 1 second
 			logInfo(0, "🔎 Now scanning all devices on BUS")
 			VMBscanAll(0)
 		}, 1000)
 		setTimeout(() => {
-			saveMapData(moduleList, subModuleList) // after 90 second
+			saveMapData(modulesList, subModulesList) // after 90 second
 			logInfo(0,"💾 List saved after scan on BUS")
 		}, 90000)		
 	} else {
@@ -816,10 +1096,10 @@ VelbusConnexion.once('connect', () => {
 VelbusConnexion.on('data', (data) => {
 	let VMBmessage = {}
 	let description = ''
-	logInfo("NOTHING", "VelbusConnexion.on 'data' event")
+
 	// data may contains multiples RAW Velbus frames: send
 	Cut(data).forEach(element => {
-		CheckModule(element);
+		CheckModule(element)
 
 		description = analyze2Texte(element);
 		logInfo('INFO', description)
@@ -827,17 +1107,29 @@ VelbusConnexion.on('data', (data) => {
 		VMBmessage = { "RAW": element, "Description": description, "TimeStamp": Date.now(), "Address": element[2], "Function": element[4] }
 
 
-		VMBEmitter.emit("msg", VMBmessage);
+		VMBEmitter.emit("msg", VMBmessage)
 
 		switch (element[4]) {
+			case 0x00:
+				break;
+			case 0xFB:
+				VMBEmitter.emit("RelayStatus", VMBmessage)
+				break;
+			case 0xEC:
+				VMBEmitter.emit("BlindStatus", VMBmessage)
+				break;
 			case 0xBE:
-				VMBEmitter.emit("EnergyStatus", VMBmessage);
+				VMBEmitter.emit("EnergyStatus", VMBmessage)
 				break;
 			case 0xE6:
-				VMBEmitter.emit("TempStatus", VMBmessage);
+				VMBEmitter.emit("TempStatus", VMBmessage)
 				break;
+			case 0xEE:
+				VMBEmitter.emit("DimmerStatus", VMBmessage)
+				break;
+
 			default:
-				break;
+				break
 		}
 
 	})
@@ -866,7 +1158,8 @@ VelbusConnexion.once('close', () => {
 
 
 export {
-	setSubModuleList, getSubModuleList, lenSubModuleList, fullSubModuleList,
+	modulesList, subModulesList,
+	setSubModuleList, getSubModuleList, fullSubModuleList,
 	CheckSum,
 	Cut,
 	toHexa, Part2Bin,

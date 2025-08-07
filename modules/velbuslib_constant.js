@@ -147,8 +147,8 @@ const getCodeFromName = (name) => {
 
 /**
  * send back code module from name module
- * @param {String} name 
- * @returns code of module
+ * @param {Byte} type 
+ * @returns {number} power of this type of module
  */
 const getPowerFromType = (type) => {
 	for (let item of moduleTypes) {
@@ -160,7 +160,7 @@ const getPowerFromType = (type) => {
 /**
  * send back part number from type module else return 1
  * @param {Number} code of module 
- * @returns number of sub part or at least one
+ * @returns {number} number of sub part or at least one
  */
 const getPartFromCode = (code) => {
 	let result = moduleTypes.find(item => Number(item.code) == code);
@@ -172,11 +172,10 @@ const getPartFromCode = (code) => {
 }
 
 /**
- * send back category module from code module
- * @param {Number} code 
- * @returns name of module
+ * send back categories from code module
+ * @param {Byte} code 
+ * @returns {String[]} name of module
  */
-// WIP ------------------------------------------------------------------
 const getCatFromCode = (code) => {
 	let result = moduleTypes.find(item => Number(item.code) == code);
 	if (result !== undefined) return result.cat;

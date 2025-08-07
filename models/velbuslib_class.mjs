@@ -19,7 +19,7 @@ class VMBmodule {
 	/**
 	 * Create a new module
 	 * @param {Int} address 
-	 * @param {*Int} type 
+	 * @param {Int} type 
 	 */
 	constructor(address, type) {
 		this.address = address
@@ -46,7 +46,7 @@ class VMBsubmodule {
 	 * @param {Int} address (0-255)
 	 * @param {Int} part (1-x)
 	 * @param {String} key adr-part (ex. 128-4)
-	 * @param {Array} cat contains energy, blind, relay...
+	 * @param {Array<String>} cat contains energy, blind, relay...
 	 * @param {Object} status non standard information (temp, energy, relay state,...)
 	 */
 	constructor(address, part, key, cat, status) {
