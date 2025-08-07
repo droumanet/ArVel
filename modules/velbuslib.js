@@ -793,7 +793,10 @@ function surveyBlindStatus() {
 			if (subModTemp) {
 				let oldStatus = subModTemp.status
 				console.log("OLD STATUS", oldStatus.current)
-				let newStatus, totalTime, closedPourcent, calcTime, currentStatus
+				let realTime, deltaTime, relativePosition, currentStatus
+				let newStatus = {}
+				
+				// determine current blind status : up, down stop
 				if (blindChannel == 1) {
 					blindStatus = (msg.RAW[7] & msg.RAW[5])
 				} else {
@@ -802,51 +805,66 @@ function surveyBlindStatus() {
 				let blindUpStatus = (blindStatus & 0b01) > 0
 				let blindDownStatus = (blindStatus & 0b10) > 0
 
-				totalTime = 15 * Math.pow(2, msg.RAW[6])
-				if (oldStatus.since) {
-					calcTime = Math.round(((Date.now() - oldStatus.since)/1000)/totalTime*100)
-				} else {
-					calcTime = 0
-					oldStatus.closedPourcent = 0
+				// Check if an old Status exist else give it a false value
+				if (!oldStatus.previousEventTime) {
+					oldStatus.previousState = "stop"
+					oldStatus.current = "stop"
+					oldStatus.currentNum = 0
+					oldStatus.previousEventTime = Date.now()
+					oldStatus.currentEventTime = Date.now()
+					oldStatus.previousClosedPosition = 100	// choose blind is full down
+					oldStatus.closedPosition = 100
 				}
-				console.log("CalcTime ", calcTime, "% de ", totalTime, "old... since", oldStatus.since)
+
+				if (oldStatus.currentClosedPosition == NaN || oldStatus.currentClosedPosition == undefined) {oldStatus.currentClosedPosition = 100}
+				newStatus.currentEventTime = Date.now()
+				newStatus.previousState = oldStatus.current
+				newStatus.previousStateNum = oldStatus.currentNum
+				newStatus.previousEventTime = oldStatus.currentEventTime
+				newStatus.previousClosedPosition = oldStatus.currentClosedPosition
 				if (blindDownStatus) {
-					closedPourcent = oldStatus.closedPourcent + calcTime
-					currentStatus = "down"
+					newStatus.current = "down"
+					newStatus.currentNum = -1
 				} else if (blindUpStatus) {
-					closedPourcent = oldStatus.closedPourcent - calcTime
-					currentStatus = "up"					
+					newStatus.current = "up"
+					newStatus.currentNum = 1
 				} else {
-					// TODO réfléchir à la formule
-					closedPourcent = oldStatus.closedPourcent
+					newStatus.current = "stop"
+					newStatus.currentNum = 0
 				}
 				
-
-				console.log(`STATUS DEBUG (State|${msg.RAW[7]}==Channel|${msg.RAW[5]} ?): blindUp: ${blindUpStatus} blinDown: ${blindDownStatus}`)
-				if (blindDownStatus || blindUpStatus) {
-					newStatus = {"current": currentStatus, "since": Date.now(), "previousState": oldStatus.current, "previousStateDuration": Date.now()-oldStatus.since, "closedPourcent": closedPourcent}
+				// Calculate move time and percentage of blind between previous state and now
+				if (oldStatus.realTime) {
+					realTime = oldStatus.realTime	// TODO use real timed duration rather Velbus value
+					newStatus.realTime = oldStatus.realTime
+					console.log(`Using realTime = ${oldStatus.realTime}, newStatus.realTime=${newStatus.realTime}`)
 				} else {
-					newStatus = {"current": "stop", "since": Date.now(), "previousState": oldStatus.current, "previousStateDuration": Date.now()-oldStatus.since, "closedPourcent": closedPourcent}
+					realTime = 15 * Math.pow(2, msg.RAW[6])	// TODO use real timed duration rather Velbus value 
 				}
-				console.log("NEW STATUS : ", newStatus.current)
-				subModTemp.status = newStatus
-				if (subModTemp.cat == "") {
-					subModTemp.cat = "relay"
-				}
+				deltaTime = (newStatus.currentEventTime - newStatus.previousEventTime)/1000
+				if (newStatus.previousStateNum == NaN) newStatus.previousStateNum = 0	// FIXME bug correction, maybe removed
+				relativePosition = Math.round(deltaTime/realTime*100) * newStatus.previousStateNum
+				console.log("DeltaTime", deltaTime, "newStatus.previousStateNum", newStatus.previousStateNum, "realTime", realTime, "relativePositon", relativePosition)
+
+				if (oldStatus.currentClosedPosition == NaN) oldStatus.currentClosedPosition = 100 // FIXME bug correction, maybe removed
+				newStatus.currentClosedPosition = Math.max(0, Math.min(100, oldStatus.currentClosedPosition - relativePosition))
+				//console.log("oldStatus.currentClosedPosition", oldStatus.currentClosedPosition, "relativePositon", relativePosition, "newStatus.currentClosedPosition", newStatus.currentClosedPosition)
+
 				subModTemp.status = newStatus
 				subModulesList.set(key, subModTemp)
+
+				
+				console.log(`STATUS DEBUG BLIND ${key} (State=${newStatus.current} on Channel=${msg.RAW[5]} ?): position= ${newStatus.currentClosedPosition} %`)
+				
+				
 				if (subModTemp.name == undefined) {
 					// if it has no name, ask it
 					VMBWrite(FrameRequestName(msg.RAW[2], msg.RAW[5]))
 				}
 
-				// initializeRelayStatus(msg)
-			} else {
+				} else {
 				VMBWrite(FrameModuleScan(msg.RAW[2]))
 			}
-			// Manage status for all relays on same module
-
-
 
 		}
 	})

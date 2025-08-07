@@ -12,6 +12,7 @@ Router.use(express.static('public'))
 Router.use(express.json())
 
 // routes list with generic API functions first
+Router.post('/modules/blind/:key', CtrlBlind.setDurationToJSON)
 Router.get('/modules/name/:key', CtrlModules.getNameToJSON)
 Router.post('/modules/name/:key', CtrlModules.setNameToJSON)
 Router.get('/modules/status/:key', CtrlModules.getStatusToJSON)

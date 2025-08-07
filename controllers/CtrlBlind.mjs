@@ -9,7 +9,7 @@ import * as VMBGeneric from "../modules/velbuslib_generic.mjs"
 
 export function setBlindStatus(req, res) {
     const key = req.params.key;
-    const newState = Number(req.params.status);
+    const newState = Number(req.params.status); // because GET method, else req.body
     let httpStatus = 200
     let httpResponse = {}
 
@@ -35,6 +35,28 @@ export function setBlindStatus(req, res) {
         httpStatus = 400
         httpResponse = {err:`Error: following key isn't existing (${key})`}
     }
+    res.setHeader('content-type', 'application/json')
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    res.status(httpStatus).json(httpResponse)
+}
+
+export function setDurationToJSON(req, res) {
+    const key = req.params.key;
+    const duration = Number(req.body.duration);
+    let httpStatus = 200
+    let httpResponse = {}
+    if (duration > 2 && duration < 180) {
+        console.log(`blind ${key} realTime set to ${duration} secondes`)
+        let subModule = velbuslib.subModulesList.get(key)
+        subModule.status.realTime = duration
+        velbuslib.subModulesList.set(key, subModule)
+    } else {
+        httpStatus = 400
+        httpResponse = {"erreur": "argument incorrect"}
+    }
+
     res.setHeader('content-type', 'application/json')
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');

@@ -156,7 +156,7 @@
                     : '';
             }
             if (category === 'blind') {
-                return 'Fermé à : ' + mod.status.closedPourcent + '% ('+mod.status.current+')';
+                return 'Fermé à : ' + mod.status.currentClosedPosition+ '% ('+mod.status.current+')';
             }
             if (category === 'button') {
                 return mod.status.pressed
@@ -199,6 +199,7 @@
                 <button class="action-btn" onclick="setBlindStatus(${mod.address},${mod.part},-1)">DOWN</button>
                 <button class="action-btn" onclick="setBlindStatus(${mod.address},${mod.part},0)">STOP</button>
                 <button class="action-btn" onclick="setSubModuleName(${mod.address},${mod.part})">✏️</button>
+                <button class="action-btn" onclick="setSubModuleBlindTime(${mod.address},${mod.part})">⏳️</button>
             `;
         }
         // Fonction globale pour changer l'état d'un volet
@@ -255,6 +256,25 @@
                 alert('Erreur: ' + err.message);
             }
         };
+
+        window.setSubModuleBlindTime = async function(address, part) {
+            duration = prompt(`Durée fermeture pour ${address}-${part}?`)
+            try {
+                const url = `/modules/blind/${address}-${part}`;
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ duration: duration })
+                });
+                if (!response.ok) throw new Error('Erreur lors de la commande');
+                // Rafraîchir la liste après action
+                await loadAndRender();
+            } catch (err) {
+                alert('Erreur: ' + err.message);
+            }
+        }
 
         // Initialisation au chargement
         loadAndRender();
