@@ -129,7 +129,7 @@ const everyMinut = schedule.scheduleJob('*/1 * * * *', () => {
                     velbuslib.VMBRequestTemp(SubModTmp.address, SubModTmp.part)
                     .then((subModuleStatus) => {
                         if (subModuleStatus) {
-                            console.log(`Temp read: ${TimeStamp2Date(new Date(subModuleStatus.timestamp))} \t${SubModTmp.address}-${SubModTmp.part}: \t${subModuleStatus.defaultStatus}°C [${SubModTmp.name}]`)
+                            console.log(`Temp read: ${TimeStamp2Date(new Date(subModuleStatus.timestamp))} \t${SubModTmp.address}-${SubModTmp.part}: \t${subModuleStatus.current}°C [${SubModTmp.name}]`)
                         }
                     })
                     /* TODO adapter pour temperature
