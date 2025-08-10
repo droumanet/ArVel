@@ -23,7 +23,7 @@ function DimmerSet(adr, part, state = 0, duration = 0) {
 	trame[2] = adr;
 	trame[3] = 0x05;    // len
 	trame[4] = 0x07;    // set Dimvalue
-    trame[5] = 1;
+    trame[5] = part;
     trame[6] = Math.min(100,Math.max(0,state))     // value clipped from 0 to 100%
 	trame[7] = (duration >> 8) & 0xFF;
     trame[8] = duration & 0xFF;
