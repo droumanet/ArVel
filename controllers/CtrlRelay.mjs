@@ -9,16 +9,16 @@ import * as VMBGeneric from "../modules/velbuslib_generic.mjs"
 
 export function setRelayStatus(req, res) {
     const key = req.params.key;
-    const newState = req.params.status;
+    const newState = Number(req.body.status);
     let httpStatus = 200
     let httpResponse = {}
 
-    if (newState) {
+    if (newState != undefined && !isNaN(newState)) {
         if (velbuslib.subModulesList.get(key)) {
             // TODO test du type de module
             const addr = key.split('-')[0]
             const part = key.split('-')[1]
-            if (newState < 2 && newState > -1) {
+            if (newState >= 0 && newState < 2) {
                 console.log(" ", "writing order ON/OFF on Velbus", addr+'-'+part)
                 velbuslib.VMBWrite(VMBRelay.RelaySet(addr, part, newState*1))
             } else if (newState > 1 && newState < 11) {

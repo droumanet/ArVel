@@ -25,6 +25,34 @@
         .status-on { color: orangered; font-weight: bold; }
         .status-off { color: black; font-weight: bold; }
         .action-btn { padding: 4px 8px; margin: 0 2px; }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            height: 5px;
+            background: #ddd;
+            outline: none;
+            border-radius: 5px;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            background: #4CAF50;
+            cursor: pointer;
+            border-radius: 50%;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            background: #4CAF50;
+            cursor: pointer;
+            border-radius: 50%;
+            border: none;
+        }
     </style>
 </head>
 <body>
@@ -125,6 +153,9 @@
                         case 'blind':
                             action = `<td>${renderBlindActions(mod)}</td>`
                             break;
+                        case 'dimmer':
+                            action = `<td>${renderDimmerActions(mod)}</td>`
+                            break;
                         default:
                             break;
                     }
@@ -205,8 +236,14 @@
         // Fonction globale pour changer l'état d'un volet
         window.setBlindStatus = async function(address, part, status) {
             try {
-                const url = `/blind/${address}-${part}/${status}`;
-                const response = await fetch(url);
+                const url = `/blind/${address}-${part}`;
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ status: parseInt(status) })
+                });
                 if (!response.ok) throw new Error('Erreur lors de la commande');
                 // Rafraîchir la liste après action
                 await loadAndRender();
@@ -228,8 +265,14 @@
         // Fonction globale pour changer l'état d'un relais
         window.setRelayStatus = async function(address, part, status) {
             try {
-                const url = `/relay/${address}-${part}/${status}`;
-                const response = await fetch(url);
+                const url = `/relay/${address}-${part}`;
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ status: parseInt(status) })
+                });
                 if (!response.ok) throw new Error('Erreur lors de la commande');
                 // Rafraîchir la liste après action
                 await loadAndRender();
@@ -275,6 +318,53 @@
                 alert('Erreur: ' + err.message);
             }
         }
+
+        // GESTION DIMMER ----------------------------------------------------------------------------------
+        // Génère les contrôles d'action pour les dimmers
+        function renderDimmerActions(mod) {
+            const currentValue = mod.status && typeof mod.status.current !== 'undefined' ? mod.status.current : 0;
+            return `
+                <div style="display: flex; align-items: center; gap: 5px;">
+                    <input type="range" 
+                        min="0" 
+                        max="100" 
+                        value="${currentValue}" 
+                        id="dimmer-${mod.address}-${mod.part}"
+                        style="width: 100px;"
+                        onchange="setDimmerStatus(${mod.address},${mod.part},this.value)">
+                    <span id="value-${mod.address}-${mod.part}" style="min-width: 35px;">${currentValue}%</span>
+                    <button class="action-btn" onclick="setDimmerStatus(${mod.address},${mod.part},0)">OFF</button>
+                    <button class="action-btn" onclick="setSubModuleName(${mod.address},${mod.part})">✏️</button>
+                </div>
+            `;
+        }
+
+        // Fonction globale pour changer l'état d'un dimmer
+        window.setDimmerStatus = async function(address, part, status) {
+            try {
+                console.log(address+"-"+part,"=>", status)
+                const url = `/dimmer/${address}-${part}`;
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ status: parseInt(status) })
+                });
+                if (!response.ok) throw new Error('Erreur lors de la commande');
+                
+                // Mettre à jour l'affichage de la valeur en temps réel
+                const valueSpan = document.getElementById(`value-${address}-${part}`);
+                if (valueSpan) {
+                    valueSpan.textContent = status + '%';
+                }
+                
+                // Rafraîchir la liste après action (optionnel, peut être commenté pour de meilleures performances)
+                // await loadAndRender();
+            } catch (err) {
+                alert('Erreur: ' + err.message);
+            }
+        };
 
         // Initialisation au chargement
         loadAndRender();

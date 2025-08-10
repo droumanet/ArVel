@@ -689,7 +689,6 @@ function surveyRelayStatus() {
 			// TODO get relays status and fill subModulesList with them
 			// msg.RAW[5] contains binary number of relay and msg.RAW[7] contains it status
 			// 
-			logInfo("warning", `Relay ${msg.RAW[2]} status : ${msg.RAW[7]} (${toButtons(msg.RAW[7])}) DATABYTE2 = ${Bin2Part(msg.RAW[5])}`)
 			let subModTemp, key
 			let relayNumber = Bin2Part(msg.RAW[5])
 
@@ -697,11 +696,9 @@ function surveyRelayStatus() {
 			subModTemp = subModulesList.get(key)
 			if (subModTemp) {
 				let oldStatus = subModTemp.status
-				console.log("OLD STATUS", oldStatus.current)
 				let newStatus
 				let relayOnStatus = (msg.RAW[7] & msg.RAW[5]) > 0
 				let relayBlinkStatus = ((msg.RAW[7]>>4) & msg.RAW[5]) > 0
-				console.log(`STATUS DEBUG (State|${msg.RAW[7]}==Channel|${msg.RAW[5]} ?): relayOn: ${relayOnStatus} relayBlink: ${relayBlinkStatus}`)
 				if (relayBlinkStatus) {
 					newStatus = {"current": "blink", "since": Date.now(), "previousState": oldStatus.current, "previousStateDuration": Date.now()-oldStatus.since}
 				} else if (relayOnStatus) {
@@ -709,7 +706,6 @@ function surveyRelayStatus() {
 				} else {
 					newStatus = {"current": "off", "since": Date.now(), "previousState": oldStatus.current, "previousStateDuration": Date.now()-oldStatus.since}
 				}
-				console.log("NEW STATUS : ", newStatus.current)
 				subModTemp.status = newStatus
 				if (subModTemp.cat == "") {
 					subModTemp.cat = "relay"
@@ -725,10 +721,6 @@ function surveyRelayStatus() {
 			} else {
 				VMBWrite(FrameModuleScan(msg.RAW[2]))
 			}
-			// Manage status for all relays on same module
-
-
-
 		}
 	})
 }
@@ -742,7 +734,6 @@ function initializeRelayStatus(msg) {
 			const subModTemp = subModulesList.get(key)
 			let newStatus
 			if (!subModTemp.status.current) {
-				console.log("Analyzing relay status because status is undefined", key, subModTemp.status.current)
 				let relaisOnStatus = msg.RAW[7] & Part2Bin(index) > 0
 				let relaisBlinkStatus = msg.RAW[7]>>4 & Part2Bin(index) > 0
 				if (relaisBlinkStatus) {
@@ -758,14 +749,63 @@ function initializeRelayStatus(msg) {
 				}
 				subModulesList.set(key, subModTemp)
 			} else {
-				console.log("Status correctly defined : ", key, subModTemp.status.current)
 			}
 		}
 	} else {
-		console.log("not able to determine number of part")
 		VMBWrite(FrameModuleScan(addr))
 	}
 }
+
+/** 📶 MANAGE DIMMER STATUS
+ *  This function use an emitter to receive specific message, then analyze and update module status
+ */
+function surveyDimmerStatus() {
+	VMBEmitter.on("DimmerStatus", (msg) => {
+		if (msg.RAW[4] == 0xEE) {
+			// TODO 
+			// msg.RAW[6] contains status. msg.RAW[5] contains MODE and msg.RAW[11] is dimmer config
+			// 
+			let subModTemp, key
+			let dimmerValue = Number(msg.RAW[6])
+
+			key = msg.RAW[2]+'-'+1
+			subModTemp = subModulesList.get(key)
+			if (subModTemp) {
+				let oldStatus = subModTemp.status
+				oldStatus.current = dimmerValue
+				oldStatus.since = Date.now()
+				oldStatus.mode = msg.RAW[5]
+				oldStatus.config = msg.RAW[11]
+				let configTable = []
+				if (msg.RAW[11] & 0b1000000) configTable.push("Zero crossing error");
+				if (msg.RAW[11] & 0b0100000) configTable.push("Too inductive load");
+				if (msg.RAW[11] & 0b0010000) {
+					configTable.push("60 Hz")
+				} else {
+					configTable.push("50 Hz")
+				}
+				if (msg.RAW[11] & 0b0001000) {
+					configTable.push("for Electronic transformer")
+				} else {
+					configTable.push("for Ferro transformer")
+				}	
+				configTable.push(msg.RAW[11] & 0b111)
+				oldStatus.configTable = configTable
+				oldStatus.delayTime = (msg.RAW[8] << 16) + (msg.RAW[9] << 8) + msg.RAW[10] 
+				
+				console.log("📶", configTable, "module Status", subModTemp.status)
+				subModulesList.set(key, subModTemp)
+				if (subModTemp.name == undefined) {
+					// if it has no name, ask it
+					VMBWrite(FrameRequestName(msg.RAW[2], relayNumber))
+				}
+			} else {
+				VMBWrite(FrameModuleScan(msg.RAW[2]))
+			}
+		}
+	})
+}
+
 
 /** 🪟 MANAGE BLIND STATUS
  *  This function use an emitter to receive specific message, then analyze and update module status
@@ -776,7 +816,6 @@ function surveyBlindStatus() {
 			// TODO get relays status and fill subModulesList with them
 			// msg.RAW[5] contains binary number of relay and msg.RAW[7] contains it status
 			// 
-			logInfo("warning", `Blind ${msg.RAW[2]} status : ${msg.RAW[7]} (${toButtons(msg.RAW[7])}) DATABYTE2 = ${Bin2Part(msg.RAW[5])}`)
 			let subModTemp, key, blindChannel, blindStatus
 
 			key = msg.RAW[2]+'-'+msg.RAW[5]
@@ -789,7 +828,6 @@ function surveyBlindStatus() {
 				key = msg.RAW[2]+'-'+ blindChannel
 				subModTemp = subModulesList.get(key)
 			}
-			console.log("BlindChannel = ", blindChannel)
 			if (subModTemp) {
 				let oldStatus = subModTemp.status
 				console.log("OLD STATUS", oldStatus.current)
@@ -837,25 +875,18 @@ function surveyBlindStatus() {
 				if (oldStatus.realTime) {
 					realTime = oldStatus.realTime	// TODO use real timed duration rather Velbus value
 					newStatus.realTime = oldStatus.realTime
-					console.log(`Using realTime = ${oldStatus.realTime}, newStatus.realTime=${newStatus.realTime}`)
 				} else {
 					realTime = 15 * Math.pow(2, msg.RAW[6])	// TODO use real timed duration rather Velbus value 
 				}
 				deltaTime = (newStatus.currentEventTime - newStatus.previousEventTime)/1000
 				if (newStatus.previousStateNum == NaN) newStatus.previousStateNum = 0	// FIXME bug correction, maybe removed
 				relativePosition = Math.round(deltaTime/realTime*100) * newStatus.previousStateNum
-				console.log("DeltaTime", deltaTime, "newStatus.previousStateNum", newStatus.previousStateNum, "realTime", realTime, "relativePositon", relativePosition)
 
 				if (oldStatus.currentClosedPosition == NaN) oldStatus.currentClosedPosition = 100 // FIXME bug correction, maybe removed
 				newStatus.currentClosedPosition = Math.max(0, Math.min(100, oldStatus.currentClosedPosition - relativePosition))
-				//console.log("oldStatus.currentClosedPosition", oldStatus.currentClosedPosition, "relativePositon", relativePosition, "newStatus.currentClosedPosition", newStatus.currentClosedPosition)
 
 				subModTemp.status = newStatus
 				subModulesList.set(key, subModTemp)
-
-				
-				console.log(`STATUS DEBUG BLIND ${key} (State=${newStatus.current} on Channel=${msg.RAW[5]} ?): position= ${newStatus.currentClosedPosition} %`)
-				
 				
 				if (subModTemp.name == undefined) {
 					// if it has no name, ask it
@@ -865,7 +896,6 @@ function surveyBlindStatus() {
 				} else {
 				VMBWrite(FrameModuleScan(msg.RAW[2]))
 			}
-
 		}
 	})
 }
@@ -1063,6 +1093,7 @@ VelbusConnexion.on('connect', () => {
 	surveyEnergyStatus()
 	surveyRelayStatus()
 	surveyBlindStatus()
+	surveyDimmerStatus()
 
 	if (ReconnectTimer != undefined) {
 		let duration = ((Date.now() - DisconnectDate) / 1000)

@@ -8,12 +8,12 @@ import * as VMBBlind from "../modules/velbuslib_blind.mjs"
 import * as VMBGeneric from "../modules/velbuslib_generic.mjs"
 
 export function setBlindStatus(req, res) {
-    const key = req.params.key;
-    const newState = Number(req.params.status); // because GET method, else req.body
+    const key = req.params.key
+    const newState = Number(req.body.status)
     let httpStatus = 200
     let httpResponse = {}
 
-    if (newState != NaN) {
+    if (newState != NaN && newState != undefined) {
         if (velbuslib.subModulesList.get(key)) {
             // TODO test du type de module
             const addr = key.split('-')[0]

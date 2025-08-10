@@ -1,11 +1,14 @@
-/*
-   Router : 
+/*----------------------------------------------------------------------------
+  Routing API functions
+  v1.0      Creation
+  ----------------------------------------------------------------------------
 */
 
 import * as express from 'express'
 import * as CtrlModules from '../controllers/CtrlModules.mjs'
 import * as CtrlRelay from '../controllers/CtrlRelay.mjs'
 import * as CtrlBlind from '../controllers/CtrlBlind.mjs'
+import * as CtrlDimmer from '../controllers/CtrlDimmer.mjs'
 
 const Router = express.Router()
 Router.use(express.static('public'))
@@ -20,16 +23,15 @@ Router.get('/modules/scan', CtrlModules.scanModulesToJSON)
 Router.get('/modules', CtrlModules.subModulesToJSON)
 
 
-// Route pour activer/désactiver un relais
-// TODO POST and not GET ?
-Router.get("/relay/:key/:status", CtrlRelay.setRelayStatus)
-Router.get("/blind/:key/:status", CtrlBlind.setBlindStatus)
+// Route to change a module status
+Router.post("/relay/:key", CtrlRelay.setRelayStatus)
+Router.post("/blind/:key", CtrlBlind.setBlindStatus)
+Router.post('/dimmer/:key', CtrlDimmer.setDimmerStatus)
 
-// TODO remove later
+// TODO remove later (this is static file to check API url)
 Router.get('/index_listes.html', (req, res) => {
   res.sendFile(path.join(process.cwd(), 'index_listes.html'));
 });
-
 
 // default routes
 Router.get('/', (req, res) => { res.send({msg:"200 nothing here"})})

@@ -17,7 +17,7 @@ import { Part2Bin } from './velbuslib.js';
 function DimmerSet(adr, part, state = 0, duration = 0) {
     state = Number(state)
     duration = Number(duration)
-	let trame = new Uint8Array(8);
+	let trame = new Uint8Array(11);
 	trame[0] = VMB.StartX;
 	trame[1] = VMB.PrioHi;
 	trame[2] = adr;
