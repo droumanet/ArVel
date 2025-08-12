@@ -114,7 +114,7 @@ function decodePower(m) {
 
 
 TeleInfo.on('listening', () => {
-    console.log("ARVEL - Connexion to TeleInfo established (UDP)")
+    console.log("ARVEL - ✅ Connexion to TeleInfo established (UDP)")
 })
 // example on how to use it
 TeleInfo.on('message', (message) => {

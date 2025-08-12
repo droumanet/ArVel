@@ -1087,7 +1087,7 @@ let DisconnectDate
 // PREPARING ALL LISTENERS : 
 // -------------------------------------------------------------------------------------------------------------------
 VelbusConnexion.on('connect', () => {
-	console.log("ARVEL - Connexion to Velbus server TCP)  > ", VelbusConnexion.remoteAddress, ":", VelbusConnexion.remotePort);
+	console.log("ARVEL - ✅ Connexion to Velbus server TCP)  > ", VelbusConnexion.remoteAddress, ":", VelbusConnexion.remotePort);
 	console.log("--------------------------------------------------------------", '\n\n')
 	surveyTempStatus()
 	surveyEnergyStatus()
@@ -1167,7 +1167,7 @@ VelbusConnexion.on('data', (data) => {
 });
 VelbusConnexion.on('error', (err) => {
 	// TODO Check if this part is needed (lost connexion start event 'close') and how...
-	console.error("  ❌ Connexion Error! Velbus reusedSocket:", VelbusConnexion.reusedSocket, "   err.code:", err.code)
+	console.error("  ❌ Connexion Error! Velbus reusedSocket:", VelbusConnexion.reusedSocket, "   (err.code:", err.code,")")
 	if (!VelbusConnexion.destroyed) {
 		VelbusConnexion.destroy();
 		setTimeout(() => {VelbusConnexion=connectVelbus(CNX)}, 5000) // Reconnexion après 5 secondes

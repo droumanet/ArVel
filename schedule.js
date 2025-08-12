@@ -44,9 +44,13 @@ const everyDay23h59 = schedule.scheduleJob('50 59 23 */1 * *', () => {
     // Record index and some jobs to clear old values
 
     // read values lists and send to SQL
-    let tableCompteur = TeleInfo.resume()
-    velbuslib.setSubModuleList("300-1", tableCompteur[0])
-    velbuslib.setSubModuleList("300-2", tableCompteur[1])
+    try {
+        let tableCompteur = TeleInfo.resume()
+        velbuslib.setSubModuleList("300-1", tableCompteur[0])
+        velbuslib.setSubModuleList("300-2", tableCompteur[1])
+    } catch (error) {
+        console.log("Arvel - ❌ Not able to see TeleInfo", error)
+    }
 
     if (velbuslib.getSubModuleList('300-1') != undefined) {
         let date = new Date();
@@ -62,7 +66,11 @@ const everyDay23h59 = schedule.scheduleJob('50 59 23 */1 * *', () => {
             velbuslib.getSubModuleList('300-1').status.powerMax + "",
             velbuslib.getSubModuleList('300-2').status.indexConso + ""
         ]
-        writePowerByDay(powerTbl)
+        try {
+            writePowerByDay(powerTbl)
+        } catch (error) {
+            console.log("Arvel - ❌ Error with database!", error)
+        }
     }
 })
 
@@ -120,9 +128,15 @@ const everyMinut = schedule.scheduleJob('*/1 * * * *', () => {
                         // Writing datas to database
                         lastSubModuleTime = new Date(SubModTmp.status.timestamp)
                         eventDate=TimeStamp2Date(lastSubModuleTime)
-                        writeEnergy([SubModTmp.address, SubModTmp.part, eventDate, SubModTmp.status.index, SubModTmp.status.power])
-                        console.log(`📀 STORE IN DB:  ${SubModTmp.address}-${SubModTmp.part} \t${SubModTmp.status.power}w \tINDEX: ${SubModTmp.status.index} \ton ${eventDate} \t [${SubModTmp.name}]`)
-                    }
+                        try {
+                            // FIXME Error when no database ❌
+
+                            //writeEnergy([SubModTmp.address, SubModTmp.part, eventDate, SubModTmp.status.index, SubModTmp.status.power])
+                            console.log(`📀 STORE IN DB:  ${SubModTmp.address}-${SubModTmp.part} \t${SubModTmp.status.power}w \tINDEX: ${SubModTmp.status.index} \ton ${eventDate} \t [${SubModTmp.name}]`)
+                        } catch (error) {
+                            console.log("Arvel: Error with database", error)
+                        }
+                     }
                 }
                 // Search for Velbus module able to manage energy counting
                 if (SubModTmp.cat.includes("temp") && SubModTmp.address < 256) {
@@ -142,8 +156,8 @@ const everyMinut = schedule.scheduleJob('*/1 * * * *', () => {
                     }
                     */
                 }
-            } catch {
-                console.error("❌ No energy module in list")
+            } catch (error) {
+                console.error("❌ No energy module in list", error)
             }
         })
     }

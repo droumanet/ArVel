@@ -47,7 +47,7 @@ function resume() {
 
 
 VMC.on('listening', () => {
-    console.log("ARVEL - Connexion to VMC established (UDP)")
+    console.log("ARVEL - ✅ Connexion to VMC established (UDP)")
 })
 // example on how to use it
 VMC.on('message', (message) => {

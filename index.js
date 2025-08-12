@@ -47,7 +47,7 @@ velbuslib.VelbusStart(VMBserver.host, VMBserver.port)
 let myhttp = http.createServer(app);
 let portWeb = appProfile.listenPort;
 myhttp.listen(portWeb, () => {
-    console.log("ARVEL - Velbus Service listening on port ", portWeb)
+    console.log("ARVEL - ✅ Velbus API listening on port ", portWeb)
 });
 
 // Launch reccurent tasks

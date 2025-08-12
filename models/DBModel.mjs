@@ -11,18 +11,23 @@ let db
 dotenv.config();
 
 async function connectDB() {
-    const connection = await mysql.createPool({
-      host: process.env.DB_HOST,
-      user: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_DATABASE,
-      waitForConnections: true,
-      connectionLimit: 10,
-      queueLimit: 0
-    });
-    console.log("Connected to remote database");
-    return connection;
-  }
+    try {
+        const connection = await mysql.createPool({
+            host: process.env.DB_HOST,
+            user: process.env.DB_USER,
+            password: process.env.DB_PASSWORD,
+            database: process.env.DB_DATABASE,
+            waitForConnections: true,
+            connectionLimit: 10,
+            queueLimit: 0
+        });
+        console.log("Arvel - ✅ Connected to remote database");
+        return connection
+    } catch (error) {
+        console.error("Arvel - ❌ Database connexion error", error.message)
+        throw new Error(`Arvel - ❌ Unable to connect database: ${process.env.DB_HOST} as ${process.env.DB_USER}, ${error.message}`)
+    }
+}
 
 /**
  * Return pwrDay data to the transmitted callback
@@ -30,6 +35,8 @@ async function connectDB() {
  * @param {function} callback 
  */
 async function getPower(callback){
+    if (!db) throw new Error(`Arvel - ❌ Unable to connect database: ${process.env.DB_HOST} as ${process.env.DB_USER}, ${error.message}`)
+
     let sql='SELECT * FROM pwrDay';
     db.query(sql, function (err, data, fields) {
         if (err) throw err;
@@ -41,28 +48,42 @@ async function getPower(callback){
  * @param values {Array} of TeleInfo for production and cunsomption
  */
 async function SQLsetPowerDay(values) {
-    let sql='INSERT INTO pwrDay (jour, indexconsohp, indexconsohc, indexprod, pwrconsomax, pwrprodmax, indexprodconso) VALUES (?)';
-    db.query(sql, [values], function (err, data) {
-        if (err) throw err;
-        console.log("setPowerDay success");
-        return data.affectedRows;
-    })
+    if (!db) throw new Error(`Arvel - ❌ Unable to connect database: ${process.env.DB_HOST} as ${process.env.DB_USER}, ${error.message}`)
+
+    const sql = `INSERT INTO pwrDay 
+        (jour, indexconsohp, indexconsohc, indexprod, pwrconsomax, pwrprodmax, indexprodconso) 
+        VALUES (?, ?, ?, ?, ?, ?, ?)`;
+    const [result] = await dbPool.execute(sql, values)
+    console.log("  DBModel setPowerDay success")
+    return result.affectedRows;
 }
 
 /**
  * @param values {Array} of TeleInfo for production and cunsomption
  */
  async function SQLsetEnergy(values) {
+    if (!db) throw new Error(`Arvel - ❌ Unable to connect database: ${process.env.DB_HOST} as ${process.env.DB_USER}, ${error.message}`)
+    
+    /*
     let sql='REPLACE INTO Energie (ModAddr, ModPart, dateRecord, PowerIndex, PowerInst) VALUES (?)';
     db.query(sql, [values], function (err, data) {
         if (err) throw err;
         console.log("setEnergy success");
         return data.affectedRows;
     })
+    */
+    const sql = `REPLACE INTO Energie (ModAddr, ModPart, dateRecord, PowerIndex, PowerInst) 
+    VALUES (?, ?, ?, ?, ?)`
+    const [result] = await dbPool.execute(sql, values)
+    return result.affectedRows
 }
 
 // launch initial connexion
 db = await connectDB()
-if (db != undefined) console.log("ARVEL - Connexion with database established.")
+if (db.waitForConnections) {
+    console.log(`ARVEL - ✅ Connexion with database established (max connexion: ${db.connectionLimit}).`)
+} else {
+    console.log(`ARVEL - ❌ No connexion with database! Check ${process.env.DB_HOST} as ${process.env.DB_USER}`)
+}
 
 export {getPower, SQLsetPowerDay, SQLsetEnergy}
