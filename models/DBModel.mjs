@@ -2,6 +2,7 @@
   Initialisation for database connexion.
   Change here for connexion settings.
   2024-04-14    Add .env file for connectDB()
+  2025-08-13    Rewrite to manage errors
   --------------------------------------------------------------------------
 */
 import * as dotenv from 'dotenv';
