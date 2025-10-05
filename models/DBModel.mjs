@@ -31,21 +31,6 @@ async function connectDB() {
 }
 
 /**
- * Return pwrDay data to the transmitted callback
- * @async
- * @param {function} callback 
- */
-async function getPower(callback){
-    if (!db) throw new Error(`Arvel - ❌ Unable to connect database: ${process.env.DB_HOST} as ${process.env.DB_USER}, ${error.message}`)
-
-    let sql='SELECT * FROM pwrDay';
-    db.query(sql, function (err, data, fields) {
-        if (err) throw err;
-        return callback(data)
-    })
-}
-
-/**
  * @param values {Array} of TeleInfo for production and cunsomption
  */
 async function SQLsetPowerDay(values) {
