@@ -72,4 +72,4 @@ if (db.waitForConnections) {
     console.log(`ARVEL - ❌ No connexion with database! Check ${process.env.DB_HOST} as ${process.env.DB_USER}`)
 }
 
-export {getPower, SQLsetPowerDay, SQLsetEnergy}
+export {SQLsetPowerDay, SQLsetEnergy}
