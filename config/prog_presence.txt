@@ -38,4 +38,4 @@ SUNSET+30 LMMJVSD pressButton $AA-8 !
 
 # Test 
 # 18:45 LMMJVSD relayTimer $2E-1=10 [$400-1.temp>29]
-19:11 LMMJVSD blindUp $35-1=10
+# 19:11 LMMJVSD blindUp $35-1=10
