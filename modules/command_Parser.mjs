@@ -37,7 +37,7 @@ export function parseScheduleFile(filePath) {
 
                 let adjustedTime
                 if (time.startsWith('sunset')) {
-                    adjustedTime = getSunHour('dusk', offset)
+                    adjustedTime = getSunHour('sunset', offset)
                 } else if (time.startsWith('sunrise')) {
                     adjustedTime = getSunHour('sunrise', offset)
                 }

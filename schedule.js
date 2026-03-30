@@ -17,7 +17,7 @@ import { parseScheduleFile, getActionsToExecute } from './modules/command_Parser
 import { checkAndExecuteActions } from './modules/command_Executor.mjs'
 
 import * as velbuslib from './modules/velbuslib.js'
-import { getSunHour, TimeStamp2Date } from './utils.js'
+import { TimeStamp2Date } from './utils.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 // console.log(__dirname)      // "/Users/Sam/dirname-example/src/api"
