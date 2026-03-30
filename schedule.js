@@ -4,7 +4,7 @@
 // ================================================================================================
 
 import schedule from 'node-schedule'
-import { getSunrise, getSunset } from 'sunrise-sunset-js'
+
 import path from 'path'
 import { dirname } from 'path'
 import { fileURLToPath } from 'url'
@@ -16,17 +16,14 @@ import * as VMC from './modules/VMC.js'
 import { parseScheduleFile, getActionsToExecute } from './modules/command_Parser.mjs'
 import { checkAndExecuteActions } from './modules/command_Executor.mjs'
 
-import appProfile from './config/appProfile.json' assert {type: "json"}
 import * as velbuslib from './modules/velbuslib.js'
-import { isDaylightSavingTime, TimeStamp2Date } from './utils.js'
+import { getSunHour, TimeStamp2Date } from './utils.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 // console.log(__dirname)      // "/Users/Sam/dirname-example/src/api"
 // console.log(process.cwd())  // "/Users/Sam/dirname-example"
 // programming action when out of house
 const filePath = path.join(__dirname, 'config/prog_presence.txt')
-const sunset = getSunset(appProfile.locationX, appProfile.locationY)
-
 
 let launchSync = () => { velbuslib.VMBSetTime(99, 99, 99) }
 // GPS coordonates for Grenoble (sunrise and sunset value)
@@ -74,22 +71,8 @@ const everyDay23h59 = schedule.scheduleJob('50 59 23 */1 * *', () => {
     }
 })
 
+// call every minute, like energy counter
 const everyMinut = schedule.scheduleJob('*/1 * * * *', () => {
-    // call every minute energy counter
-    let currentDate = new Date()
-
-    // ☀️ -> 🌙 : GPS coordonates for Grenoble (sunrise and sunset value)
-    let sunsetBrut = getSunset(appProfile.locationX, appProfile.locationY)
-    let decalage = 30 * 60 * 1000;  // 20 minutes
-    let summerTime = 0
-    if (isDaylightSavingTime()) {
-        summerTime = 60*60*1000
-    }
-    let sunset = new Date(sunsetBrut.getTime() - summerTime + decalage);
-
-    // Format time as XX:YY in 24h hour
-    let sunsetTime = sunset.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-    let nowTime = currentDate.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
 
     // scan external modules (TeleInfo & VMC)
     console.log("⚡🌀  Synchronizing external modules (TeleInfo & VMC)  ⚡🌀")
@@ -103,7 +86,7 @@ const everyMinut = schedule.scheduleJob('*/1 * * * *', () => {
 
     // ⏰📖 Reading and parsing file for programmed actions (new version)
     const scheduleActions = parseScheduleFile(filePath)                         // ✅ Checked up and running
-    const actionsToCheck = getActionsToExecute(scheduleActions, currentDate)    // ✅ Checked up and running
+    const actionsToCheck = getActionsToExecute(scheduleActions, new Date())    // ✅ Checked up and running
     if (actionsToCheck) console.log("ACTIONS TO CHECK : ",actionsToCheck)
     checkAndExecuteActions(actionsToCheck)
 

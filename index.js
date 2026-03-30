@@ -18,9 +18,9 @@ import cors from "cors"
 import http from 'http'
 
 // Import from self frameworks
-import appProfile from './config/appProfile.json' assert {type: "json"}
+import appProfile from './config/appProfile.json' with {type: "json"}
 import { Router } from './routes/routes.js'
-import VMBserver from './config/VMBServer.json' assert {type: "json"}    // settings for Velbus server TCP port and address
+import VMBserver from './config/VMBServer.json' with {type: "json"}    // settings for Velbus server TCP port and address
 import * as velbuslib from "./modules/velbuslib.js"
 import { launchSync, everyDay5h, everyDay23h59, everyMinut } from './schedule.js'
 

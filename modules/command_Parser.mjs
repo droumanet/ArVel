@@ -1,9 +1,6 @@
 import fs from 'fs'
 import path from 'path'
-import { getSunrise, getSunset } from 'sunrise-sunset-js'
-import { isDaylightSavingTime, TimeStamp2Date } from '../utils.js'
-import appProfile from '../config/appProfile.json' assert {type: "json"}
-
+import { getSunHour } from '../utils.js'
 
 /*
     The parser part should parse a file where each line contains an action by hour, day, type of action, module address-part.
@@ -29,23 +26,22 @@ export function parseScheduleFile(filePath) {
             const days = parts[1]
             const action = parts[2].toLowerCase()
             
-            // case where time (ex: 08:33) isn't a time but key word 'sunset' or 'sunrise'
+            // case where time (ex: 08:33) isn't a time but key word 'sunset' or 'sunrise' or 'sunset+30'
             if (time.startsWith('sunset') || time.startsWith('sunrise')) {
                 let offset = 0
                 if (time.includes('+')) {
-                    offset = parseInt(time.split('+')[1], 10) * 60 * 1000
+                    offset = parseInt(time.split('+')[1], 10)
                 } else if (time.includes('-')) {
-                    offset = -parseInt(time.split('-')[1], 10) * 60 * 1000
+                    offset = -parseInt(time.split('-')[1], 10)
                 }
 
-                let summerTime = isDaylightSavingTime() ? 60 * 60 * 1000 : 0
-                let brutTime
+                let adjustedTime
                 if (time.startsWith('sunset')) {
-                    brutTime = getSunset(appProfile.locationX, appProfile.locationY)
+                    adjustedTime = getSunHour('dusk', offset)
                 } else if (time.startsWith('sunrise')) {
-                    brutTime = getSunrise(appProfile.locationX, appProfile.locationY)
+                    adjustedTime = getSunHour('sunrise', offset)
                 }
-                let adjustedTime = new Date(brutTime.getTime() - summerTime + offset)
+                
                 time = adjustedTime.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
                 console.log(`SUNSET/SUNRISE at ${time} TODAY (${action})`)
             }
