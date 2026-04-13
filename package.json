@@ -27,8 +27,11 @@
     "suncalc": "^1.9.0"
   },
   "scripts": {
-    "test": "jest"
+    "test": "vitest run"
   },
   "author": "prRoumanet",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "vitest": "^4.1.4"
+  }
 }
