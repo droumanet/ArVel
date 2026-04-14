@@ -1521,10 +1521,10 @@
           "relay"
         ],
         "status": {
-          "current": "off",
-          "since": 1754864456730,
-          "previousState": "on",
-          "previousStateDuration": 8399970
+          "current": "on",
+          "since": 1776110460045,
+          "previousState": "off",
+          "previousStateDuration": 21246003315
         },
         "room": "",
         "zone": []
@@ -1588,9 +1588,9 @@
         ],
         "status": {
           "current": "off",
-          "since": 1754915188302,
+          "since": 1776108778825,
           "previousState": "on",
-          "previousStateDuration": 6266115
+          "previousStateDuration": 5350046
         },
         "room": "",
         "zone": []
@@ -1675,10 +1675,10 @@
           "relay"
         ],
         "status": {
-          "current": "on",
-          "since": 1754903011294,
+          "current": "off",
+          "since": 1776099498392,
           "previousState": "on",
-          "previousStateDuration": 174174808
+          "previousStateDuration": 21196487098
         },
         "room": "",
         "zone": []
@@ -1785,10 +1785,10 @@
           "input"
         ],
         "status": {
-          "current": 767.6,
-          "index": 25854.53,
-          "power": 767.6,
-          "timestamp": 1754920336126
+          "current": 194.8,
+          "index": 27647.447,
+          "power": 194.8,
+          "timestamp": 1776115730969
         },
         "room": "",
         "zone": []
@@ -1809,9 +1809,9 @@
         ],
         "status": {
           "current": 0,
-          "index": 3553.645,
+          "index": 3814.025,
           "power": 0,
-          "timestamp": 1754920336135
+          "timestamp": 1776115730977
         },
         "room": "",
         "zone": []
@@ -1832,9 +1832,9 @@
         ],
         "status": {
           "current": 0,
-          "index": 12657.986,
+          "index": 15182.236,
           "power": 0,
-          "timestamp": 1754920336144
+          "timestamp": 1776115730987
         },
         "room": "",
         "zone": []
@@ -1847,17 +1847,17 @@
         "part": 4,
         "id": "6-4",
         "hexId": "06-4",
-        "name": "Kw_Y",
+        "name": "Conso. Eau",
         "type": 34,
         "cat": [
           "energy",
           "input"
         ],
         "status": {
-          "current": 0,
-          "index": 0,
-          "power": 0,
-          "timestamp": 1754920336154
+          "current": 595.2,
+          "index": 5.83,
+          "power": 595.2,
+          "timestamp": 1776115730996
         },
         "room": "",
         "zone": []
@@ -2192,9 +2192,9 @@
         ],
         "status": {
           "current": "off",
-          "since": 1754918668349,
+          "since": 1776103248322,
           "previousState": "on",
-          "previousStateDuration": 26643
+          "previousStateDuration": 18203
         },
         "room": "",
         "zone": []
@@ -2258,9 +2258,9 @@
         ],
         "status": {
           "current": "off",
-          "since": 1754901231773,
+          "since": 1776115346334,
           "previousState": "on",
-          "previousStateDuration": 2070
+          "previousStateDuration": 11304818
         },
         "room": "",
         "zone": []
@@ -2279,16 +2279,18 @@
           "dimmer"
         ],
         "status": {
-          "current": 0,
-          "since": 1754864775816,
+          "current": 100,
+          "since": 1776115369522,
           "mode": 4,
-          "config": 129,
+          "config": 228,
           "configTable": [
+            "Zero crossing error",
+            "Too inductive load",
             "50 Hz",
             "for Ferro transformer",
-            1
+            4
           ],
-          "delayTime": 0
+          "delayTime": 17998
         },
         "room": "",
         "zone": []
@@ -2307,8 +2309,8 @@
           "dimmer"
         ],
         "status": {
-          "current": 0,
-          "since": 1754864827900,
+          "current": 100,
+          "since": 1776115369689,
           "mode": 4,
           "config": 129,
           "configTable": [
@@ -2316,7 +2318,7 @@
             "for Ferro transformer",
             1
           ],
-          "delayTime": 0
+          "delayTime": 17998
         },
         "room": "",
         "zone": []
@@ -2336,9 +2338,9 @@
         ],
         "status": {
           "current": "off",
-          "since": 1754918668374,
-          "previousState": "off",
-          "previousStateDuration": 26644
+          "since": 1776103248346,
+          "previousState": "on",
+          "previousStateDuration": 7451
         },
         "room": "",
         "zone": []
@@ -2357,10 +2359,10 @@
           "relay"
         ],
         "status": {
-          "current": "off",
-          "since": 1754863416572,
-          "previousState": "on",
-          "previousStateDuration": 343642
+          "current": "on",
+          "since": 1776115428714,
+          "previousState": "off",
+          "previousStateDuration": 21252012142
         },
         "room": "",
         "zone": []
@@ -2402,9 +2404,9 @@
         ],
         "status": {
           "current": "off",
-          "since": 1754915187018,
+          "since": 1776108781595,
           "previousState": "on",
-          "previousStateDuration": 379
+          "previousStateDuration": 4666892
         },
         "room": "",
         "zone": []
@@ -2469,12 +2471,13 @@
         ],
         "status": {
           "current": 0,
-          "since": 1754913878801,
+          "since": 1776098091470,
           "mode": 3,
-          "config": 129,
+          "config": 217,
           "configTable": [
-            "50 Hz",
-            "for Ferro transformer",
+            "Zero crossing error",
+            "60 Hz",
+            "for Electronic transformer",
             1
           ],
           "delayTime": 0
@@ -2497,7 +2500,7 @@
         ],
         "status": {
           "current": 0,
-          "since": 1754863143175,
+          "since": 1776115365198,
           "mode": 4,
           "config": 129,
           "configTable": [
@@ -2524,15 +2527,15 @@
           "blind"
         ],
         "status": {
-          "currentEventTime": 1754915288413,
+          "currentEventTime": 1776106431880,
           "previousState": "down",
           "previousStateNum": -1,
-          "previousEventTime": 1754915283131,
-          "previousClosedPosition": 0,
+          "previousEventTime": 1776106401235,
+          "previousClosedPosition": 26,
           "current": "stop",
           "currentNum": 0,
           "realTime": 20,
-          "currentClosedPosition": 26
+          "currentClosedPosition": 100
         },
         "room": "",
         "zone": []
@@ -2551,10 +2554,10 @@
           "blind"
         ],
         "status": {
-          "currentEventTime": 1754912715053,
+          "currentEventTime": 1776106431943,
           "previousState": "down",
           "previousStateNum": -1,
-          "previousEventTime": 1754912700130,
+          "previousEventTime": 1776106401300,
           "previousClosedPosition": 100,
           "current": "stop",
           "currentNum": 0,
@@ -2578,15 +2581,15 @@
           "blind"
         ],
         "status": {
-          "currentEventTime": 1754907840580,
+          "currentEventTime": 1776106431028,
           "previousState": "down",
           "previousStateNum": -1,
-          "previousEventTime": 1754907825550,
-          "previousClosedPosition": 0,
+          "previousEventTime": 1776106401815,
+          "previousClosedPosition": 88,
           "current": "stop",
           "currentNum": 0,
           "realTime": 17,
-          "currentClosedPosition": 88
+          "currentClosedPosition": 100
         },
         "room": "",
         "zone": []
@@ -2605,15 +2608,15 @@
           "blind"
         ],
         "status": {
-          "currentEventTime": 1754915322601,
-          "previousState": "up",
-          "previousStateNum": 1,
-          "previousEventTime": 1754915316640,
-          "previousClosedPosition": 53,
+          "currentEventTime": 1776106431085,
+          "previousState": "down",
+          "previousStateNum": -1,
+          "previousEventTime": 1776106401873,
+          "previousClosedPosition": 29,
           "current": "stop",
           "currentNum": 0,
           "realTime": 25,
-          "currentClosedPosition": 29
+          "currentClosedPosition": 100
         },
         "room": "",
         "zone": []
@@ -2632,15 +2635,15 @@
           "blind"
         ],
         "status": {
-          "currentEventTime": 1754915298402,
+          "currentEventTime": 1776106432452,
           "previousState": "down",
           "previousStateNum": -1,
-          "previousEventTime": 1754915285356,
-          "previousClosedPosition": 0,
+          "previousEventTime": 1776106400135,
+          "previousClosedPosition": 77,
           "current": "stop",
           "currentNum": 0,
           "realTime": 17,
-          "currentClosedPosition": 77
+          "currentClosedPosition": 100
         },
         "room": "",
         "zone": []
@@ -2659,15 +2662,15 @@
           "blind"
         ],
         "status": {
-          "currentEventTime": 1754912712150,
+          "currentEventTime": 1776106432503,
           "previousState": "down",
           "previousStateNum": -1,
-          "previousEventTime": 1754912700196,
-          "previousClosedPosition": 0,
+          "previousEventTime": 1776106400196,
+          "previousClosedPosition": 85,
           "current": "stop",
           "currentNum": 0,
           "realTime": 14,
-          "currentClosedPosition": 85
+          "currentClosedPosition": 100
         },
         "room": "",
         "zone": []
@@ -2686,15 +2689,15 @@
           "blind"
         ],
         "status": {
-          "currentEventTime": 1754904621004,
-          "previousState": "up",
-          "previousStateNum": 1,
-          "previousEventTime": 1754904600118,
-          "previousClosedPosition": 100,
+          "currentEventTime": 1776106431152,
+          "previousState": "down",
+          "previousStateNum": -1,
+          "previousEventTime": 1776106402407,
+          "previousClosedPosition": 16,
           "current": "stop",
           "currentNum": 0,
           "realTime": 25,
-          "currentClosedPosition": 16
+          "currentClosedPosition": 100
         },
         "room": "",
         "zone": []
@@ -2713,15 +2716,15 @@
           "blind"
         ],
         "status": {
-          "currentEventTime": 1754896629662,
+          "currentEventTime": 1776106431217,
           "previousState": "down",
           "previousStateNum": -1,
-          "previousEventTime": 1754896627334,
-          "previousClosedPosition": 50,
+          "previousEventTime": 1776106402473,
+          "previousClosedPosition": 67,
           "current": "stop",
           "currentNum": 0,
           "realTime": 14,
-          "currentClosedPosition": 67
+          "currentClosedPosition": 100
         },
         "room": "",
         "zone": []
@@ -2938,10 +2941,10 @@
           "relay"
         ],
         "status": {
-          "current": "off",
-          "since": 1754872656774,
-          "previousState": "on",
-          "previousStateDuration": 9622844
+          "current": "on",
+          "since": 1776108500488,
+          "previousState": "off",
+          "previousStateDuration": 4413293
         },
         "room": "",
         "zone": []
@@ -3049,11 +3052,11 @@
           "blind"
         ],
         "status": {
-          "currentEventTime": 1754909649591,
+          "currentEventTime": 1776106431293,
           "previousState": "down",
           "previousStateNum": -1,
-          "previousEventTime": 1754909618671,
-          "previousClosedPosition": 47,
+          "previousEventTime": 1776106400263,
+          "previousClosedPosition": 100,
           "current": "stop",
           "currentNum": 0,
           "realTime": 25,
@@ -3102,10 +3105,10 @@
           "relay"
         ],
         "status": {
-          "current": "off",
-          "since": 1754775291001,
-          "previousState": "on",
-          "previousStateDuration": 1344622
+          "current": "on",
+          "since": 1776108934499,
+          "previousState": "off",
+          "previousStateDuration": 21333643498
         },
         "room": "",
         "zone": []
@@ -3125,9 +3128,9 @@
         ],
         "status": {
           "current": "off",
-          "since": 1754845519745,
+          "since": 1776099836529,
           "previousState": "on",
-          "previousStateDuration": 179604
+          "previousStateDuration": 96414
         },
         "room": "",
         "zone": []
@@ -3147,9 +3150,9 @@
         ],
         "status": {
           "current": "off",
-          "since": 1754917464899,
+          "since": 1776101568188,
           "previousState": "on",
-          "previousStateDuration": 287080
+          "previousStateDuration": 782416
         },
         "room": "",
         "zone": []
@@ -3191,8 +3194,9 @@
         ],
         "status": {
           "current": "off",
-          "since": 1754399221688,
-          "previousStateDuration": null
+          "since": 1776108644135,
+          "previousState": "off",
+          "previousStateDuration": 21709422447
         },
         "room": "",
         "zone": []
@@ -3278,9 +3282,9 @@
         ],
         "status": {
           "current": "off",
-          "since": 1754915442281,
+          "since": 1776106519780,
           "previousState": "on",
-          "previousStateDuration": 119209
+          "previousStateDuration": 118833
         },
         "room": "",
         "zone": []
@@ -3365,11 +3369,11 @@
           "blind"
         ],
         "status": {
-          "currentEventTime": 1754853234268,
+          "currentEventTime": 1776106434327,
           "previousState": "down",
           "previousStateNum": -1,
-          "previousEventTime": 1754853205040,
-          "previousClosedPosition": 65,
+          "previousEventTime": 1776106400380,
+          "previousClosedPosition": 100,
           "current": "stop",
           "currentNum": 0,
           "realTime": 31,
@@ -3392,15 +3396,15 @@
           "blind"
         ],
         "status": {
-          "currentEventTime": 1754896679195,
-          "previousState": "up",
-          "previousStateNum": 1,
-          "previousEventTime": 1754896674306,
-          "previousClosedPosition": 100,
+          "currentEventTime": 1776106435591,
+          "previousState": "down",
+          "previousStateNum": -1,
+          "previousEventTime": 1776106400460,
+          "previousClosedPosition": 84,
           "current": "stop",
           "currentNum": 0,
           "realTime": 31,
-          "currentClosedPosition": 84
+          "currentClosedPosition": 100
         },
         "room": "",
         "zone": []
@@ -3471,11 +3475,11 @@
           "blind"
         ],
         "status": {
-          "currentEventTime": 1754907922347,
+          "currentEventTime": 1776106437634,
           "previousState": "down",
           "previousStateNum": -1,
-          "previousEventTime": 1754907891333,
-          "previousClosedPosition": 71,
+          "previousEventTime": 1776106403352,
+          "previousClosedPosition": 100,
           "current": "stop",
           "currentNum": 0,
           "realTime": 17,
@@ -3498,10 +3502,10 @@
           "blind"
         ],
         "status": {
-          "currentEventTime": 1754912715168,
+          "currentEventTime": 1776106438820,
           "previousState": "down",
           "previousStateNum": -1,
-          "previousEventTime": 1754912700281,
+          "previousEventTime": 1776106403858,
           "previousClosedPosition": 100,
           "current": "stop",
           "currentNum": 0,
@@ -3547,10 +3551,10 @@
           "relay"
         ],
         "status": {
-          "current": "off",
-          "since": 1754918361852,
-          "previousState": "on",
-          "previousStateDuration": 896888
+          "current": "on",
+          "since": 1776115428777,
+          "previousState": "off",
+          "previousStateDuration": 5752766
         },
         "room": "",
         "zone": []
@@ -3722,10 +3726,10 @@
           "input"
         ],
         "status": {
-          "current": 387.6,
-          "index": 1992.915,
-          "power": 387.6,
-          "timestamp": 1754920340642
+          "current": 0,
+          "index": 2099.819,
+          "power": 0,
+          "timestamp": 1776115705530
         },
         "room": "",
         "zone": []
@@ -3745,10 +3749,10 @@
           "input"
         ],
         "status": {
-          "current": 123.4,
-          "index": 4917.132,
-          "power": 123.4,
-          "timestamp": 1754920340652
+          "current": 106.9,
+          "index": 5530.675,
+          "power": 106.9,
+          "timestamp": 1776115705539
         },
         "room": "",
         "zone": []
@@ -3855,9 +3859,9 @@
         ],
         "status": {
           "current": "on",
-          "since": 1754913657117,
+          "since": 1776110460449,
           "previousState": "on",
-          "previousStateDuration": 7200185
+          "previousStateDuration": 7199230
         },
         "room": "",
         "zone": []
@@ -3942,10 +3946,10 @@
           "temp"
         ],
         "status": {
-          "current": 26.4,
-          "min": 23.6,
-          "max": 27.4,
-          "timestamp": 1754920322055
+          "current": 21.4,
+          "min": 15.7,
+          "max": 29.3,
+          "timestamp": 1776115680533
         },
         "room": "",
         "zone": []
@@ -3964,10 +3968,10 @@
           "temp"
         ],
         "status": {
-          "current": 26.6,
-          "min": 23.3,
-          "max": 27.4,
-          "timestamp": 1754920322296
+          "current": 21.2,
+          "min": 18.4,
+          "max": 27.9,
+          "timestamp": 1776115680593
         },
         "room": "",
         "zone": []
@@ -3986,10 +3990,10 @@
           "temp"
         ],
         "status": {
-          "current": 27,
-          "min": 23.6,
-          "max": 28.1,
-          "timestamp": 1754920322116
+          "current": 22.1,
+          "min": 16.2,
+          "max": 30.6,
+          "timestamp": 1776115680653
         },
         "room": "",
         "zone": []
@@ -4008,10 +4012,10 @@
           "temp"
         ],
         "status": {
-          "current": 30.4,
-          "min": 24.9,
-          "max": 30.6,
-          "timestamp": 1754920322176
+          "current": 18.2,
+          "min": 9.6,
+          "max": 31.4,
+          "timestamp": 1776115680714
         },
         "room": "",
         "zone": []
@@ -4030,10 +4034,10 @@
           "temp"
         ],
         "status": {
-          "current": 35.5,
-          "min": 30.4,
-          "max": 36.5,
-          "timestamp": 1754920321874
+          "current": 22.7,
+          "min": 10.9,
+          "max": 39.1,
+          "timestamp": 1776115680774
         },
         "room": "",
         "zone": []
@@ -4052,10 +4056,10 @@
           "temp"
         ],
         "status": {
-          "current": 23,
-          "min": 21.6,
-          "max": 24,
-          "timestamp": 1754920322357
+          "current": 19.6,
+          "min": 15.9,
+          "max": 25.4,
+          "timestamp": 1776115680834
         },
         "room": "",
         "zone": []
@@ -4074,10 +4078,10 @@
           "temp"
         ],
         "status": {
-          "current": 25.7,
-          "min": 22.9,
-          "max": 27.4,
-          "timestamp": 1754920322236
+          "current": 19.5,
+          "min": 15.2,
+          "max": 28.7,
+          "timestamp": 1776115680894
         },
         "room": "",
         "zone": []
@@ -4096,10 +4100,10 @@
           "temp"
         ],
         "status": {
-          "current": 25.7,
-          "min": 23.1,
-          "max": 27.6,
-          "timestamp": 1754920321814
+          "current": 22.2,
+          "min": 12.3,
+          "max": 29.9,
+          "timestamp": 1776115680954
         },
         "room": "",
         "zone": []
@@ -4118,10 +4122,10 @@
           "temp"
         ],
         "status": {
-          "current": 25.6,
-          "min": 23.5,
+          "current": 19.2,
+          "min": 17,
           "max": 27.3,
-          "timestamp": 1754920321996
+          "timestamp": 1776115681015
         },
         "room": "",
         "zone": []
@@ -4140,10 +4144,10 @@
           "temp"
         ],
         "status": {
-          "current": 26,
-          "min": 24,
-          "max": 28.4,
-          "timestamp": 1754920321936
+          "current": 22,
+          "min": 17.9,
+          "max": 30.2,
+          "timestamp": 1776115681075
         },
         "room": "",
         "zone": []
@@ -4162,10 +4166,10 @@
           "temp"
         ],
         "status": {
-          "current": 26.3,
-          "min": 23.6,
-          "max": 27.4,
-          "timestamp": 1754920322422
+          "current": 22.7,
+          "min": 18.4,
+          "max": 27.7,
+          "timestamp": 1776115681135
         },
         "room": "",
         "zone": []
@@ -7681,16 +7685,16 @@
           "electricity"
         ],
         "status": {
-          "index": 88453323,
-          "power": 1962,
+          "index": 98446621,
+          "power": 4458,
           "indexHC": 18073331,
-          "powerMax": 3561,
-          "powerMaxDate": "2025-08-11 12:47:16",
+          "powerMax": 4301,
+          "powerMaxDate": "2026-04-13 21:42:43",
           "message": "PAS DE MESSAGE",
-          "Urms": "232",
-          "Umoy": "E250811155000 230",
-          "timestamp": 1754920320025,
-          "dateRefresh": "E250811155155"
+          "Urms": "238",
+          "Umoy": "E260413232000 242",
+          "timestamp": 1776115680017,
+          "dateRefresh": "E260413232756"
         },
         "room": "",
         "zone": []
@@ -7710,15 +7714,15 @@
           "electricity"
         ],
         "status": {
-          "index": 24083411,
-          "power": 1286,
-          "indexConso": 21341,
-          "Urms": "244",
-          "powerMax": 1414,
-          "powerMaxDate": "2025-08-11 14:07:44",
+          "index": 25406758,
+          "power": 0,
+          "indexConso": 23716,
+          "Urms": "240",
+          "powerMax": 476,
+          "powerMaxDate": "2026-04-13 13:19:48",
           "message": "PAS DE MESSAGE",
-          "timestamp": 1754920320025,
-          "dateRefresh": "E250811155156"
+          "timestamp": 1776115680017,
+          "dateRefresh": "E260413182857"
         },
         "room": "",
         "zone": []
@@ -7738,8 +7742,31 @@
           "vmc"
         ],
         "status": {
-          "error": "Unable to read registers",
-          "timestamp": "15:51:53"
+          "TotalRunningTime": "945d, 10h, 16m",
+          "current": 9.2,
+          "defaultStatus": 9.2,
+          "TempAdmission": 9.2,
+          "TempInsufflation": 17.3,
+          "TempExtraction": 18.9,
+          "TempOut": 11.9,
+          "humidity": 50,
+          "bypass": 0,
+          "boost": true,
+          "fanInSpeed": 2460,
+          "fanMaxSpeed": 3360,
+          "fanInPercent": 70,
+          "fanOutSpeed": 2340,
+          "fanOutPercent": 65,
+          "power": 116,
+          "powerMax": 162,
+          "flow": 214,
+          "flowMax": 300,
+          "Alarm": 2,
+          "FilterStatus": 0,
+          "ReplaceFilterCountdown": 71,
+          "MotorUpTime": "945d, 10h, 16m",
+          "rendement": 83.5,
+          "timestamp": "23:27:48"
         },
         "room": "",
         "zone": []

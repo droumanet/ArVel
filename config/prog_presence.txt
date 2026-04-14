@@ -33,8 +33,8 @@
 # 20:35 LMMJVSD relayTimer $2E-1=900
 # 21:55 LMMJVSD relayTimer $0C-2=900
 
-# Fermer tous les volets au coucher du soleil puis forcer à 22h30
-SUNSET LMMJVSD pressButton $AA-8 !
+# Fermer tous les volets au coucher du soleil
+SUNSET-10 LMMJVSD pressButton $AA-8 !
 
 # Test 
 # 18:45 LMMJVSD relayTimer $2E-1=10 [$400-1.temp>29]

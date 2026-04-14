@@ -599,22 +599,24 @@ function VMBscanAll(addrModule = 0) {
    Function that return a value are named 'VMBRequest'/Type and read a Map
    ===========================================================================================================*/
 
-function EnergyIndexCalculation(msg) {
+function CounterIndexCalculation(msg) {
+	// Pulse : RAW[5] as xxxxxxcc with cc = channel (0-3) and xxxxxx * 100 is pulse 
+	// counter: RAW[6]^24+RAW[7]^16+RAW[8]^8+RAW[9]
 	let pulse = (msg.RAW[5] >> 2) * 100
 	let rawcounter = msg.RAW[6] * 2 ** 24 + msg.RAW[7] * 2 ** 16 + msg.RAW[8] * 2 ** 8 + msg.RAW[9]
 	return Math.round(rawcounter / pulse * 1000) / 1000;
 }
-function EnergyPowerCalculation(msg) {
+function CounterPowerCalculation(msg) {
 	let power = 0
 	let pulse = (msg.RAW[5] >> 2) * 100
 	if (msg.RAW[10] != 0xFF && msg.RAW[11] != 0xFF) {
-		power = Math.round((1000 * 1000 * 3600 / (msg.RAW[10] * 256 + msg.RAW[11])) / pulse * 10) / 10;
+		power = Math.round((1000 * 1000 * 3600 / (msg.RAW[10] * 256 + msg.RAW[11])) / pulse * 100) / 100;
 	}
 	return power
 }
 
 /**
- * Function that calculate full digit for Velvus temperature. PartA is main part, partB is low digit part
+ * Function that calculate full digit for Velbus temperature. PartA is main part, partB is low digit part
  * @param {Byte} partA main part
  * @param {Byte} partB 
  * @returns 
@@ -947,8 +949,8 @@ async function VMBRequestTemp(adr, part) {
 function surveyEnergyStatus() {
 	VMBEmitter.on("EnergyStatus", (msg) => {
 		if (msg.RAW[4] == 0xBE) {
-			let rawcounter = EnergyIndexCalculation(msg)
-			let power = EnergyPowerCalculation(msg)
+			let rawcounter = CounterIndexCalculation(msg)
+			let power = CounterPowerCalculation(msg)
 			let addr = msg.RAW[2]
 			let part = (msg.RAW[5] & 3) + 1
 			let key = addr + "-" + part
@@ -1195,7 +1197,7 @@ export {
 	Cut,
 	toHexa, Part2Bin, Bin2Part, toButtons,
 	FineTempCalculation, TempCurrentCalculation, TempMinCalculation, TempMaxCalculation,
-	EnergyIndexCalculation, EnergyPowerCalculation,
+	CounterIndexCalculation as EnergyIndexCalculation, CounterPowerCalculation as EnergyPowerCalculation,
 	VMB, resume,
 	VMBWrite, VMBSetTime, VMBscanAll,
 	FrameSendButton, PressButton, LongPressButton,

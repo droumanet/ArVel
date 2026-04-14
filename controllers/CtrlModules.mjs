@@ -64,13 +64,17 @@ export function scanModulesToJSON(req, res) {
   res.status(200).json(mapObj) // Send object in JSON format
 }
 
+/**
+ * Route /modules/name/:key
+ * @param {*} req key is module key (X-Y) with X as decimal number
+ * @param {*} res name of this module in JSON
+ */
 export function getNameToJSON(req, res) {
     const key = req.params.key;
     const x = velbuslib.subModulesList
     let httpStatus = 400
     let response = undefined
     
-    console.log("🕸️", key, `request to get name of ${key}`)
     if (key) {
         let subModule = x.get(key)
         if (subModule) {
@@ -78,6 +82,9 @@ export function getNameToJSON(req, res) {
           httpStatus = 200
         } 
     }
+
+    console.log("🕸️", key, `request to get name of ${key} answer is ${response} (subModulesList size: ${x.size} )`)
+
     res.setHeader('content-type', 'application/json')
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
@@ -85,8 +92,14 @@ export function getNameToJSON(req, res) {
     res.status(httpStatus).json({name:response})
 }
 
+/**
+ * route POST /modules/name/:key
+ * @param {*} req key (X-Y) with X a decimal number. POST: name string
+ * @param {*} res new name
+ */
 export function setNameToJSON(req, res) {
     const key = req.params.key;
+        console.log("BODY",req.body)
     const name = req.body.name.substring(0, 15)
     const x = velbuslib.subModulesList
     let httpStatus = 400
