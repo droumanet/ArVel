@@ -70,6 +70,7 @@
         "modType": 34,
         "modCat": [
           "energy",
+          "counter",
           "input"
         ],
         "partNumber": 7,
@@ -702,6 +703,7 @@
         "modType": 34,
         "modCat": [
           "energy",
+          "counter",
           "input"
         ],
         "partNumber": 7,
@@ -1782,9 +1784,11 @@
         "type": 34,
         "cat": [
           "energy",
+          "counter",
           "input"
         ],
         "status": {
+          "unit": 3,
           "current": 194.8,
           "index": 27647.447,
           "power": 194.8,
@@ -1805,9 +1809,11 @@
         "type": 34,
         "cat": [
           "energy",
+          "counter",
           "input"
         ],
         "status": {
+          "unit": 3,
           "current": 0,
           "index": 3814.025,
           "power": 0,
@@ -1828,9 +1834,11 @@
         "type": 34,
         "cat": [
           "energy",
+          "counter",
           "input"
         ],
         "status": {
+          "unit": 3,
           "current": 0,
           "index": 15182.236,
           "power": 0,
@@ -1851,9 +1859,11 @@
         "type": 34,
         "cat": [
           "energy",
+          "counter",
           "input"
         ],
         "status": {
+          "unit": 1,
           "current": 595.2,
           "index": 5.83,
           "power": 595.2,
@@ -3723,9 +3733,11 @@
         "type": 34,
         "cat": [
           "energy",
+          "counter",
           "input"
         ],
         "status": {
+          "unit": 3,
           "current": 0,
           "index": 2099.819,
           "power": 0,
@@ -3746,9 +3758,11 @@
         "type": 34,
         "cat": [
           "energy",
+          "counter",
           "input"
         ],
         "status": {
+          "unit": 3,
           "current": 106.9,
           "index": 5530.675,
           "power": 106.9,
@@ -3769,9 +3783,12 @@
         "type": 34,
         "cat": [
           "energy",
+          "counter",
           "input"
         ],
-        "status": {},
+        "status": {
+          "unit": 3
+        },
         "room": "",
         "zone": []
       }
@@ -3787,9 +3804,12 @@
         "type": 34,
         "cat": [
           "energy",
+          "counter",
           "input"
         ],
-        "status": {},
+        "status": {
+          "unit": 3
+        },
         "room": "",
         "zone": []
       }

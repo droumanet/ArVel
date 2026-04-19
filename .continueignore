@@ -1,0 +1,14 @@
+# .continueignore
+node_modules/
+dist/
+build/
+.git/
+*.lock
+*.min.js
+*.map
+__pycache__/
+venv/
+.env
+*.log
+data/
+docs/

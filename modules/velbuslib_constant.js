@@ -34,7 +34,7 @@ const moduleTypes    =
  {code : "0x1E", name :  "VMBGP1",    power: [20],  desc : "1 push glass button module", PartNb : 1, cat:["button"]},
  {code : "0x1F", name :  "VMBGP2",    power: [20],  desc : "2 push glass button module", PartNb : 2, cat:["button"]},
  {code : "0x20", name :  "VMBGP4",    power: [20],  desc : "4 push glass button module", PartNb : 4, cat:["button"]},
- {code : "0x22", name :  "VMB7IN",    power: [30,150], desc : "7 inputs with minus up to 4 counters", PartNb : 7, cat:["energy","input"] },
+ {code : "0x22", name :  "VMB7IN",    power: [30,150], desc : "7 inputs with minus up to 4 counters", PartNb : 7, cat:["energy","counter","input"] },
  {code : "0x25", name :  "VMBGPTC",   power: [20],  desc : "", PartNb : 1, cat:["unknown"]},
  {code : "0x28", name :  "VMBGPOD",   power: [20], desc : "", PartNb : 1, cat:["unknown"]},
  {code : "0x29", name :  "VMB1RYNOS", power: [15],  desc : "", PartNb : 1, cat:["unknown"]},

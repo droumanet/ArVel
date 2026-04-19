@@ -127,6 +127,28 @@ function FrameSendButton(address, part, status) {
 }
 
 /**
+ * Function to request memory : [0x0F] [Priority] [Address] [0x03] [0xFD] [Addr High] [Addr Low] [Checksum] [0x04]
+ * @param {byte} addr address of module on the bus
+ * @param {int} Module memory address to request
+ * @returns  Velbus frame ready to emit
+ */
+ function FrameRequestMemoryByte(addr, memAddr) {
+	let addrHi = memAddr >> 8
+	let addrLo = memAddr & 0xFF
+	let trame = new Uint8Array(9);
+	trame[0] = StartX;
+	trame[1] = PrioLo;
+	trame[2] = addr;
+	trame[3] = 0x03;    // len
+	trame[4] = 0xFD;    // Memory address request (one byte). Answer: 0xFE
+	trame[5] = addrHi;
+	trame[6] = addrLo;
+	trame[7] = CheckSum(trame, 0);
+	trame[8] = EndX;
+	return trame;
+}
+
+/**
  * Checksum is able to calculate the frame checksum
  * @param {Buffer} frame a Velbus frame from 0F xxxxx to 04
  * @param {number} full number removed from frame length (default=1)
@@ -143,4 +165,4 @@ function FrameSendButton(address, part, status) {
 	return crc;
 }
 
-export {FrameModuleScan, FrameRequestName, FrameTransmitTime, FrameRequestTime, FrameSendButton, CheckSum}
+export {FrameModuleScan, FrameRequestName, FrameTransmitTime, FrameRequestTime, FrameSendButton, FrameRequestMemoryByte, CheckSum}

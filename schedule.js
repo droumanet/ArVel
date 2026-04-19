@@ -115,7 +115,7 @@ const everyMinut = schedule.scheduleJob('*/1 * * * *', () => {
                             // FIXME Error when no database ❌
 
                             //writeEnergy([SubModTmp.address, SubModTmp.part, eventDate, SubModTmp.status.index, SubModTmp.status.power])
-                            console.log(`📀 STORE IN DB:  ${SubModTmp.address}-${SubModTmp.part} \t${SubModTmp.status.power}w \tINDEX: ${SubModTmp.status.index} \ton ${eventDate} \t [${SubModTmp.name}]`)
+                            console.log(`📀 STORE IN DB:  ${SubModTmp.address}-${SubModTmp.part} \t${SubModTmp.status.power} ${SubModTmp.status.unit} \tINDEX: ${SubModTmp.status.index} \ton ${eventDate} \t [${SubModTmp.name}]`)
                         } catch (error) {
                             console.log("Arvel: Error with database", error)
                         }
