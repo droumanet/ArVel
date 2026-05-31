@@ -16,15 +16,15 @@
 07:50 LMMJV-- blindUp $37-1=2
 
 # Baisser volets Est
-08:45 LMMJVSD blindDown 34-2=14 [$400-1.temp>22]
+08:55 LMMJVSD blindDown 34-2=14 [$400-1.temp>22]
 
 # Lever volet Alexandre
 11:30 LMMJVSD blindUp $25-1=20
 
 # Baisser les volets ouest : 21-2 (Ch. amis), 23-2 (Cuisine ouest), 37-2 (bureau)
-13:45 LMMJVSD blindDown $21-2=14 [$400-1.temp>25]
-13:45 LMMJVSD blindDown $23-2=11 [$400-1.temp>25]
-13:45 LMMJVSD blindDown $37-2=14 [$400-1.temp>25]
+13:35 LMMJVSD blindDown $21-2=14 [$400-1.temp>23]
+13:35 LMMJVSD blindDown $23-2=11 [$400-1.temp>23]
+13:35 LMMJVSD blindDown $37-2=14 [$400-1.temp>23]
 
 # TEST : Allumage couloir du haut pendant 3 minutes
 19:02 LMMJVSD relayTimer $2E-2=180 !

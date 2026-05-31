@@ -14,15 +14,15 @@
 
 // Import from official frameworks
 import express from 'express'
-import cors from "cors"
+import cors from 'cors'
 import http from 'http'
 
 // Import from self frameworks
 import appProfile from './config/appProfile.json' with {type: "json"}
 import { Router } from './routes/routes.js'
 import VMBserver from './config/VMBServer.json' with {type: "json"}    // settings for Velbus server TCP port and address
-import * as velbuslib from "./modules/velbuslib.js"
-import { launchSync, everyDay5h, everyDay23h59, everyMinut } from './schedule.js'
+import * as velbuslib from './modules/velbuslib.js'
+import { launchSync, everyDay5h, everyDay23h59, everyMinute } from './schedule.js'
 
 
 /* ===============================================================================================================
@@ -33,10 +33,10 @@ let app = express()
 
 // Make the app available through an ADSL box (WAN) and adding CORS to SocketIO + App
 app.use(cors({
-    origin: '*', // Autoriser toutes les origines (utiliser un domaine spcifique en production)
-    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Autoriser ces mthodes HTTP
-    allowedHeaders: ['Content-Type', 'Authorization'], // Autoriser ces entêtes
-    optionsSuccessStatus: 200 // Renvoyer le statut 200 pour les requtes prliminaires (preflight) en OPTIONS
+    origin: '*',                                        // Accept all origin (ue specific domain in production)
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],          // Authorize these methodes (HTTP)
+    allowedHeaders: ['Content-Type', 'Authorization'],  // Authorize these headers ces entêtes
+    optionsSuccessStatus: 200                           // return statut 200 for preliminary request in OPTIONS
   }))
 
 app.use('/', Router)
@@ -52,6 +52,6 @@ myhttp.listen(portWeb, () => {
 
 // Launch reccurent tasks
 launchSync
-everyMinut
+everyMinute
 everyDay5h
 everyDay23h59

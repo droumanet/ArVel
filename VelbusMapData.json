@@ -7705,6 +7705,7 @@
           "electricity"
         ],
         "status": {
+          "unit": 3,
           "index": 98446621,
           "power": 4458,
           "indexHC": 18073331,
@@ -7734,6 +7735,7 @@
           "electricity"
         ],
         "status": {
+          "unit": 3,
           "index": 25406758,
           "power": 0,
           "indexConso": 23716,
@@ -7762,6 +7764,7 @@
           "vmc"
         ],
         "status": {
+          "unit": 3,
           "TotalRunningTime": "945d, 10h, 16m",
           "current": 9.2,
           "defaultStatus": 9.2,

@@ -638,22 +638,20 @@ Function that return a value are named 'VMBRequest'/Type and read a Map
 ===========================================================================================================*/
 
 /**
-* 
+* Get the unit measurement for counter module
 * @param {*} msg Frame from 0xBE function (counter Status)
-* @returns 
+* @returns number from 0b00 to 0b11
 */
 function getUnit(msg) {
-	let unit = 0b11	// default is kWh
 	let channel = msg.RAW[5] & 0x11
 	let key = msg.RAW[2] + "-" + channel
 	let subMod = getSubModuleList(key)
 
-	// Module doesn't exit
+	// Module exist: return unit or default value (kWh)
 	if (subMod != undefined) {
-		console.log("unité : ", subMod)
-		return subMod.status.unit != undefined ? subMod.status.unit : unit
+		return subMod.status.unit != undefined ? subMod.status.unit : 0b11
 	}
-	return unit
+	return 0b11
 }
 
 function CounterIndexCalculation(msg) {
@@ -674,8 +672,6 @@ function CounterPowerCalculation(msg) {
 			case 3:
 				power = Math.round((1000 * 1000 * 3600 / (msg.RAW[10] * 256 + msg.RAW[11])) / pulse * 100) / 100;	// Wh
 				break;
-			case 1:
-				power = Math.round((1000 * 60 / (msg.RAW[10] * 256 + msg.RAW[11])) / pulse * 100) / 100;	// Try to be l/mn
 			default:
 				power = Math.round((1000 * 3600 / (msg.RAW[10] * 256 + msg.RAW[11])) / pulse * 100) / 100;	// Try to be m³/h
 				break;
@@ -1057,7 +1053,7 @@ async function VMBRequestEnergy(adr, part) {
 		// Received answer
 		let result = subModulesList.get(adr + "-" + part)
 		if (result) return result.status;
-		return { "power": undefined, "index": undefined, "timestamp": Date.now() };
+		return { "unit": 3, "power": undefined, "index": undefined, "timestamp": Date.now() };
 	} else {
 		// part is 0xF or more : send request on all part of a module
 		let tableModule = [];

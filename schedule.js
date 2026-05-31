@@ -72,12 +72,15 @@ const everyDay23h59 = schedule.scheduleJob('50 59 23 */1 * *', () => {
 })
 
 // call every minute, like energy counter
-const everyMinut = schedule.scheduleJob('*/1 * * * *', () => {
+const everyMinute = schedule.scheduleJob('*/1 * * * *', () => {
 
     // scan external modules (TeleInfo & VMC)
     console.log("⚡🌀  Synchronizing external modules (TeleInfo & VMC)  ⚡🌀")
     let tableCompteur = TeleInfo.resume()
+    tableCompteur[0].status.unit = 3
+    tableCompteur[1].status.unit = 3
     let VMCModule = VMC.resume()
+    VMCModule.status.unit = 3
 
     // Create or update external modules (with addresses > 255)
     velbuslib.setSubModuleList("300-1", tableCompteur[0])
