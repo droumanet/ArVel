@@ -6,7 +6,7 @@ import * as VMB from '../models/velbuslib_class.mjs'
 import { Part2Bin } from './velbuslib.js';
 import { EndX, PrioLo, PrioHi, StartX } from './velbuslib_constant.js';
 
-function FrameRequestName (addr, part) {
+function FrameRequestName (addr, part=0) {
 	let trame = new Uint8Array(8);
 	trame[0] = StartX;
 	trame[1] = PrioLo;

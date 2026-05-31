@@ -395,7 +395,7 @@ function CheckModule(VMBmessage) {
 			console.log("CREATE TYPE:", newModule.modType)
 			newModule.partNumber = VMB.getPartFromCode(newModule.modType)	// Fixed 2024-04-07
 			modulesList.set(addrByte, newModule)							// Fixed 2024-04-12
-			if (VMB.getCatFromCode(typeByte).contains("counter")) {
+			if (VMB.getCatFromCode(typeByte).includes("counter")) {
 				VMBWrite(FrameRequestMemoryByte(addrByte, 0x03FE))			// Specific for counter, ask for memory byte containing unit (by channel)
 			}
 			// Now we have enough information to create SUBMODULE
@@ -405,7 +405,7 @@ function CheckModule(VMBmessage) {
 				subModTmp.hexId = toHexa([addrByte]) + "-" + (i + 1)
 				subModTmp.type = typeByte
 				subModTmp.cat = newModule.modCat
-				if (getNameFromCode(typeByte) == "VMB7IN" && i >= 4) {	// VMB7IN : correcting 3 last parts are 'input' only
+				if (VMB.getNameFromCode(typeByte) == "VMB7IN" && i >= 4) {	// VMB7IN : correcting 3 last parts are 'input' only
 					subModTmp.cat = ["input"]
 				}
 
@@ -497,12 +497,12 @@ function analyze2Texte(element) {
 			texte += `ERROR Counter: TX=${errorTX}, RX=${errorRX}, BusOFF=${errorBO}`
 			if (modulesList.get(addrByte)) {
 				// update existing module with current value
-				let dt = new Date()
+				// TODO remove: let dt = new Date()
 				let moduleTmp = modulesList.get(addrByte)
 				moduleTmp.busErrorTX = element[5]
 				moduleTmp.busErrorRX = element[6]
 				moduleTmp.busErrorBOFF = element[7]
-				moduleTmp.busRefreshDate = dt.now()
+				moduleTmp.busRefreshDate = Date.now()
 				modulesList.set(addrByte, moduleTmp)
 			}
 			break
@@ -801,8 +801,9 @@ function initializeRelayStatus(msg) {
 			const subModTemp = subModulesList.get(key)
 			let newStatus
 			if (!subModTemp.status.current) {
-				let relaisOnStatus = msg.RAW[7] & Part2Bin(index) > 0
-				let relaisBlinkStatus = msg.RAW[7] >> 4 & Part2Bin(index) > 0
+				// TODO resolved predecedence to check (l.805 and l.806) : if both on and blink are true, which one is priority ? For now, blink is priority on on
+				let relaisOnStatus = (msg.RAW[7] & Part2Bin(index)) > 0
+				let relaisBlinkStatus = ((msg.RAW[7] >> 4) & Part2Bin(index)) > 0
 				if (relaisBlinkStatus) {
 					newStatus = { "current": "blink", "since": Date.now(), "previousState": "blink", "previousStateDuration": Date.now() }
 				} else if (relaisOnStatus) {
@@ -864,7 +865,7 @@ function surveyDimmerStatus() {
 				subModulesList.set(key, subModTemp)
 				if (subModTemp.name == undefined) {
 					// if it has no name, ask it
-					VMBWrite(FrameRequestName(msg.RAW[2], relayNumber))
+					VMBWrite(FrameRequestName(msg.RAW[2], 0))
 				}
 			} else {
 				VMBWrite(FrameModuleScan(msg.RAW[2]))
@@ -1138,30 +1139,22 @@ function logInfo(priority, text) {
 // =                                           VELBUS SERVER PART                                             =
 // ============================================================================================================
 
-const CNX = { host: "127.0.0.1", port: 8445 }
 import net from 'net'
-import { get } from 'http';
-import { scanModulesToJSON } from '../controllers/CtrlModules.mjs';
-import { timeStamp } from 'console';
+import { scanModulesToJSON } from '../controllers/CtrlModules.mjs'
 
-const connectVelbus = (TCPConnexion) => {
-	let velbusConnexion = new net.Socket();
-	return velbusConnexion;
-}
+const CNX = { host: "127.0.0.1", port: 8445 }
+const RECONNECT_INTERVAL_MS = 10 * 1000
 
-let VelbusConnexion = connectVelbus(CNX);
-const VelbusStart = (host, port) => {
-	VelbusConnexion.connect(port, host);
-}
-
-let ReconnectTimer
-let DisconnectDate
+let VelbusConnexion         // Active TCP socket (replaced on each reconnect)
+let ReconnectTimer          // setInterval id for reconnection attempts
+let DisconnectDate          // Timestamp of last disconnection
+let initialLoadDone = false // Ensures loadMapData/scan runs only on first connect
 
 // -------------------------------------------------------------------------------------------------------------------
-// PREPARING ALL LISTENERS : 
+// EVENT HANDLERS : named functions so they can be re-attached after reconnect
 // -------------------------------------------------------------------------------------------------------------------
-VelbusConnexion.on('connect', () => {
-	console.log("ARVEL - ✅ Connexion to Velbus server TCP)  > ", VelbusConnexion.remoteAddress, ":", VelbusConnexion.remotePort);
+const onConnect = () => {
+	console.log("ARVEL - ✅ Connexion to Velbus server TCP > ", VelbusConnexion.remoteAddress, ":", VelbusConnexion.remotePort)
 	console.log("--------------------------------------------------------------", '\n\n')
 	surveyTempStatus()
 	surveyEnergyStatus()
@@ -1169,104 +1162,112 @@ VelbusConnexion.on('connect', () => {
 	surveyBlindStatus()
 	surveyDimmerStatus()
 
+	// Reconnection succeeded: stop retry loop and log downtime
 	if (ReconnectTimer != undefined) {
-		let duration = ((Date.now() - DisconnectDate) / 1000)
-		console.log("Reconnect after ", Math.round(duration / 60), "minuts and", Math.round(duration % 60), "seconds")
+		const duration = ((Date.now() - DisconnectDate) / 1000)
+		console.log("Reconnect after ", Math.round(duration / 60), "minutes and", Math.round(duration % 60), "seconds")
 		clearInterval(ReconnectTimer)
 		ReconnectTimer = undefined
 	}
 
-})
+	// Initial bootstrap : load persisted map, scan bus if empty (only first time)
+	if (!initialLoadDone) {
+		initialLoadDone = true
+		const fileRead = loadMapData()
+		logInfo(2, "💾 Reading file give " + fileRead + " submodules")
 
-VelbusConnexion.once('connect', () => {
-	// Load Modules (synchrone method) before starting asynchrone communication with Velbus
-	let fileRead = loadMapData()
-	logInfo(2, "💾 Reading file give " + fileRead + " submodules")
-
-	/* FIXME remove this after testing sending frame
-		setTimeout(() => {
-			// Send a read on memory to test after 10 seconds
-			logInfo(0, "🔎 Now sending Memory value for power module")
-			VMBWrite(FrameRequestMemoryByte(6, 0x03FE))
-		}, 10000)
-	*/
-
-	if (fileRead < 5) {
-		console.log("subModuleList size", subModulesList.size)
-		setTimeout(() => {
-			// VMBscanAll() after 1 second
-			logInfo(0, "🔎 Now scanning all devices on BUS")
-			VMBscanAll(0)
-		}, 1000)
-		setTimeout(() => {
-			saveMapData(modulesList, subModulesList) // after 90 second
-			logInfo(0, "💾 List saved after scan on BUS")
-		}, 90000)
-	} else {
-		logInfo(0, "💾 List loaded, no need to scan on BUS")
+		if (fileRead < 5) {
+			console.log("subModuleList size", subModulesList.size)
+			setTimeout(() => {
+				logInfo(0, "🔎 Now scanning all devices on BUS")
+				VMBscanAll(0)
+			}, 1000)
+			setTimeout(() => {
+				saveMapData(modulesList, subModulesList)
+				logInfo(0, "💾 List saved after scan on BUS")
+			}, 90000)
+		} else {
+			logInfo(0, "💾 List loaded, no need to scan on BUS")
+		}
 	}
-})
+}
 
-VelbusConnexion.on('data', (data) => {
-	let VMBmessage = {}
-	let description = ''
-
-	// data may contains multiples RAW Velbus frames: send
+const onData = (data) => {
+	// data may contain multiple raw Velbus frames concatenated
 	Cut(data).forEach(element => {
 		CheckModule(element)
 
-		description = analyze2Texte(element);
+		const description = analyze2Texte(element)
 		logInfo('INFO', description)
 
-		VMBmessage = { "RAW": element, "Description": description, "TimeStamp": Date.now(), "Address": element[2], "Function": element[4] }
-
+		const VMBmessage = {
+			RAW: element,
+			Description: description,
+			TimeStamp: Date.now(),
+			Address: element[2],
+			Function: element[4]
+		}
 
 		VMBEmitter.emit("msg", VMBmessage)
 
 		switch (element[4]) {
-			case 0x00:
-				break;
-			case 0xFB:
-				VMBEmitter.emit("RelayStatus", VMBmessage)
-				break;
-			case 0xEC:
-				VMBEmitter.emit("BlindStatus", VMBmessage)
-				break;
-			case 0xBE:
-				VMBEmitter.emit("EnergyStatus", VMBmessage)
-				break;
-			case 0xE6:
-				VMBEmitter.emit("TempStatus", VMBmessage)
-				break;
-			case 0xEE:
-				VMBEmitter.emit("DimmerStatus", VMBmessage)
-				break;
-
-			default:
-				break
+			case 0x00: break
+			case 0xFB: VMBEmitter.emit("RelayStatus", VMBmessage); break
+			case 0xEC: VMBEmitter.emit("BlindStatus", VMBmessage); break
+			case 0xBE: VMBEmitter.emit("EnergyStatus", VMBmessage); break
+			case 0xE6: VMBEmitter.emit("TempStatus", VMBmessage); break
+			case 0xEE: VMBEmitter.emit("DimmerStatus", VMBmessage); break
+			default: break
 		}
-
 	})
-});
-VelbusConnexion.on('error', (err) => {
-	// TODO Check if this part is needed (lost connexion start event 'close') and how...
+}
+
+const onError = (err) => {
 	console.error("  ❌ Connexion Error! Velbus reusedSocket:", VelbusConnexion.reusedSocket, "   (err.code:", err.code, ")")
+	// destroy() will emit 'close', which is the single place that handles reconnect.
 	if (!VelbusConnexion.destroyed) {
-		VelbusConnexion.destroy();
-		setTimeout(() => { VelbusConnexion = connectVelbus(CNX) }, 5000) // Reconnexion après 5 secondes
+		VelbusConnexion.destroy()
 	}
-});
-VelbusConnexion.on('close', () => {
-	console.warn("  ✂️ Closing velbus server connexion");
-});
-VelbusConnexion.once('close', () => {
-	// Try to reconnect every 10 seconds
-	console.warn("  📶 Try velbus server reconnexion");
+}
+
+const onClose = (hadError) => {
+	console.warn("  ✂️ Closing velbus server connexion (hadError:", hadError, ")")
+
+	// Prevent stacking several reconnect intervals if close fires multiple times
+	if (ReconnectTimer != undefined) return
+
 	DisconnectDate = Date.now()
+	console.warn("  📶 Try velbus server reconnexion every", RECONNECT_INTERVAL_MS / 1000, "s")
 	ReconnectTimer = setInterval(() => {
+		// Recreate a fresh socket each attempt and reattach all handlers
+		VelbusConnexion = createVelbusSocket()
 		VelbusConnexion.connect(CNX.port, CNX.host)
-	}, 10 * 1000)
-})
+	}, RECONNECT_INTERVAL_MS)
+}
+
+/**
+ * Creates a brand new TCP socket and attaches all required event handlers.
+ * Must be called for the initial connection AND for every reconnect attempt,
+ * otherwise the new socket would have no handlers and the app would go silent.
+ */
+const createVelbusSocket = () => {
+	const socket = new net.Socket()
+	socket.on('connect', onConnect)
+	socket.on('data', onData)
+	socket.on('error', onError)
+	socket.on('close', onClose)
+	return socket
+}
+
+// Initial socket: handlers are attached here.
+VelbusConnexion = createVelbusSocket()
+
+const VelbusStart = (host, port) => {
+	// Allow caller to override default target; reconnects will reuse these values.
+	if (host) CNX.host = host
+	if (port) CNX.port = port
+	VelbusConnexion.connect(CNX.port, CNX.host)
+}
 // ==================================================================================
 // #endregion
 
