@@ -54,15 +54,9 @@ function BlindStop(adr, part, vmb2bl=true) {
 	return trame
 }
 
-function FrameHello (name) {
-    console.log("Hello ", name)
-	return name.length
-}
-
 // ==========================================================================================================
 
 export {
     BlindMove,
-    BlindStop,
-    FrameHello
+    BlindStop
 }
